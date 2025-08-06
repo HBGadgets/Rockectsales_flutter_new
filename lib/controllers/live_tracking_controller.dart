@@ -22,7 +22,7 @@ class LiveTrackingController extends GetxController {
 
   final String socketUrl = 'http://104.251.218.102:8080';
   final String googleApiKey =
-      'AIzaSyAvHHoPKPwRFui0undeEUrz00-8w6qFtik'; // Replace with your API key
+      ''; 
 
   @override
   void onInit() {
