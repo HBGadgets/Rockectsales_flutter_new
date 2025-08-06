@@ -1,0 +1,2 @@
+C:/Users/Lenovo/StudioProjects/rocketsale_rs2/rocketsale_rs/android/app/.cxx/Debug/t304x3kl/x86/CMakeFiles/edit_cache.dir
+C:/Users/Lenovo/StudioProjects/rocketsale_rs2/rocketsale_rs/android/app/.cxx/Debug/t304x3kl/x86/CMakeFiles/rebuild_cache.dir

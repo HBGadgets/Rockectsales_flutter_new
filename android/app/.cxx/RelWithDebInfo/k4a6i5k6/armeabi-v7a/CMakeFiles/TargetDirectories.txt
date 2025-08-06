@@ -1,0 +1,2 @@
+C:/Users/Lenovo/StudioProjects/rocketsale_rs2/rocketsale_rs/android/app/.cxx/RelWithDebInfo/k4a6i5k6/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Lenovo/StudioProjects/rocketsale_rs2/rocketsale_rs/android/app/.cxx/RelWithDebInfo/k4a6i5k6/armeabi-v7a/CMakeFiles/rebuild_cache.dir
