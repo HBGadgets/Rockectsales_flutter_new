@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBS-THTHDaiHbusN-khvpS7AwCMx37NDmU',
-    appId: '1:535225261505:android:49fb28d9905b23ca452340',
-    messagingSenderId: '535225261505',
+    apiKey: '',
+    appId: '',
+    messagingSenderId: '',
     projectId: 'rocketsalesapp-e5b34',
-    storageBucket: 'rocketsalesapp-e5b34.firebasestorage.app',
+    storageBucket: '',
   );
 
   static FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDikk0H0QEYb_bNEHhXlNWxGcKEromyyU4',
-    appId: '1:535225261505:ios:b0e81f4e383aea6c452340',
-    messagingSenderId: '535225261505',
-    projectId: 'rocketsalesapp-e5b34',
-    storageBucket: 'rocketsalesapp-e5b34.firebasestorage.app',
+    apiKey: '',
+    appId: '',
+    messagingSenderId: '',
+    projectId: '',
+    storageBucket: '',
     iosBundleId: 'com.example.rocketsaleRs',
   );
 }
