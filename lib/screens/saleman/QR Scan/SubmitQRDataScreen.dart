@@ -15,17 +15,17 @@ class Submitqrdatascreen extends StatelessWidget {
 
   final QRCardsController controller = Get.put(QRCardsController());
 
-  String formattedDate(String? dateTimeStr) {
-    DateTime dateTime = DateTime.parse(dateTimeStr!);
-    return DateFormat('dd/MM/yy').format(dateTime);
-  }
-
-  String formattedTime(String? dateTimeStr) {
-    DateTime dateTime = DateTime.parse(dateTimeStr!);
-
-    // Format to hh:mm a (12-hour format with AM/PM)
-    return DateFormat('hh:mm a').format(dateTime);
-  }
+  // String formattedDate(String? dateTimeStr) {
+  //   DateTime dateTime = DateTime.parse(dateTimeStr!);
+  //   return DateFormat('dd/MM/yy').format(dateTime);
+  // }
+  //
+  // String formattedTime(String? dateTimeStr) {
+  //   DateTime dateTime = DateTime.parse(dateTimeStr!);
+  //
+  //   // Format to hh:mm a (12-hour format with AM/PM)
+  //   return DateFormat('hh:mm a').format(dateTime);
+  // }
 
   Submitqrdatascreen(
       {super.key,
@@ -73,8 +73,8 @@ class Submitqrdatascreen extends StatelessWidget {
                   Qrcard(
                       cardIdString: cardIdString,
                       cardNameString: cardNameString,
-                      date: formattedDate(DateTime.now().toString()),
-                      time: formattedTime(DateTime.now().toString())),
+                      date: DateTime.now().toString(),
+                      time: DateTime.now().toString()),
                   const SizedBox(height: 20),
                   Row(
                     children: [

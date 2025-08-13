@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Qrcard extends StatelessWidget {
   final String cardIdString;
@@ -14,54 +15,85 @@ class Qrcard extends StatelessWidget {
       required this.date,
       required this.time});
 
+  String formattedDate(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+    return DateFormat('dd/MM/yy').format(dateTime);
+  }
+
+  String formattedTime(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+
+    // Format to hh:mm a (12-hour format with AM/PM)
+    return DateFormat('hh:mm a').format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
+        child: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+            const Icon(
+              Icons.qr_code,
+              size: 60,
+              color: Colors.black54,
+            ),
+            Expanded(
+              child: Column(
                 children: [
-                  Text('QR id: '),
-                  Text(
-                    cardIdString,
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Text('QR id: '),
+                        Expanded(
+                          child: Text(
+                            cardIdString,
+                            textAlign: TextAlign.start,
+                            softWrap: true,
+                            overflow: TextOverflow.visible,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        const Text('Commodity no: '),
+                        Expanded(
+                          child: Text(
+                            cardNameString,
+                            softWrap: true,
+                            overflow: TextOverflow.visible,
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Text(formattedDate(date)),
+                        const Spacer(),
+                        Text(formattedTime(time)),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  const Text('Commodity no: '),
-                  Text(
-                    cardNameString,
-                    textAlign: TextAlign.start,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Text(date),
-                  const Spacer(),
-                  Text(time),
-                ],
-              ),
-            )
           ],
         ),
       ),

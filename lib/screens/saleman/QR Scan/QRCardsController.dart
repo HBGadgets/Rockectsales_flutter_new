@@ -28,6 +28,7 @@ class QRCardsController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     getSalesmanAdminName();
+    getQRCards();
     super.onInit();
   }
 
@@ -45,8 +46,7 @@ class QRCardsController extends GetxController {
         return;
       }
 
-      final url =
-          Uri.parse('${dotenv.env['BASE_URL']}/api/api/scanqr/$salesManId');
+      final url = Uri.parse('${dotenv.env['BASE_URL']}/api/api/scanqr/get');
       final response = await http.get(
         url,
         headers: {
@@ -57,7 +57,9 @@ class QRCardsController extends GetxController {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
+        print(jsonData);
         final List<dynamic> dataList = jsonData['data'];
+        // final List<dynamic> dataList = jsonData;
         final qrcardsList =
             dataList.map((item) => QRCard.fromJson(item)).toList();
         qrCards.assignAll(qrcardsList);
@@ -68,7 +70,8 @@ class QRCardsController extends GetxController {
       }
     } catch (e) {
       qrCards.clear();
-      Get.snackbar("Exception", e.toString());
+      // Get.snackbar("Exception", e.toString());
+      Get.snackbar("Exception", "Couldn't get QR history");
     } finally {
       isLoading.value = false;
     }
@@ -77,7 +80,7 @@ class QRCardsController extends GetxController {
   void getSalesmanAdminName() async {
     String? token = await TokenManager.getToken();
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
-    print(decodedToken);
+    // print(decodedToken);
     adminName.value = decodedToken['chatusername'];
   }
 
@@ -99,22 +102,7 @@ class QRCardsController extends GetxController {
         final branchId = decodedToken['branchId'];
         final supervisorId = decodedToken['supervisorId'];
 
-        print("QR code ID is this =====>>>> $qrID");
-
-        // var request = http.MultipartRequest('POST', uri);
-        // request.headers['Authorization'] = 'Bearer $token';
-        // request.fields['boxNo'] = boxNumber;
-        // request.fields['companyId'] = companyId;
-        // request.fields['branchId'] = branchId;
-        // request.fields['supervisorId'] = supervisorId;
-        // // request.fields['qrcodeId'] = qrID;
-        // request.fields['qrcodeId'] = '689b3a692727d74089f689f8';
-        // request.fields['salesmanId'] = salesManId;
-        // request.fields['lat'] = salesManLocation.latitude.toString();
-        // request.fields['long'] = salesManLocation.longitude.toString();
-
-        // final streamedResponse = await request.send();
-        // final response = await http.Response.fromStream(streamedResponse);
+        // print("QR code ID is this =====>>>> $qrID");
 
         final response = await http.post(
           uri,
@@ -147,6 +135,7 @@ class QRCardsController extends GetxController {
             ),
             (route) => false, //if you want to disable back feature set to false
           );
+          getQRCards();
           Get.snackbar("Success", "QR info submitted");
         } else {
           isLoading.value = false;
@@ -168,11 +157,14 @@ class QRCardsController extends GetxController {
 class QRCard {
   String? cardTitle;
   String? dateTime;
+  String? qrId;
 
-  QRCard({this.cardTitle, required this.dateTime});
+  QRCard({this.cardTitle, required this.dateTime, required this.qrId});
 
   QRCard.fromJson(Map<String, dynamic> json) {
-    cardTitle = json['boxName'];
-    dateTime = json['dateTime'];
+    cardTitle = json['qrcodeId']?['boxNo']; // Nested access
+    dateTime = json['createdAt'];
+    // dateTime = json['qrcodeId']?['createdAt'];
+    qrId = json['qrcodeId']?['_id']; // Nested access
   }
 }

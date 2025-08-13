@@ -48,7 +48,7 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
-      floatingActionButton: FloatingActionButton.large(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Qrtabs()));
@@ -57,7 +57,7 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
         foregroundColor: Colors.white,
         child: Icon(
           Icons.qr_code,
-          size: 45,
+          size: 30,
         ),
       ),
       appBar: AdminAppBar(
