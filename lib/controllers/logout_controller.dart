@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +33,7 @@ class LogoutController extends GetxController {
   }
 
   Future<void> logoutUser() async {
-    const String apiUrl = 'http://104.251.218.102:8080/api/logout';
+    String apiUrl = '${dotenv.env['BASE_URL']}/api/api/logout';
     final Map<String, dynamic> requestBody = {"username": username.value};
 
     try {

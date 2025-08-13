@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -72,7 +73,7 @@ class _ManualTaskScreenState extends State<ManualTaskScreen> {
     try {
       // Prepare the request body
       final response = await http.post(
-        Uri.parse('http://104.251.218.102:8080/api/task'),
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/task'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

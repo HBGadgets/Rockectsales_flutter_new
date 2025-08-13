@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -28,7 +29,8 @@ class TaskController extends GetxController {
       }
       final token = await TokenManager.getToken();
       final response = await GetConnect().get(
-        'https://salestrack.rocketsalestracker.com/api/api/task/$id',
+        // 'https://salestrack.rocketsalestracker.com/api/api/task/$id',
+        '${dotenv.env['BASE_URL']}/api/api/task/$id',
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -53,8 +55,7 @@ class TaskController extends GetxController {
   }
 
   Future<void> toggleTaskStatus(String taskId, String newStatus) async {
-    final url =
-        'https://salestrack.rocketsalestracker.com/api/api/task/status/$taskId';
+    final url = '${dotenv.env['BASE_URL']}/api/api/task/status/$taskId';
 
     final id = await TokenManager.getSupervisorId(); // Get user ID from token
     if (id == null) {

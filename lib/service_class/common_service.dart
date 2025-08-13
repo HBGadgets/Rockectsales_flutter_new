@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../utils/token_manager.dart';
 
 class ApiServiceCommon {
-  static const String baseUrl = "https://salestrack.rocketsalestracker.com/api";
+  static final String baseUrl = "${dotenv.env['BASE_URL']}/api";
 
   static Future<dynamic> request({
     required String method,

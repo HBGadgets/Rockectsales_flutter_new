@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // For encoding the request body to JSON
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';  // Add this import for decoding JWT
+import 'package:jwt_decoder/jwt_decoder.dart'; // Add this import for decoding JWT
 
 class ApplyLeave extends StatefulWidget {
-  const ApplyLeave ({super.key});
+  const ApplyLeave({super.key});
 
   @override
   _ApplyLeaveState createState() => _ApplyLeaveState();
@@ -50,37 +51,48 @@ class _ApplyLeaveState extends State<ApplyLeave> {
 
   Future<void> _applyLeaveRequest() async {
     // Check if dates and reason are valid
-    if (selectedFromDate == null || selectedTillDate == null || reasonController.text.isEmpty) {
+    if (selectedFromDate == null ||
+        selectedTillDate == null ||
+        reasonController.text.isEmpty) {
       _showSnackbar('Please fill in all the fields');
       return;
     }
 
     // Decode the JWT token to get the salesmanId (or user ID) and additional fields
-    String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTlhYzRhMmJhM2RmMWYzNzkyZjZmZSIsInVzZXJuYW1lIjoicGF2YW5zYWwiLCJyb2xlIjo1LCJjb21wYW55SWQiOiI2NzkwN2ViZGIwMjEzZmE2ZTcwYTJhYWQiLCJicmFuY2hJZCI6IjY3OTA3ZjA0YjAyMTNmYTZlNzBhMmFiZCIsInN1cGVydmlzb3JJZCI6IjY3OTA3ZjczYjAyMTNmYTZlNzBhMmFkMyIsImNoYXR1c2VybmFtZSI6ImFuaXN1cCIsImlhdCI6MTczOTMzOTc2MywiZXhwIjoyMDU0OTE1NzYzfQ.tgYo7jT_WtcclJ45DI8XwhmelgRi61kSyfAoW_GQabA';  // Use your token here
+    String token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTlhYzRhMmJhM2RmMWYzNzkyZjZmZSIsInVzZXJuYW1lIjoicGF2YW5zYWwiLCJyb2xlIjo1LCJjb21wYW55SWQiOiI2NzkwN2ViZGIwMjEzZmE2ZTcwYTJhYWQiLCJicmFuY2hJZCI6IjY3OTA3ZjA0YjAyMTNmYTZlNzBhMmFiZCIsInN1cGVydmlzb3JJZCI6IjY3OTA3ZjczYjAyMTNmYTZlNzBhMmFkMyIsImNoYXR1c2VybmFtZSI6ImFuaXN1cCIsImlhdCI6MTczOTMzOTc2MywiZXhwIjoyMDU0OTE1NzYzfQ.tgYo7jT_WtcclJ45DI8XwhmelgRi61kSyfAoW_GQabA'; // Use your token here
 
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    String salesmanId = decodedToken['id'];  // Extracting the salesmanId
-    String companyId = decodedToken['companyId'];  // Extracting companyId
-    String supervisorId = decodedToken['superviserId'];  // Extracting superviserId
-    String branchId = decodedToken['branchId'];  // Extracting branchId
+    String salesmanId = decodedToken['id']; // Extracting the salesmanId
+    String companyId = decodedToken['companyId']; // Extracting companyId
+    String supervisorId =
+        decodedToken['superviserId']; // Extracting superviserId
+    String branchId = decodedToken['branchId']; // Extracting branchId
 
     // Prepare the request body with the required fields, including the newly extracted fields
     final Map<String, dynamic> leaveRequestData = {
-      'salesmanId': salesmanId, // Add the salesmanId extracted from the token
-      'leaveStartdate': selectedFromDate?.toIso8601String(),  // Assuming leaveStartdate is the same as 'fromDate'
-      'leaveEnddate': selectedTillDate?.toIso8601String(),    // Assuming leaveEnddate is the same as 'tillDate'
-      'reason': reasonController.text,  // The reason for leave
-      'companyId': companyId,  // Add companyId from token
-      'supervisorId': supervisorId,  // Add supervisorId from token
-      'branchId': branchId,  // Add branchId from token
+      'salesmanId': salesmanId,
+      // Add the salesmanId extracted from the token
+      'leaveStartdate': selectedFromDate?.toIso8601String(),
+      // Assuming leaveStartdate is the same as 'fromDate'
+      'leaveEnddate': selectedTillDate?.toIso8601String(),
+      // Assuming leaveEnddate is the same as 'tillDate'
+      'reason': reasonController.text,
+      // The reason for leave
+      'companyId': companyId,
+      // Add companyId from token
+      'supervisorId': supervisorId,
+      // Add supervisorId from token
+      'branchId': branchId,
+      // Add branchId from token
     };
 
     try {
-      print('Using Token: $token');  // Debug the token
+      print('Using Token: $token'); // Debug the token
 
       // Send the POST request with the Authorization header
       final response = await http.post(
-        Uri.parse('http://104.251.218.102:8080/api/leaverequest'),
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/leaverequest'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token', // Add the token here
@@ -206,7 +218,8 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('From Date -', style: TextStyle(color: Colors.black, fontSize: 18)),
+                    Text('From Date -',
+                        style: TextStyle(color: Colors.black, fontSize: 18)),
                     GestureDetector(
                       onTap: () => _selectDate(context, 'from'),
                       child: Container(
@@ -232,8 +245,10 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                               child: Text(
                                 selectedFromDate == null
                                     ? 'Select date'
-                                    : '${selectedFromDate!.toLocal()}'.split(' ')[0],
-                                style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                                    : '${selectedFromDate!.toLocal()}'
+                                        .split(' ')[0],
+                                style: TextStyle(
+                                    color: Colors.black.withOpacity(0.6)),
                               ),
                             ),
                             Icon(Icons.calendar_today, color: Colors.black),
@@ -249,7 +264,8 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Till Date -', style: TextStyle(color: Colors.black, fontSize: 18)),
+                    Text('Till Date -',
+                        style: TextStyle(color: Colors.black, fontSize: 18)),
                     GestureDetector(
                       onTap: () => _selectDate(context, 'till'),
                       child: Container(
@@ -275,8 +291,10 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                               child: Text(
                                 selectedTillDate == null
                                     ? 'Select date'
-                                    : '${selectedTillDate!.toLocal()}'.split(' ')[0],
-                                style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                                    : '${selectedTillDate!.toLocal()}'
+                                        .split(' ')[0],
+                                style: TextStyle(
+                                    color: Colors.black.withOpacity(0.6)),
                               ),
                             ),
                             Icon(Icons.calendar_today, color: Colors.black),
@@ -348,10 +366,15 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                         ],
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center, // Centering horizontally
-                        crossAxisAlignment: CrossAxisAlignment.center, // Centering vertically
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        // Centering horizontally
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        // Centering vertically
                         children: [
-                          Text('First Half', textAlign: TextAlign.center, style: TextStyle(color: Colors.black.withOpacity(0.6))),
+                          Text('First Half',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.black.withOpacity(0.6))),
                         ],
                       ),
                     ),
@@ -374,13 +397,17 @@ class _ApplyLeaveState extends State<ApplyLeave> {
                         ],
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center, // Centering horizontally
-                        crossAxisAlignment: CrossAxisAlignment.center, // Centering vertically
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        // Centering horizontally
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        // Centering vertically
                         children: [
                           Text(
                             'Second Half',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 14.0),
+                            style: TextStyle(
+                                color: Colors.black.withOpacity(0.6),
+                                fontSize: 14.0),
                           ),
                         ],
                       ),

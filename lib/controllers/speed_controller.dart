@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -24,7 +25,7 @@ class SpeedController extends GetxController {
       String? token = await TokenManager.getToken();
       String? pd = await TokenManager.getSupervisorId();
       print("Supervisor ID: $pd");
-      var url = Uri.parse("http://104.251.218.102:8080/api/setoverspeed/$pd");
+      var url = Uri.parse("${dotenv.env['BASE_URL']}/api/api/setoverspeed/$pd");
 
       var response = await http.delete(
         url,
@@ -56,7 +57,7 @@ class SpeedController extends GetxController {
       String? pd = await TokenManager.getSupervisorId();
       print(token);
 
-      var url = Uri.parse('http://104.251.218.102:8080/api/setoverspeed');
+      var url = Uri.parse('${dotenv.env['BASE_URL']}/api/api/setoverspeed');
       var response = await http.post(
         url,
         headers: {
@@ -89,7 +90,7 @@ class SpeedController extends GetxController {
       isLoading.value = true;
       String? token = await TokenManager.getToken();
       String? cd = await TokenManager.getSupervisorinsalemanId();
-      var url = Uri.parse('http://104.251.218.102:8080/api/setoverspeed/$cd');
+      var url = Uri.parse('${dotenv.env['BASE_URL']}/api/api/setoverspeed/$cd');
       var response = await http.get(
         url,
         headers: {
@@ -126,7 +127,7 @@ class SpeedController extends GetxController {
       String? kj = await TokenManager.getSupervisorId();
       print(kj);
 
-      var url = Uri.parse('http://104.251.218.102:8080/api/setoverspeed/$kj');
+      var url = Uri.parse('${dotenv.env['BASE_URL']}/api/api/setoverspeed/$kj');
 
       var response = await http.put(
         url,

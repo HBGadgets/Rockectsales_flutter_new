@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -57,7 +58,7 @@ class _SalesmanExpenseState extends State<SalesmanExpense> {
 
   // Fetch expense types from API
   Future<void> _fetchExpenceTypes() async {
-    final url = Uri.parse('http://104.251.218.102:8080/api/expencetype');
+    final url = Uri.parse('${dotenv.env['BASE_URL']}/api/api/expencetype');
     String? token = await getToken();
 
     if (token == null) {
@@ -136,7 +137,7 @@ class _SalesmanExpenseState extends State<SalesmanExpense> {
 // POST API method
   // POST API method
   Future<void> _submitExpenseData() async {
-    final String url = 'http://104.251.218.102:8080/api/expence';
+    final String url = '${dotenv.env['BASE_URL']}/api/api/expence';
 
     // Get the token from SharedPreferences
     final String? token = await getToken();

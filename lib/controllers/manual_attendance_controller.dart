@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../models/manual_attendance_model.dart'; // adjust the path accordingly
@@ -31,8 +32,7 @@ class ManualAttendanceController extends GetxController {
       isLoading.value = true;
 
       final response = await http.get(
-        Uri.parse(
-            'https://salestrack.rocketsalestracker.com/api/api/manualattendence'),
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/manualattendence'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ class ManualAttendanceController extends GetxController {
       final token = await TokenManager.getToken();
       print(token);
 
-      final uri = Uri.parse('http://104.251.218.102:8080/api/attendence');
+      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence');
 
       var request = http.MultipartRequest('POST', uri);
       request.headers['Authorization'] = 'Bearer $token';

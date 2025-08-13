@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -49,7 +50,7 @@ class _TaskDetailsState extends State<TaskDetails> {
       }
 
       // final String apiUrl = "https://rocketsales-server.onrender.com/api/task/$taskId"; // Ensure this is the correct URL with the task ID
-      final String apiUrl = "http://104.251.218.102:8080/api/task/$taskId";
+      final String apiUrl = "${dotenv.env['BASE_URL']}/api/api/task/$taskId";
       final response = await http.get(
         Uri.parse(apiUrl),
         headers: {
@@ -167,10 +168,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                             onTap: () {
                               // Navigate to TaskDescriptionScreen when tapped
                               Get.to(() => TaskDescriptionScreen(
-                                    taskId: tasks[index][
-                                        "task"]!, // Assuming "task" is a non-null string
-                                    deadline: tasks[index][
-                                        "deadline"]!, // Assuming "deadline" is a non-null string
+                                    taskId: tasks[index]["task"]!,
+                                    // Assuming "task" is a non-null string
+                                    deadline: tasks[index]["deadline"]!,
+                                    // Assuming "deadline" is a non-null string
                                     task: tasks[index]["task"]!,
                                   ));
                             },
@@ -274,7 +275,8 @@ class TaskItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 4.0),
                 Text(
-                  'Deadline: ${deadline.isNotEmpty ? deadline : "No deadline available"}', // Check if deadline is non-null
+                  'Deadline: ${deadline.isNotEmpty ? deadline : "No deadline available"}',
+                  // Check if deadline is non-null
                   style: const TextStyle(color: Colors.grey, fontSize: 12.0),
                 ),
               ],

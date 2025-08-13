@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../utils/token_manager.dart';
@@ -46,8 +47,8 @@ class AdminAttendanceController extends GetxController {
         return;
       }
 
-      final url = Uri.parse(
-          'https://salestrack.rocketsalestracker.com/api/api/attendence?$filter');
+      final url =
+          Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence?$filter');
       final response = await http.get(
         url,
         headers: {

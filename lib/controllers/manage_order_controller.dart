@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -63,7 +64,7 @@ class ManageOrderController extends GetxController {
       String? token = await TokenManager.getToken();
 
       var response = await http.get(
-        Uri.parse("http://104.251.218.102:8080/api/order"),
+        Uri.parse("${dotenv.env['BASE_URL']}/api/api/order"),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

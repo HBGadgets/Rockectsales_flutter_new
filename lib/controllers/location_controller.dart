@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -14,7 +15,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../utils/token_manager.dart';
-
 
 class CheckInOutController extends GetxController {
   final Battery _battery = Battery();
@@ -47,8 +47,8 @@ class CheckInOutController extends GetxController {
   void _listenConnectivity() {
     connectivitySubscription =
         Connectivity().onConnectivityChanged.listen((result) {
-          _getNetworkType(result as ConnectivityResult);
-        }) as StreamSubscription<ConnectivityResult>?;
+      _getNetworkType(result as ConnectivityResult);
+    }) as StreamSubscription<ConnectivityResult>?;
   }
 
   Future<void> _getBatteryPercentage() async {
@@ -96,7 +96,8 @@ class CheckInOutController extends GetxController {
       return R * c;
     }
 
-    double distance = haversine(lastLatitude, lastLongitude, latitude, longitude);
+    double distance =
+        haversine(lastLatitude, lastLongitude, latitude, longitude);
     totalDistance.value += distance;
 
     DateTime now = DateTime.now();
@@ -132,7 +133,7 @@ class CheckInOutController extends GetxController {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://104.251.218.102:8080/api/attendence'),
+      Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence'),
     );
     request.headers['Authorization'] = 'Bearer $token';
     request.fields.addAll({
@@ -171,7 +172,7 @@ class CheckInOutController extends GetxController {
     final objectId = tokenData['id'] ?? tokenData['_id'] ?? tokenData['userId'];
 
     final url =
-        "http://104.251.218.102:8080/api/updatecheckouttime/$objectId";
+        "${dotenv.env['BASE_URL']}/api/api/updatecheckouttime/$objectId";
 
     final response = await http.put(
       Uri.parse(url),
@@ -180,7 +181,8 @@ class CheckInOutController extends GetxController {
         "Authorization": "Bearer $token",
       },
       body: jsonEncode({
-        "checkOutTime": DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(DateTime.now()),
+        "checkOutTime":
+            DateFormat('yyyy-MM-ddTHH:mm:ss.SSSZ').format(DateTime.now()),
         "endLat": latitude,
         "endLong": longitude,
       }),

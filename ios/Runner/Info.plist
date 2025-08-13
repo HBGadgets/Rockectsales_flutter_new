@@ -82,6 +82,12 @@
 	<key>GMSApiKey</key>
 	<string>AIzaSyAvHHoPKPwRFui0undeEUrz00-8w6qFtik</string>
 
+	<key>NSCameraUsageDescription</key>
+    <string>This app needs camera access to scan QR codes</string>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs photos access to get QR code from photo library</string>
+
     <!-- for phone and sms launching -->
 	<key>LSApplicationQueriesSchemes</key>
     <array>

@@ -125,11 +125,11 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                       'Manage Order',
                       onTap: () => Get.to(() => ManageOrderScreen()),
                     ),
-                    _buildMenuItem(
-                      Image(image: chat, width: 50, height: 50),
-                      'Chat Bot',
-                      onTap: () => Get.to(() => ChatBotScreen()),
-                    ),
+                    // _buildMenuItem(
+                    //   Image(image: chat, width: 50, height: 50),
+                    //   'Chat Bot',
+                    //   onTap: () => Get.to(() => ChatBotScreen()),
+                    // ),
                     _buildMenuItem(
                       Image(image: expenses, width: 50, height: 50),
                       'Expenses',

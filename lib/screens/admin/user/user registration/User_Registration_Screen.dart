@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -88,7 +89,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
         "supervisorId": supervisorId, // Include supervisor ID
       };
 
-      var uri = Uri.parse('http://104.251.218.102:8080/api/salesman');
+      var uri = Uri.parse('${dotenv.env['BASE_URL']}/api/api/salesman');
       var request = http.MultipartRequest('POST', uri)
         ..headers['Authorization'] = "Bearer $token";
 

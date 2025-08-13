@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -14,6 +15,7 @@ class TaskDescriptionScreen extends StatefulWidget {
     required this.deadline,
     required this.taskId,
   });
+
   // TaskDescriptionScreen({required this.taskId, required deadline});
 
   @override
@@ -30,9 +32,9 @@ class _TaskDescriptionScreenState extends State<TaskDescriptionScreen> {
   void initState() {
     super.initState();
     // Initialize the controllers with the passed values
-    descriptionController.text = widget.task;  // Set task description
-    deadlineController.text = widget.deadline;  // Set task deadline
-    _fetchTaskDetails();  // Optionally fetch task details using taskId
+    descriptionController.text = widget.task; // Set task description
+    deadlineController.text = widget.deadline; // Set task deadline
+    _fetchTaskDetails(); // Optionally fetch task details using taskId
   }
 
   Future<void> _fetchTaskDetails() async {
@@ -49,7 +51,7 @@ class _TaskDescriptionScreenState extends State<TaskDescriptionScreen> {
     }
 
     // final url = 'https://rocketsales-server.onrender.com/api/task/${widget.taskId}';
-    final url = 'http://104.251.218.102:8080/api/task/${widget.taskId}';
+    final url = '${dotenv.env['BASE_URL']}/api/api/task/${widget.taskId}';
     print('Requesting URL: $url');
 
     try {
@@ -67,7 +69,8 @@ class _TaskDescriptionScreenState extends State<TaskDescriptionScreen> {
         try {
           final responseData = json.decode(response.body);
           if (responseData is List && responseData.isNotEmpty) {
-            var taskData = responseData[0]; // Assuming the first item in the list
+            var taskData =
+                responseData[0]; // Assuming the first item in the list
             final taskModel = TaskModel.fromJson(taskData);
 
             setState(() {
@@ -109,7 +112,6 @@ class _TaskDescriptionScreenState extends State<TaskDescriptionScreen> {
     return prefs.getString('token'); // Fetches the token from SharedPreferences
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,108 +119,115 @@ class _TaskDescriptionScreenState extends State<TaskDescriptionScreen> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.grey.shade50,
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: const Text('Task'),
-              background: Container(color: Colors.grey.shade50),
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Get.back(); // Go back to the previous screen
-              },
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: descriptionController,
-                      decoration: InputDecoration(
-                        labelText: 'Task Description',
-                        labelStyle: TextStyle(color: Colors.black),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: 'Enter the task details',
-                      ),
-                      style: TextStyle(color: Colors.black),
-                      maxLines: 4,
-                    ),
-                    SizedBox(height: 16.0),
-                    TextField(
-                      controller: deadlineController,
-                      decoration: InputDecoration(
-                        labelText: 'Deadline',
-                        labelStyle: TextStyle(color: Colors.black),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: 'Enter the deadline (e.g., YYYY-MM-DD)',
-                      ),
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    SizedBox(height: 16.0),
-                    TextField(
-                      controller: locationController,
-                      decoration: InputDecoration(
-                        labelText: 'Location (Latitude, Longitude)',
-                        labelStyle: TextStyle(color: Colors.black),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black, width: 1),
-                        ),
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: 'Enter the location coordinates',
-                      ),
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    SizedBox(height: 16.0),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Handle task update logic here
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          side: BorderSide(color: Colors.black, width: 1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(0),
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                        ),
-                        child: const Text('Edit Task'),
-                      ),
-                    ),
-                  ],
+              slivers: [
+                SliverAppBar(
+                  backgroundColor: Colors.grey.shade50,
+                  floating: false,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: const Text('Task'),
+                    background: Container(color: Colors.grey.shade50),
+                  ),
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Get.back(); // Go back to the previous screen
+                    },
+                  ),
                 ),
-              ),
-            ]),
-          ),
-        ],
-      ),
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextField(
+                            controller: descriptionController,
+                            decoration: InputDecoration(
+                              labelText: 'Task Description',
+                              labelStyle: TextStyle(color: Colors.black),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1),
+                              ),
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText: 'Enter the task details',
+                            ),
+                            style: TextStyle(color: Colors.black),
+                            maxLines: 4,
+                          ),
+                          SizedBox(height: 16.0),
+                          TextField(
+                            controller: deadlineController,
+                            decoration: InputDecoration(
+                              labelText: 'Deadline',
+                              labelStyle: TextStyle(color: Colors.black),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1),
+                              ),
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText: 'Enter the deadline (e.g., YYYY-MM-DD)',
+                            ),
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          SizedBox(height: 16.0),
+                          TextField(
+                            controller: locationController,
+                            decoration: InputDecoration(
+                              labelText: 'Location (Latitude, Longitude)',
+                              labelStyle: TextStyle(color: Colors.black),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1),
+                              ),
+                              fillColor: Colors.white,
+                              filled: true,
+                              hintText: 'Enter the location coordinates',
+                            ),
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          SizedBox(height: 16.0),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Handle task update logic here
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Colors.white,
+                                side: BorderSide(color: Colors.black, width: 1),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 40, vertical: 16),
+                              ),
+                              child: const Text('Edit Task'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ),
+              ],
+            ),
     );
   }
 
@@ -247,7 +256,6 @@ class TaskModel {
     );
   }
 }
-
 
 // class TaskDescriptionScreen extends StatefulWidget {
 //   const TaskDescriptionScreen({super.key});

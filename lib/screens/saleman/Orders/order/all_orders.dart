@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import '../../dashboard_salesman.dart';
@@ -34,7 +35,7 @@ class _AllOrdersState extends State<AllOrders> {
       print('Token retrieved: $token');
 
       final response = await http.get(
-        Uri.parse('http://104.251.218.102:8080/api/order'),
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/order'),
         headers: {'Authorization': 'Bearer $token'},
       );
 

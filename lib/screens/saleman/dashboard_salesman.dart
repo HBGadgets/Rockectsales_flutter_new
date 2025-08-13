@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScan.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRTabs.dart';
 import 'package:rocketsale_rs/screens/saleman/task%20sales%20man/Task_Management_Sales_Man.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/dashboard_salesman_controller.dart';
@@ -12,7 +14,7 @@ import '../../utils/widgets/admin_app_bar.dart';
 import '../../utils/widgets/salesman_custom_drawer.dart';
 import '../notification_list_Screen.dart';
 import 'Attendance/Attendance_Page.dart';
-import 'Manage Expense Sales Man/Manage_Expense_Sales_Man.dart';
+import 'Expense/ExpensesScreen.dart';
 import 'Orders/order/all_orders.dart';
 import 'chat/chat_screen_sales_man.dart';
 import 'live trackings/Live_Tracking_Screen.dart';
@@ -46,6 +48,18 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton.large(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Qrtabs()));
+        },
+        backgroundColor: MyColor.dashbord,
+        foregroundColor: Colors.white,
+        child: Icon(
+          Icons.qr_code,
+          size: 45,
+        ),
+      ),
       appBar: AdminAppBar(
         title: 'Dashboard',
         onMenuTap: () {
@@ -145,7 +159,7 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                       Image(image: chat, width: 50, height: 50),
                       "Chat",
                       onTap: () {
-                        Get.to(() => ChatScreenSalesMan());
+                        Get.to(() => ChatPage());
                       },
                     ),
                     _buildMenuItem(
@@ -159,9 +173,16 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                       Image(image: expenses, width: 50, height: 50),
                       "Expenses",
                       onTap: () {
-                        Get.to(() => ManageExpenseSalesMan());
+                        Get.to(() => Expensesscreen());
                       },
                     ),
+                    // _buildMenuItem(
+                    //   Image(image: qrscan, width: 70, height: 70),
+                    //   "QR Scan",
+                    //   onTap: () {
+                    //     Get.to(() => QrscanScreen());
+                    //   },
+                    // ),
                   ],
                 ),
               ],

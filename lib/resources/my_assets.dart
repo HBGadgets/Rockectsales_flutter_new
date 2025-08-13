@@ -18,6 +18,7 @@ var meater = const AssetImage('assets/images/meater.png');
 var clock = const AssetImage('assets/images/clock.png');
 var location = const AssetImage('assets/images/location.png');
 var salesman = const AssetImage('assets/images/Salesman.png');
+var qrscan = const AssetImage('assets/images/qrscan.jpg');
 
 //
 // //dialog

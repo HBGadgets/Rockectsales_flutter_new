@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,9 +24,9 @@ class _OrderScreenState extends State<OrderScreen> {
 
   final TextEditingController quantityController = TextEditingController();
 
-  final String apiUrl = "http://104.251.218.102:8080/api/order";
+  final String apiUrl = "${dotenv.env['BASE_URL']}/api/api/order";
   final String productApiUrl =
-      "http://104.251.218.102:8080/api/product"; // API to fetch products
+      "${dotenv.env['BASE_URL']}/api/api/product"; // API to fetch products
   String? token;
 
   @override
@@ -80,12 +81,11 @@ class _OrderScreenState extends State<OrderScreen> {
           print("Product List: $productList"); // See the actual product list
 
           setState(() {
-            availableProducts =
-                productList.map((productJson) {
-                  return Product.fromJson(
-                    productJson,
-                  ); // Convert each product into Product instance
-                }).toList();
+            availableProducts = productList.map((productJson) {
+              return Product.fromJson(
+                productJson,
+              ); // Convert each product into Product instance
+            }).toList();
           });
         } else {
           print("No 'data' key in response or it's empty.");
@@ -133,12 +133,12 @@ class _OrderScreenState extends State<OrderScreen> {
     // Create a map of the data you want to send
     final List<Map<String, dynamic>> orderData =
         selectedProducts.map((product) {
-          return {
-            'product': product.name,
-            'quantity': product.quantity,
-            'price': product.price,
-          };
-        }).toList();
+      return {
+        'product': product.name,
+        'quantity': product.quantity,
+        'price': product.price,
+      };
+    }).toList();
 
     try {
       // Sending the POST request
@@ -253,196 +253,168 @@ class _OrderScreenState extends State<OrderScreen> {
                         const SizedBox(height: 10),
                         availableProducts.isEmpty
                             ? const Center(
-                              child: CircularProgressIndicator(),
-                            ) // Show loading indicator if products are not loaded
+                                child: CircularProgressIndicator(),
+                              ) // Show loading indicator if products are not loaded
                             : MultiSelectDialogField<String>(
-                              title: Text("Select Products"),
-                              items:
-                                  availableProducts.map((product) {
-                                    return MultiSelectItem(
-                                      product.name,
-                                      product.name,
-                                    );
-                                  }).toList(),
-                              initialValue:
-                                  selectedProducts.map((e) => e.name).toList(),
-                              onConfirm: (values) {
-                                setState(() {
-                                  selectedProducts =
-                                      values.map((productName) {
-                                        return Product(
-                                          name: productName,
-                                          quantity: 0, // Default quantity
-                                          price: 10.0, // Default price
-                                        );
-                                      }).toList();
-                                });
-                              },
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                border: Border.all(
-                                  color: Colors.black,
-                                  width: 2.0,
+                                title: Text("Select Products"),
+                                items: availableProducts.map((product) {
+                                  return MultiSelectItem(
+                                    product.name,
+                                    product.name,
+                                  );
+                                }).toList(),
+                                initialValue: selectedProducts
+                                    .map((e) => e.name)
+                                    .toList(),
+                                onConfirm: (values) {
+                                  setState(() {
+                                    selectedProducts =
+                                        values.map((productName) {
+                                      return Product(
+                                        name: productName,
+                                        quantity: 0, // Default quantity
+                                        price: 10.0, // Default price
+                                      );
+                                    }).toList();
+                                  });
+                                },
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 2.0,
+                                  ),
+                                ),
+                                backgroundColor: Colors.white,
+                                buttonText: Text(
+                                  "Select Products",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                cancelText: Text(
+                                  "Cancel",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                itemsTextStyle: TextStyle(fontSize: 16),
+                                selectedColor: Colors.blue,
+                                confirmText: Text(
+                                  'Ok',
+                                  style: TextStyle(color: Colors.black),
                                 ),
                               ),
-                              backgroundColor: Colors.white,
-                              buttonText: Text(
-                                "Select Products",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              cancelText: Text(
-                                "Cancel",
-                                style: TextStyle(color: Colors.black),
-                              ),
-                              itemsTextStyle: TextStyle(fontSize: 16),
-                              selectedColor: Colors.blue,
-                              confirmText: Text(
-                                'Ok',
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
                         const SizedBox(height: 20),
                         Expanded(
                           child: SingleChildScrollView(
                             child: Column(
-                              children:
-                                  selectedProducts.map((product) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 6.0,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                              children: selectedProducts.map((product) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6.0,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(product.name),
+                                      Row(
                                         children: [
-                                          Text(product.name),
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                width: 55,
-                                                child: TextField(
-                                                  controller:
-                                                      TextEditingController(
-                                                        text:
-                                                            product.quantity
-                                                                .toString(),
-                                                      ),
-                                                  keyboardType:
-                                                      TextInputType.number,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      product.quantity =
-                                                          int.tryParse(value) ??
-                                                          0;
-                                                    });
-                                                  },
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Qty',
-                                                    labelStyle: TextStyle(
-                                                      color: Colors.black,
-                                                    ),
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                color:
-                                                                    Colors
-                                                                        .black,
-                                                              ),
-                                                        ),
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                color:
-                                                                    Colors
-                                                                        .black,
-                                                              ),
-                                                        ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                color:
-                                                                    Colors
-                                                                        .black,
-                                                              ),
-                                                        ),
+                                          SizedBox(
+                                            width: 55,
+                                            child: TextField(
+                                              controller: TextEditingController(
+                                                text:
+                                                    product.quantity.toString(),
+                                              ),
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  product.quantity =
+                                                      int.tryParse(value) ?? 0;
+                                                });
+                                              },
+                                              decoration: InputDecoration(
+                                                labelText: 'Qty',
+                                                labelStyle: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                                enabledBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Colors.black,
                                                   ),
-                                                  cursorColor: Colors.black,
-                                                  style: TextStyle(
+                                                ),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                border: UnderlineInputBorder(
+                                                  borderSide: BorderSide(
                                                     color: Colors.black,
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
-                                                width: 80,
-                                                child: TextField(
-                                                  controller:
-                                                      TextEditingController(
-                                                        text:
-                                                            product.price
-                                                                .toString(),
-                                                      ),
-                                                  keyboardType:
-                                                      TextInputType.numberWithOptions(
-                                                        decimal: true,
-                                                      ),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      product.price =
-                                                          double.tryParse(
+                                              cursorColor: Colors.black,
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 80,
+                                            child: TextField(
+                                              controller: TextEditingController(
+                                                text: product.price.toString(),
+                                              ),
+                                              keyboardType: TextInputType
+                                                  .numberWithOptions(
+                                                decimal: true,
+                                              ),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  product.price =
+                                                      double.tryParse(
                                                             value,
                                                           ) ??
                                                           10.0;
-                                                    });
-                                                  },
-                                                  decoration: InputDecoration(
-                                                    labelText:
-                                                        'Per piece price',
-                                                    labelStyle: TextStyle(
-                                                      color: Colors.black,
-                                                    ),
-                                                    enabledBorder:
-                                                        UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                color:
-                                                                    Colors
-                                                                        .black,
-                                                              ),
-                                                        ),
-                                                    focusedBorder:
-                                                        UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                color:
-                                                                    Colors
-                                                                        .black,
-                                                              ),
-                                                        ),
-                                                    border:
-                                                        UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                color:
-                                                                    Colors
-                                                                        .black,
-                                                              ),
-                                                        ),
+                                                });
+                                              },
+                                              decoration: InputDecoration(
+                                                labelText: 'Per piece price',
+                                                labelStyle: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                                enabledBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Colors.black,
                                                   ),
-                                                  cursorColor: Colors.black,
-                                                  style: TextStyle(
+                                                ),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                                border: UnderlineInputBorder(
+                                                  borderSide: BorderSide(
                                                     color: Colors.black,
                                                   ),
                                                 ),
                                               ),
-                                            ],
+                                              cursorColor: Colors.black,
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    );
-                                  }).toList(),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ),

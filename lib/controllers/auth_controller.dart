@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,8 +31,8 @@ class AuthController extends GetxController {
   Future<void> login() async {
     try {
       final response = await http.post(
-        // Uri.parse("http://104.251.218.102:8080/api/login"),
-        Uri.parse("https://salestrack.rocketsalestracker.com/api/api/login"),
+        Uri.parse("${dotenv.env['BASE_URL']}/api/api/login"),
+        // Uri.parse("https://salestrack.rocketsalestracker.com/api/api/login"),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'username': usernameController.text.trim(),
@@ -48,10 +49,10 @@ class AuthController extends GetxController {
         String usernameFromAPI = data['username'];
         int role = data['role'];
         String token = data['token'];
-        String adminName = data['chatusername'];
+        // String adminName = data['chatusername'];
 
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setString('adminName', adminName);
+        // final prefs = await SharedPreferences.getInstance();
+        // prefs.setString('adminName', adminName);
 
         print("Mera Token =============>>>>>>> $token");
 
@@ -70,16 +71,18 @@ class AuthController extends GetxController {
           Get.snackbar('Login Failed', 'Unknown user role');
         }
       } else {
+        print('user already');
         Get.snackbar('Login Failed', data['message'] ?? 'Invalid credentials');
       }
     } catch (e) {
-      // print("Login Error: $e");
+      print("Login Error: $e");
+      print('Error occured');
       Get.snackbar('Error', 'Something went wrong. Please try again.');
     }
   }
 
   Future<void> logout() async {
-    const String apiUrl = 'http://104.251.218.102:8080/api/logout';
+    final String apiUrl = '${dotenv.env['BASE_URL']}/api/api/logout';
 
     try {
       await fcmTockenDelete();
@@ -106,7 +109,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> fcmTockenSend() async {
-    const url = 'http://104.251.218.102:8080/api/fcmtokenupdate';
+    final url = '${dotenv.env['BASE_URL']}/api/api/fcmtokenupdate';
     final token = await TokenManager.getToken(); // your auth token
     final fcmToken =
         await FirebaseMessaging.instance.getToken(); // get FCM token directly
@@ -147,7 +150,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> fcmTockenDelete() async {
-    const url = 'http://104.251.218.102:8080/api/fcmtokendelete';
+    final url = '${dotenv.env['BASE_URL']}/api/api/fcmtokendelete';
     final token = await TokenManager.getToken();
     final fcmToken = await FirebaseMessaging.instance.getToken();
 

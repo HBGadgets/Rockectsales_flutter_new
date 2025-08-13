@@ -1,0 +1,85 @@
+import 'package:flutter/material.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScan.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScanHistory.dart';
+
+import '../../../resources/my_colors.dart';
+
+class Qrtabs extends StatefulWidget {
+  const Qrtabs({super.key});
+
+  @override
+  State<Qrtabs> createState() => _QrtabsState();
+}
+
+class _QrtabsState extends State<Qrtabs> with TickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: MyColor.dashbord,
+        leading: const BackButton(
+          color: Colors.white,
+        ),
+        title: const Text(
+          'QR',
+          style: TextStyle(color: Colors.white),
+        ),
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.white,
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicator: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+              color: Colors.white),
+          tabs: <Widget>[
+            Tab(
+              child: Text(
+                'QR Scan',
+                textAlign: TextAlign.center,
+                style:
+                    TextStyle(fontSize: getResponsiveFontSize(context, 12.0)),
+              ),
+            ),
+            Tab(
+              child: Text(
+                'Scan History',
+                textAlign: TextAlign.center,
+                style:
+                    TextStyle(fontSize: getResponsiveFontSize(context, 12.0)),
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          const QrscanScreen(),
+          Qrscanhistory(),
+        ],
+      ),
+    );
+  }
+
+  double getResponsiveFontSize(BuildContext context, double baseFontSize) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    const double referenceWidth = 375.0; // iPhone 8 width
+    return baseFontSize * (screenWidth / referenceWidth);
+  }
+}

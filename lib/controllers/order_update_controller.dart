@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -30,7 +31,7 @@ class OrderUpdateController extends GetxController {
     isLoading.value = true;
 
     final url = Uri.parse(
-        'http://104.251.218.102:8080/api/order/$orderId'); // Replace with your actual PUT endpoint
+        '${dotenv.env['BASE_URL']}/api/api/order/$orderId'); // Replace with your actual PUT endpoint
 
     String? token = await TokenManager.getToken();
 

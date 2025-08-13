@@ -78,7 +78,8 @@ dependencies:
   flutter_launcher_icons: ^0.14.3
   url_launcher: ^6.3.2
   flutter_debouncer: ^2.0.0
-  animations: ^2.0.11
+  mobile_scanner: ^7.0.1
+  chat_bubbles: ^1.7.0
 
 
   #workmanager: ^0.5.0
@@ -110,6 +111,7 @@ flutter:
     - assets/images/
     - assets/beep_sound.mp3
     - assets/overSpeed.mp3
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

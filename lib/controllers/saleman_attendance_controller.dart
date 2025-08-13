@@ -8,6 +8,7 @@ import 'package:battery_plus/battery_plus.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -172,7 +173,8 @@ class AttendanceController extends GetxController {
 
     print("Extracted Object ID: $objectId");
 
-    String url = "http://104.251.218.102:8080/api/updatecheckouttime/$objectId";
+    String url =
+        "${dotenv.env['BASE_URL']}/api/api/updatecheckouttime/$objectId";
 
     Map<String, String> headers = {
       "Content-Type": "application/json",
@@ -256,7 +258,7 @@ class AttendanceController extends GetxController {
       // 🔹 Prepare Multipart Request
       var request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://104.251.218.102:8080/api/attendence'),
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence'),
       );
 
       // 🔹 Add Headers

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -28,7 +29,7 @@ class LeaveAttendanceController extends GetxController {
       }
 
       final url = Uri.parse(
-          'http://104.251.218.102:8080/api/leaverequest?startDate=$startDate&endDate=$endDate');
+          '${dotenv.env['BASE_URL']}/api/api/leaverequest?startDate=$startDate&endDate=$endDate');
 
       final response = await http.get(
         url,
@@ -88,7 +89,7 @@ class LeaveAttendanceController extends GetxController {
       }
 
       final url =
-          Uri.parse("http://104.251.218.102:8080/api/leaverequest/$leaveId");
+          Uri.parse("${dotenv.env['BASE_URL']}/api/api/leaverequest/$leaveId");
 
       final response = await http.put(
         url,

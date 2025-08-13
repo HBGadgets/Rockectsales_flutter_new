@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -20,7 +21,7 @@ class LiveTrackingController extends GetxController {
   final List<LatLng> polylineCoordinates = [];
   var currentPosition = Rxn<LatLng>();
 
-  final String socketUrl = 'http://104.251.218.102:8080';
+  final String socketUrl = '${dotenv.env['BASE_URL']}/api';
   final String googleApiKey =
       ''; 
 

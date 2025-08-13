@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -25,8 +26,8 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchExpenceTypes();  // Fetch expense types
-    _fetchSalesmanId();  // Fetch Salesman ID from JWT
+    _fetchExpenceTypes(); // Fetch expense types
+    _fetchSalesmanId(); // Fetch Salesman ID from JWT
   }
 
   @override
@@ -39,7 +40,8 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
 
   // Fetch expense types from API
   Future<void> _fetchExpenceTypes() async {
-    final url = Uri.parse('http://104.251.218.102:8080/api/expencetype'); //post api
+    final url =
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/expencetype'); //post api
     String? token = await getToken();
 
     if (token == null) {
@@ -61,16 +63,20 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
         final data = json.decode(response.body);
         if (data['success'] == true && data['data'] != null) {
           setState(() {
-            _expenceTypes = List<String>.from(data['data'].map((item) => item['expenceType']));
+            _expenceTypes = List<String>.from(
+                data['data'].map((item) => item['expenceType']));
           });
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unexpected response structure')));
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Unexpected response structure')));
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load expense types')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to load expense types')));
       }
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while fetching expense types')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('An error occurred while fetching expense types')));
     } finally {
       setState(() {
         isLoading = false;
@@ -86,25 +92,26 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
 
   // Fetch and decode salesmanId from JWT token
   Future<void> _fetchSalesmanId() async {
-    String? token = await getToken();  // Fetch token from SharedPreferences
+    String? token = await getToken(); // Fetch token from SharedPreferences
 
     if (token != null) {
       try {
         // Decode the JWT token
         Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-        print('Decoded token: $decodedToken');  // Debug: print the decoded token
+        print('Decoded token: $decodedToken'); // Debug: print the decoded token
 
         // Check for the 'id' key in the decoded token and set the salesmanId
         if (decodedToken.containsKey('id')) {
           setState(() {
-            _salesmanId = decodedToken['id'];  // Extract id as salesmanId
+            _salesmanId = decodedToken['id']; // Extract id as salesmanId
           });
-          print('Salesman ID fetched: $_salesmanId');  // Debug: print the fetched id
+          print(
+              'Salesman ID fetched: $_salesmanId'); // Debug: print the fetched id
         } else {
           setState(() {
             _salesmanId = null;
           });
-          print('No id in the token');  // Debug: print if id is missing
+          print('No id in the token'); // Debug: print if id is missing
         }
       } catch (e) {
         print('Error decoding JWT: $e');
@@ -113,7 +120,7 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
         });
       }
     } else {
-      print('Token is null');  // Debug: print if token is null
+      print('Token is null'); // Debug: print if token is null
       setState(() {
         _salesmanId = null;
       });
@@ -122,11 +129,12 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
 
   // Submit expense data to API
   Future<void> _submitExpense() async {
-    final url = Uri.parse('http://104.251.218.102:8080/api/expence');
+    final url = Uri.parse('${dotenv.env['BASE_URL']}/api/api/expence');
     String? salesmanId = _salesmanId;
 
     if (salesmanId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Salesman ID not found. Please login again')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Salesman ID not found. Please login again')));
       return;
     }
 
@@ -134,42 +142,46 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
     String? token = await getToken();
 
     if (token == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No token found. Please login again.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No token found. Please login again.')));
       return;
     }
 
     // Validate the required fields
     if (_selectedExpenseType == null || _selectedExpenseType!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Expense type is required')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Expense type is required')));
       return;
     }
 
-    print('Selected Expense Type: $_selectedExpenseType');  // Debugging
+    print('Selected Expense Type: $_selectedExpenseType'); // Debugging
 
-    if (_amountController.text.isEmpty || double.tryParse(_amountController.text) == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Valid amount is required')));
+    if (_amountController.text.isEmpty ||
+        double.tryParse(_amountController.text) == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Valid amount is required')));
       return;
     }
 
-    print('Amount: ${_amountController.text}');  // Debugging
+    print('Amount: ${_amountController.text}'); // Debugging
 
     final expenseData = {
       'salesmanName': _salesmanNameController.text,
       'salesmanId': salesmanId,
       'expenseType': _selectedExpenseType,
       'expenseDescription': _expenseDescription,
-      'amount': _amountController.text,  // Ensure this is in correct format
+      'amount': _amountController.text, // Ensure this is in correct format
       'date': _dateController.text,
     };
 
-    print( expenseData);
+    print(expenseData);
 
     try {
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',  // Use the token here
+          'Authorization': 'Bearer $token', // Use the token here
         },
         body: json.encode(expenseData),
       );
@@ -179,15 +191,18 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Expense submitted successfully')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Expense submitted successfully')));
       } else {
         // Handle specific failure cases and provide detailed error messages
         final responseBody = json.decode(response.body);
         String errorMessage = responseBody['message'] ?? 'Unknown error';
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to submit expense: $errorMessage')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to submit expense: $errorMessage')));
       }
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred: $error')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('An error occurred: $error')));
     }
   }
 
@@ -202,7 +217,8 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
 
     if (pickedDate != null) {
       setState(() {
-        _dateController.text = "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+        _dateController.text =
+            "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
       });
     }
   }
@@ -212,8 +228,7 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-          backgroundColor: Colors.grey.shade50,
-
+        backgroundColor: Colors.grey.shade50,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -221,58 +236,71 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Manual Expense", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+              const Text("Manual Expense",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               TextField(
                 controller: _salesmanNameController,
                 style: TextStyle(
-                  color: Colors.black,  // Text color black
-                  fontSize: 18,  // Font size, you can adjust it as needed
+                  color: Colors.black, // Text color black
+                  fontSize: 18, // Font size, you can adjust it as needed
                 ),
-                cursorColor: Colors.black,  // Cursor color black
+                cursorColor: Colors.black, // Cursor color black
                 decoration: const InputDecoration(
-                    labelText: 'Salesman Name',
-                  labelStyle: TextStyle(color: Colors.black), // Label text color
+                  labelText: 'Salesman Name',
+                  labelStyle: TextStyle(color: Colors.black),
+                  // Label text color
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), // Bottom border color black
+                    borderSide: BorderSide(
+                        color: Colors.black), // Bottom border color black
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), // Bottom border color when focused
-                  ),),
+                    borderSide: BorderSide(
+                        color:
+                            Colors.black), // Bottom border color when focused
+                  ),
+                ),
               ),
-              SizedBox(height: 5,),
+              SizedBox(
+                height: 5,
+              ),
               // Show the salesmanId once it is fetched
               _salesmanId != null
                   ? Container(
-                padding: EdgeInsets.all(8), // Optional padding for spacing around the text
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50, // Set the background color
-                  border: Border(
-                    bottom: BorderSide(color: Colors.black), // Black bottom border
-                  ),
-                ),
-                child: Text(
-                  'Salesman ID: $_salesmanId',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-              )
+                      padding: EdgeInsets.all(8),
+                      // Optional padding for spacing around the text
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50, // Set the background color
+                        border: Border(
+                          bottom: BorderSide(
+                              color: Colors.black), // Black bottom border
+                        ),
+                      ),
+                      child: Text(
+                        'Salesman ID: $_salesmanId',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    )
                   : isLoading
-                  ? Center(child: CircularProgressIndicator())  // Show loading if data is being fetched
-                  : Text('No salesman ID found'),
-
+                      ? Center(
+                          child:
+                              CircularProgressIndicator()) // Show loading if data is being fetched
+                      : Text('No salesman ID found'),
 
               DropdownButtonFormField<String>(
                 value: _selectedExpenseType,
-                hint: const Text('Select Expense Type',
+                hint: const Text(
+                  'Select Expense Type',
                   style: TextStyle(
-                    color: Colors.black,  // Text color black
-                    fontSize: 18,  // Font size, you can adjust it as needed
+                    color: Colors.black, // Text color black
+                    fontSize: 18, // Font size, you can adjust it as needed
                   ),
                 ),
                 items: _expenceTypes.map((String value) {
-                  return DropdownMenuItem<String>(value: value, child: Text(value));
+                  return DropdownMenuItem<String>(
+                      value: value, child: Text(value));
                 }).toList(),
                 onChanged: (newValue) {
                   setState(() {
@@ -280,61 +308,77 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
                   });
                 },
                 decoration: InputDecoration(
-                  filled: true, // Enables background color for the button
-                  fillColor: Colors.grey.shade50, // Set the background color for the button to white
-                  border: InputBorder.none, // Remove borders if desired
+                  filled: true,
+                  // Enables background color for the button
+                  fillColor: Colors.grey.shade50,
+                  // Set the background color for the button to white
+                  border: InputBorder.none,
+                  // Remove borders if desired
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), // Black bottom border when focused
+                    borderSide: BorderSide(
+                        color:
+                            Colors.black), // Black bottom border when focused
                   ),
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), // Black bottom border when not focused
+                    borderSide: BorderSide(
+                        color: Colors
+                            .black), // Black bottom border when not focused
                   ),
                 ),
-                dropdownColor: Colors.grey.shade200, // Set background color for the dropdown menu
+                dropdownColor: Colors.grey
+                    .shade200, // Set background color for the dropdown menu
               ),
               TextField(
                 onChanged: (text) {
                   _expenseDescription = text;
                 },
                 style: TextStyle(
-                  color: Colors.black,  // Text color black
-                  fontSize: 18,  // Font size, you can adjust it as needed
+                  color: Colors.black, // Text color black
+                  fontSize: 18, // Font size, you can adjust it as needed
                 ),
-                cursorColor: Colors.black,  // Cursor color black
+                cursorColor: Colors.black, // Cursor color black
                 decoration: InputDecoration(
                   labelText: 'Expense Description',
-                  labelStyle: TextStyle(color: Colors.black), // Label text color
+                  labelStyle: TextStyle(color: Colors.black),
+                  // Label text color
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), // Bottom border color black
+                    borderSide: BorderSide(
+                        color: Colors.black), // Bottom border color black
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), // Bottom border color when focused
+                    borderSide: BorderSide(
+                        color:
+                            Colors.black), // Bottom border color when focused
                   ),
                 ),
               ),
               TextField(
                 controller: _amountController,
                 style: TextStyle(
-                  color: Colors.black,  // Text color black
-                  fontSize: 18,  // Font size, you can adjust it as needed
+                  color: Colors.black, // Text color black
+                  fontSize: 18, // Font size, you can adjust it as needed
                 ),
-                cursorColor: Colors.black,  // Cursor color black
+                cursorColor: Colors.black, // Cursor color black
                 decoration: const InputDecoration(
-                    labelText: 'Amount',
-                    labelStyle: TextStyle(color: Colors.black), // Label text color
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Bottom border color black
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black), // Bottom border color when focused
-                ),
+                  labelText: 'Amount',
+                  labelStyle: TextStyle(color: Colors.black),
+                  // Label text color
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.black), // Bottom border color black
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color:
+                            Colors.black), // Bottom border color when focused
+                  ),
                 ),
               ),
               TextField(
                 controller: _dateController,
                 style: TextStyle(
-                  color: Colors.black,  // Text color black
-                  fontSize: 18,  // Font size, you can adjust it as needed
+                  color: Colors.black, // Text color black
+                  fontSize: 18, // Font size, you can adjust it as needed
                 ),
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
@@ -343,12 +387,16 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
                     icon: const Icon(Icons.calendar_today),
                     onPressed: _selectDate,
                   ),
-                  labelStyle: TextStyle(color: Colors.black), // Label text color
+                  labelStyle: TextStyle(color: Colors.black),
+                  // Label text color
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), // Bottom border color black
+                    borderSide: BorderSide(
+                        color: Colors.black), // Bottom border color black
                   ),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), // Bottom border color when focused
+                    borderSide: BorderSide(
+                        color:
+                            Colors.black), // Bottom border color when focused
                   ),
                 ),
               ),
@@ -367,13 +415,19 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.white,
+                      // Text color
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Rounded corners
+                        borderRadius:
+                            BorderRadius.circular(8), // Rounded corners
                       ),
-                      side: BorderSide(color: Colors.grey.shade100), // Optional: Adds a border around the button
+                      side: BorderSide(
+                          color: Colors.grey
+                              .shade100), // Optional: Adds a border around the button
                     ),
-                    child: const Text('Reset',
+                    child: const Text(
+                      'Reset',
                       style: TextStyle(
                         fontSize: 18, // Set the text size here
                       ),
@@ -386,19 +440,26 @@ class _ManualExpenseScreenState extends State<ManualExpenseScreen> {
                           _expenseDescription == null ||
                           _amountController.text.isEmpty ||
                           _dateController.text.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill out all fields')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Please fill out all fields')));
                         return;
                       }
                       _submitExpense();
                     },
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black, backgroundColor: Colors.white, // Text color
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.white,
+                      // Text color
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Rounded corners
+                        borderRadius:
+                            BorderRadius.circular(8), // Rounded corners
                       ),
-                      side: BorderSide(color: Colors.grey.shade100), // Optional: Adds a border around the button
+                      side: BorderSide(
+                          color: Colors.grey
+                              .shade100), // Optional: Adds a border around the button
                     ),
-                    child: const Text('Submit',
+                    child: const Text(
+                      'Submit',
                       style: TextStyle(
                         fontSize: 18, // Set the text size here
                       ),
