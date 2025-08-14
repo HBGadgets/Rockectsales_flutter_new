@@ -21,6 +21,8 @@ class QRCardsController extends GetxController {
   // final companyId = ''.obs;
   // final branchId = ''.obs;
   // final supervisorId = ''.obs;
+  RxInt page = 1.obs;
+  RxBool isMoreCardsAvailable = true.obs;
 
   SalesManLocationController controller = SalesManLocationController();
 
@@ -34,10 +36,6 @@ class QRCardsController extends GetxController {
 
   void getQRCards() async {
     isLoading.value = true;
-    final token = await TokenManager.getToken();
-
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
-    final salesManId = decodedToken['id'];
     try {
       final token = await TokenManager.getToken();
 
@@ -46,7 +44,8 @@ class QRCardsController extends GetxController {
         return;
       }
 
-      final url = Uri.parse('${dotenv.env['BASE_URL']}/api/api/scanqr/get');
+      final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/scanqr/get?page=$page&limit=10');
       final response = await http.get(
         url,
         headers: {
@@ -62,6 +61,7 @@ class QRCardsController extends GetxController {
         // final List<dynamic> dataList = jsonData;
         final qrcardsList =
             dataList.map((item) => QRCard.fromJson(item)).toList();
+        // isMoreCardsAvailable.value = true;
         qrCards.assignAll(qrcardsList);
       } else {
         qrCards.clear();
@@ -74,6 +74,53 @@ class QRCardsController extends GetxController {
       Get.snackbar("Exception", "Couldn't get QR history");
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void getMoreQrCards() async {
+    if (isMoreCardsAvailable.value) {
+      page.value++;
+    }
+    try {
+      final token = await TokenManager.getToken();
+
+      if (token == null || token.isEmpty) {
+        Get.snackbar("Auth Error", "Token not found");
+        return;
+      }
+
+      final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/scanqr/get?page=$page&limit=10');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        // print(jsonData);
+        final List<dynamic> dataList = jsonData['data'];
+        // final List<dynamic> dataList = jsonData;
+        final qrcardsList =
+            dataList.map((item) => QRCard.fromJson(item)).toList();
+        // page.value++;
+        if (qrcardsList.length < 1) {
+          isMoreCardsAvailable.value = false;
+          // page.value = 1;
+        }
+        qrCards.addAll(qrcardsList);
+      } else {
+        qrCards.clear();
+        Get.snackbar("Error connect",
+            "Failed to Connect to DB (Code: ${response.statusCode})");
+      }
+    } catch (e) {
+      qrCards.clear();
+      // Get.snackbar("Exception", e.toString());
+      Get.snackbar("Exception", "Couldn't get QR history");
     }
   }
 

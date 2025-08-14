@@ -9,10 +9,42 @@ import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
 
 import '../../admin/attendance/attendance screen/FilterOnSpecificDate.dart';
 
-class Qrscanhistory extends StatelessWidget {
+class Qrscanhistory extends StatefulWidget {
+  Qrscanhistory({super.key});
+
+  @override
+  State<Qrscanhistory> createState() => _QrscanhistoryState();
+}
+
+class _QrscanhistoryState extends State<Qrscanhistory> {
   final QRCardsController controller = Get.put(QRCardsController());
 
-  Qrscanhistory({super.key});
+  final scrollController = ScrollController();
+  int page = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.addListener(() {
+      if (scrollController.position.maxScrollExtent ==
+          scrollController.offset) {
+        print('reached end');
+        controller.getMoreQrCards();
+      }
+      // if (scrollController.position.pixels >=
+      //     scrollController.position.maxScrollExtent - 50) {
+      //   loadMore();
+      // }
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller.dispose();
+    scrollController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,18 +67,39 @@ class Qrscanhistory extends StatelessWidget {
                 return RefreshIndicator(
                   backgroundColor: Colors.white,
                   color: MyColor.dashbord,
-                  onRefresh: () async => controller.getQRCards(),
+                  onRefresh: () async {
+                    controller.isMoreCardsAvailable.value = true;
+                    controller.page.value = 1;
+                    controller.getQRCards();
+                  },
                   child: ListView.builder(
-                    itemCount: controller.qrCards.length,
+                    controller: scrollController,
+                    itemCount: controller.qrCards.length + 1,
                     itemBuilder: (context, index) {
-                      final reversedIndex =
-                          controller.qrCards.length - 1 - index;
-                      final item = controller.qrCards[reversedIndex];
-                      return Qrcard(
-                          cardIdString: item.qrId ?? '',
-                          cardNameString: item.cardTitle ?? '',
-                          date: item.dateTime ?? '',
-                          time: item.dateTime ?? '');
+                      if (index < controller.qrCards.length) {
+                        final item = controller.qrCards[index];
+                        return Qrcard(
+                            cardIdString: item.qrId ?? '',
+                            cardNameString: item.cardTitle ?? '',
+                            date: item.dateTime ?? '',
+                            time: item.dateTime ?? '');
+                      } else {
+                        if (controller.isMoreCardsAvailable.value) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: MyColor.dashbord,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Center(child: Text('')),
+                          );
+                        }
+                      }
                     },
                   ),
                 );
