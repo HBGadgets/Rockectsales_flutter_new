@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:rocketsale_rs/resources/my_assets.dart';
+import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
 
 import '../../../../controllers/admin_attendance_controller.dart';
@@ -46,6 +47,17 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
   var filteredAttendanceList = <adminModel.Data>[];
 
   final QRCardsController controller = Get.put(QRCardsController());
+
+  void _handleTextFieldChange(String value) {
+    const duration = Duration(milliseconds: 500);
+    _debouncer.debounce(
+      duration: duration,
+      onDebounce: () {
+        controller.searchString.value = value;
+        controller.getQRCards();
+      },
+    );
+  }
 
   String formatTimeOfDayFull(TimeOfDay time) {
     final hour = time.hour.toString().padLeft(2, '0');
@@ -177,23 +189,17 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7),
                       ),
-                      backgroundColor: controller.dateTimeFilter.value.isEmpty
-                          ? Colors.white
-                          : Colors.green,
+                      // backgroundColor: MyColor.dashbord,
                       // side: const BorderSide(color: Colors.black54),
-                      side: controller.dateTimeFilter.value.isEmpty
-                          ? BorderSide(color: Colors.black54)
-                          : BorderSide(color: Colors.green)),
+                      side: BorderSide(color: Colors.black)),
                   onPressed: () {
                     controller.dateTimeFilter.value = filterString(
                         fromDate ?? DateTime.now(), tillDate ?? DateTime.now());
                     controller.getQRCards();
                   },
-                  label: Icon(
+                  label: const Icon(
                     Icons.check,
-                    color: controller.dateTimeFilter.value.isEmpty
-                        ? Colors.black
-                        : Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ],
@@ -209,7 +215,7 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                 children: [
                   Expanded(
                     child: TextField(
-                      // onChanged: _handleTextFieldChange,
+                      onChanged: _handleTextFieldChange,
                       decoration: const InputDecoration(
                         hintText: 'Search QR',
                         border: InputBorder.none,
