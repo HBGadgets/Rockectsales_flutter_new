@@ -1,19 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/resources/my_colors.dart';
+import 'package:rocketsale_rs/screens/saleman/Attendance/Attendance_Page.dart';
+
+import 'QRCardsController.dart';
 
 class Qrcard extends StatelessWidget {
   final String cardIdString;
   final String cardNameString;
   final String date;
   final String time;
+  final String addressString;
 
-  const Qrcard(
+  Qrcard(
       {super.key,
       required this.cardIdString,
       required this.cardNameString,
       required this.date,
-      required this.time});
+      required this.time,
+      required this.addressString});
+
+  // final QRCardsController controller = QRCardsController();
+  final QRCardsController controller = Get.find<QRCardsController>();
 
   String formattedDate(String? dateTimeStr) {
     DateTime dateTime = DateTime.parse(dateTimeStr!);
@@ -78,6 +89,36 @@ class Qrcard extends StatelessWidget {
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Obx(() {
+                            final isGettingLocation =
+                                controller.gettingLocation.value;
+                            if (isGettingLocation) {
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                  color: MyColor.dashbord,
+                                ),
+                              );
+                            } else {
+                              return Text(
+                                addressString,
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
+                                textAlign: TextAlign.start,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            }
+                          }),
+                        )
                       ],
                     ),
                   ),

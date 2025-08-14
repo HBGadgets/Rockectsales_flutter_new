@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +17,7 @@ class QRCardsController extends GetxController {
   var qrCards = <QRCard>[].obs;
   final isLoading = false.obs;
   final adminName = ''.obs;
+  final addressString = ''.obs;
 
   // final salesManId = ''.obs;
   // final companyId = ''.obs;
@@ -23,6 +25,7 @@ class QRCardsController extends GetxController {
   // final supervisorId = ''.obs;
   RxInt page = 1.obs;
   RxBool isMoreCardsAvailable = true.obs;
+  RxBool gettingLocation = false.obs;
 
   SalesManLocationController controller = SalesManLocationController();
 
@@ -32,6 +35,26 @@ class QRCardsController extends GetxController {
     getSalesmanAdminName();
     getQRCards();
     super.onInit();
+  }
+
+  void getAddress() async {
+    gettingLocation.value = true;
+    print("getting address.............");
+    try {
+      final salesManLocation = await controller.determinePosition();
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          salesManLocation.latitude, salesManLocation.longitude);
+      Placemark place = placemarks[0];
+      addressString.value =
+          "${place.name}, ${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}";
+      print(placemarks);
+    } catch (e) {
+      gettingLocation.value = false;
+      Get.snackbar("Location Error", e.toString());
+    } finally {
+      // ✅ Always reset to false, even if error
+      gettingLocation.value = false;
+    }
   }
 
   void getQRCards() async {
@@ -165,7 +188,8 @@ class QRCardsController extends GetxController {
             'qrcodeId': qrID,
             'salesmanId': salesManId,
             'lat': salesManLocation.latitude.toString(),
-            'long': salesManLocation.longitude.toString()
+            'long': salesManLocation.longitude.toString(),
+            'address': addressString.value
           }),
         );
 
@@ -173,6 +197,7 @@ class QRCardsController extends GetxController {
 
         if (response.statusCode == 201) {
           isLoading.value = false;
+          addressString.value = '';
           print("✅ qr card Submitted");
           // Navigator.pop(context);
           Navigator.pushAndRemoveUntil<dynamic>(
@@ -205,13 +230,19 @@ class QRCard {
   String? cardTitle;
   String? dateTime;
   String? qrId;
+  String? addressString;
 
-  QRCard({this.cardTitle, required this.dateTime, required this.qrId});
+  QRCard(
+      {this.cardTitle,
+      required this.dateTime,
+      required this.qrId,
+      required this.addressString});
 
   QRCard.fromJson(Map<String, dynamic> json) {
     cardTitle = json['qrcodeId']?['boxNo']; // Nested access
     dateTime = json['createdAt'];
     // dateTime = json['qrcodeId']?['createdAt'];
     qrId = json['qrcodeId']?['_id']; // Nested access
+    addressString = json['address'];
   }
 }

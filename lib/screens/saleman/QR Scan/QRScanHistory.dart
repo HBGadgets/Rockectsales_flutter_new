@@ -17,8 +17,9 @@ class Qrscanhistory extends StatefulWidget {
 }
 
 class _QrscanhistoryState extends State<Qrscanhistory> {
-  final QRCardsController controller = Get.put(QRCardsController());
-
+  // final QRCardsController controller = Get.put(QRCardsController());
+  final QRCardsController controller =
+      Get.put(QRCardsController(), permanent: false);
   final scrollController = ScrollController();
   int page = 2;
 
@@ -31,19 +32,22 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
         print('reached end');
         controller.getMoreQrCards();
       }
-      // if (scrollController.position.pixels >=
-      //     scrollController.position.maxScrollExtent - 50) {
-      //   loadMore();
-      // }
     });
   }
 
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   super.dispose();
+  //   controller.dispose();
+  //   scrollController.dispose();
+  // }
+
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    controller.dispose();
     scrollController.dispose();
+    Get.delete<QRCardsController>();
+    super.dispose();
   }
 
   @override
@@ -82,7 +86,8 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
                             cardIdString: item.qrId ?? '',
                             cardNameString: item.cardTitle ?? '',
                             date: item.dateTime ?? '',
-                            time: item.dateTime ?? '');
+                            time: item.dateTime ?? '',
+                            addressString: item.addressString ?? '');
                       } else {
                         if (controller.isMoreCardsAvailable.value) {
                           return const Padding(
@@ -95,7 +100,7 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
                           );
                         } else {
                           return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 32),
+                            padding: EdgeInsets.symmetric(vertical: 5),
                             child: Center(child: Text('')),
                           );
                         }
