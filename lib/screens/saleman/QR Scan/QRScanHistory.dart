@@ -57,7 +57,7 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
       child: Column(
         children: [
           // SizedBox(height: size.width * 0.02),
-          // const Filtrationsystem(),
+          const Filtrationsystem(),
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {

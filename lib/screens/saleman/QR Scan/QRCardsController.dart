@@ -26,6 +26,7 @@ class QRCardsController extends GetxController {
   RxInt page = 1.obs;
   RxBool isMoreCardsAvailable = true.obs;
   RxBool gettingLocation = false.obs;
+  final dateTimeFilter = ''.obs;
 
   SalesManLocationController controller = SalesManLocationController();
 
@@ -68,7 +69,7 @@ class QRCardsController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/scanqr/get?page=$page&limit=10');
+          '${dotenv.env['BASE_URL']}/api/api/scanqr/get?page=$page&limit=10$dateTimeFilter');
       final response = await http.get(
         url,
         headers: {
@@ -113,7 +114,7 @@ class QRCardsController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/scanqr/get?page=$page&limit=10');
+          '${dotenv.env['BASE_URL']}/api/api/scanqr/get?page=$page&limit=10$dateTimeFilter');
       final response = await http.get(
         url,
         headers: {

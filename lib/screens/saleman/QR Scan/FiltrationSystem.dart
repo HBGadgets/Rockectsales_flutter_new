@@ -26,6 +26,7 @@ class Filtrationsystem extends StatefulWidget {
 
 class _FiltrationsystemState extends State<Filtrationsystem> {
   DateTime? fromDate;
+  DateTime? tillDate;
 
   DateTime? toDate;
 
@@ -35,7 +36,7 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
 
   TimeOfDay twelveAM = const TimeOfDay(hour: 00, minute: 00);
 
-  late String dateTimeFilter = '';
+  // late String dateTimeFilter = '';
 
   final Debouncer _debouncer = Debouncer();
   late String salesmanName;
@@ -60,43 +61,11 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
     return DateFormat('yyyy-MM-dd').format(date);
   }
 
-  Future<void> _pickTime(String fromDateString) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (picked != null) {
-      setState(() {
-        selectedTime = picked;
-        String date = formatDate(fromDate!);
-
-        String fromTimeString = formatTimeOfDayFull(twelveAM);
-
-        String endTimeString = formatTimeOfDayFull(selectedTime);
-
-        dateTimeFilter = "startDate=$date" +
-            "T" +
-            fromTimeString +
-            "Z&endDate=$date" +
-            "T" +
-            endTimeString +
-            "Z";
-
-        // dateTimeFilter = "page=1&limit=12&fromDate=$date" +
-        //     "T" +
-        //     fromTimeString +
-        //     "Z&endDate=$date" +
-        //     "T" +
-        //     endTimeString +
-        //     "Z";
-      });
-    }
+  String filterString(DateTime fromDate, DateTime tillDate) {
+    String filterString1 =
+        "&fromDate=${formatDate(fromDate)}&toDate=${formatDate(tillDate)}";
+    return filterString1;
   }
-
-  // void applyFilter() {
-  //   controller.getQRCards(dateTimeFilter);
-  // }
 
   Future<void> _selectFromDate(BuildContext context) async {
     final picked = await showDatePicker(
@@ -109,9 +78,27 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
     if (picked != null) {
       setState(() {
         fromDate = picked;
-        String date = formatDate(fromDate!);
+        // String date = formatDate(fromDate!);
 
-        _pickTime(date);
+        // _pickTime(date);
+      });
+    }
+  }
+
+  Future<void> _selectTillDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      // initialDate: fromDate ?? DateTime.now(),
+      initialDate: tillDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        tillDate = picked;
+        // String date = formatDate(fromDate!);
+
+        // _pickTime(date);
       });
     }
   }
@@ -165,7 +152,7 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                     ),
                     side: const BorderSide(color: Colors.black54),
                   ),
-                  onPressed: () => _selectFromDate(context),
+                  onPressed: () => _selectTillDate(context),
                   icon: const Icon(
                     Icons.date_range,
                     color: Colors.black,
@@ -173,8 +160,8 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                   label: Row(
                     children: [
                       Text(
-                        fromDate != null
-                            ? DateFormat('dd/MM/yyyy').format(fromDate!)
+                        tillDate != null
+                            ? DateFormat('dd/MM/yyyy').format(tillDate!)
                             : DateFormat('dd/MM/yyyy').format(Today),
                         style: const TextStyle(color: Colors.black),
                       ),
@@ -190,20 +177,23 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(7),
                       ),
-                      backgroundColor:
-                          dateTimeFilter.isEmpty ? Colors.white : Colors.green,
+                      backgroundColor: controller.dateTimeFilter.value.isEmpty
+                          ? Colors.white
+                          : Colors.green,
                       // side: const BorderSide(color: Colors.black54),
-                      side: dateTimeFilter.isEmpty
+                      side: controller.dateTimeFilter.value.isEmpty
                           ? BorderSide(color: Colors.black54)
                           : BorderSide(color: Colors.green)),
                   onPressed: () {
-                    if (dateTimeFilter.isNotEmpty) {
-                      // applyFilter();
-                    }
+                    controller.dateTimeFilter.value = filterString(
+                        fromDate ?? DateTime.now(), tillDate ?? DateTime.now());
+                    controller.getQRCards();
                   },
                   label: Icon(
                     Icons.check,
-                    color: dateTimeFilter.isEmpty ? Colors.black : Colors.white,
+                    color: controller.dateTimeFilter.value.isEmpty
+                        ? Colors.black
+                        : Colors.white,
                   ),
                 ),
               ],
