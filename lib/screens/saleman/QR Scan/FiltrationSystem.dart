@@ -141,7 +141,8 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                       Text(
                         fromDate != null
                             ? DateFormat('dd/MM/yyyy').format(fromDate!)
-                            : DateFormat('dd/MM/yyyy').format(Today),
+                            // : DateFormat('dd/MM/yyyy').format(Today),
+                            : '...',
                         style: const TextStyle(color: Colors.black),
                       ),
                     ],
@@ -149,8 +150,8 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                 ),
 
                 // const SizedBox(width: 10),
-                Padding(
-                  padding: const EdgeInsets.all(2.0),
+                const Padding(
+                  padding: EdgeInsets.all(2.0),
                   child: Icon(
                     Icons.arrow_forward_outlined,
                     size: 15,
@@ -191,7 +192,7 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                       ),
                       // backgroundColor: MyColor.dashbord,
                       // side: const BorderSide(color: Colors.black54),
-                      side: BorderSide(color: Colors.black)),
+                      side: const BorderSide(color: Colors.black)),
                   onPressed: () {
                     controller.dateTimeFilter.value = filterString(
                         fromDate ?? DateTime.now(), tillDate ?? DateTime.now());

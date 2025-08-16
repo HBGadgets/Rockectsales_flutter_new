@@ -35,18 +35,11 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
     });
   }
 
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   super.dispose();
-  //   controller.dispose();
-  //   scrollController.dispose();
-  // }
-
   @override
   void dispose() {
     scrollController.dispose();
     Get.delete<QRCardsController>();
+    // controller.dispose();
     super.dispose();
   }
 

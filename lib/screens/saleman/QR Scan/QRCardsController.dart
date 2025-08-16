@@ -48,8 +48,8 @@ class QRCardsController extends GetxController {
           salesManLocation.latitude, salesManLocation.longitude);
       Placemark place = placemarks[0];
       addressString.value =
-          "${place.name}, ${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}";
-      print(placemarks);
+          "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}";
+      // print(placemarks);
     } catch (e) {
       gettingLocation.value = false;
       Get.snackbar("Location Error", e.toString());
@@ -83,10 +83,8 @@ class QRCardsController extends GetxController {
         final jsonData = json.decode(response.body);
         print(jsonData);
         final List<dynamic> dataList = jsonData['data'];
-        // final List<dynamic> dataList = jsonData;
         final qrcardsList =
             dataList.map((item) => QRCard.fromJson(item)).toList();
-        // isMoreCardsAvailable.value = true;
         qrCards.assignAll(qrcardsList);
       } else {
         qrCards.clear();
@@ -195,12 +193,11 @@ class QRCardsController extends GetxController {
           }),
         );
 
-        // print("request fields =========>>>>>${request.fields}");
-
         if (response.statusCode == 201) {
           isLoading.value = false;
           addressString.value = '';
           print("✅ qr card Submitted");
+          // print("address field =========>>>>>${addressString.value}");
           // Navigator.pop(context);
           Navigator.pushAndRemoveUntil<dynamic>(
             context,
@@ -214,7 +211,7 @@ class QRCardsController extends GetxController {
         } else {
           isLoading.value = false;
           print("❌ qr card submission Failed: ${response.body}");
-          Get.snackbar("Error", "Failed to submit qr");
+          Get.snackbar("Error", response.body);
         }
       } catch (e) {
         isLoading.value = false;
@@ -241,7 +238,8 @@ class QRCard {
       required this.addressString});
 
   QRCard.fromJson(Map<String, dynamic> json) {
-    cardTitle = json['qrcodeId']?['boxNo']; // Nested access
+    // cardTitle = json['qrcodeId']?['boxNo'];
+    cardTitle = json['boxNo']?.toString();
     dateTime = json['createdAt'];
     // dateTime = json['qrcodeId']?['createdAt'];
     qrId = json['qrcodeId']?['_id']; // Nested access

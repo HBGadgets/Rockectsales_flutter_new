@@ -44,15 +44,10 @@ class _QrscanScreenState extends State<QrscanScreen>
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => Obx(
-                        () {
-                          return Submitqrdatascreen(
-                            adminName: controller.adminName,
-                            cardNameString: cardString,
-                            cardIdString: cardIdString,
-                            addressString: controller.addressString.value,
-                          );
-                        },
+                  builder: (context) => Submitqrdatascreen(
+                        cardNameString: cardString,
+                        cardIdString: cardIdString,
+                        // addressString: controller.addressString.value,
                       )),
             );
           }

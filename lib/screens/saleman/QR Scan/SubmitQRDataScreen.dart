@@ -10,19 +10,15 @@ import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
 import 'QRCardsController.dart';
 
 class Submitqrdatascreen extends StatelessWidget {
-  final adminName;
   final cardNameString;
   final cardIdString;
-  final addressString;
+
+  // final addressString;
 
   final QRCardsController controller = Get.put(QRCardsController());
 
   Submitqrdatascreen(
-      {super.key,
-      required this.adminName,
-      required this.cardNameString,
-      required this.cardIdString,
-      required this.addressString});
+      {super.key, required this.cardNameString, required this.cardIdString});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +62,7 @@ class Submitqrdatascreen extends StatelessWidget {
                     cardNameString: cardNameString,
                     date: DateTime.now().toString(),
                     time: DateTime.now().toString(),
-                    addressString: addressString,
+                    addressString: controller.addressString.value,
                   ),
                   const SizedBox(height: 20),
                   Row(
