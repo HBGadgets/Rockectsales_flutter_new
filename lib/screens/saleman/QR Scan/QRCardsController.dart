@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class QRCardsController extends GetxController {
   RxBool gettingLocation = false.obs;
   final dateTimeFilter = ''.obs;
   final searchString = ''.obs;
+  var salesManSelfie = Rxn<File?>();
 
   SalesManLocationController controller = SalesManLocationController();
 
@@ -101,6 +103,7 @@ class QRCardsController extends GetxController {
   }
 
   void getMoreQrCards() async {
+    print('fetching more');
     if (isMoreCardsAvailable.value) {
       page.value++;
     }
@@ -154,6 +157,12 @@ class QRCardsController extends GetxController {
     adminName.value = decodedToken['chatusername'];
   }
 
+  // Future<String> imageToBase64(File imageFile) async {
+  //   List<int> imageBytes = await imageFile.readAsBytes();
+  //   String base64String = base64Encode(imageBytes);
+  //   return base64String;
+  // }
+
   Future<void> postQR(
       {required String boxNumber,
       required String qrID,
@@ -162,6 +171,7 @@ class QRCardsController extends GetxController {
     try {
       final salesManLocation = await controller.determinePosition();
       try {
+        // String imageString = await imageToBase64(salesManSelfie.value!);
         final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/api/scanqr');
 
         final token = await TokenManager.getToken();
@@ -189,13 +199,15 @@ class QRCardsController extends GetxController {
             'salesmanId': salesManId,
             'lat': salesManLocation.latitude.toString(),
             'long': salesManLocation.longitude.toString(),
-            'address': addressString.value
+            'address': addressString.value,
+            'selfieImage': salesManSelfie.value.toString()
           }),
         );
 
         if (response.statusCode == 201) {
           isLoading.value = false;
           addressString.value = '';
+          salesManSelfie.value = null;
           print("✅ qr card Submitted");
           // print("address field =========>>>>>${addressString.value}");
           // Navigator.pop(context);
@@ -230,12 +242,14 @@ class QRCard {
   String? dateTime;
   String? qrId;
   String? addressString;
+  String? base64selfie;
 
   QRCard(
       {this.cardTitle,
       required this.dateTime,
       required this.qrId,
-      required this.addressString});
+      required this.addressString,
+      required this.base64selfie});
 
   QRCard.fromJson(Map<String, dynamic> json) {
     // cardTitle = json['qrcodeId']?['boxNo'];
@@ -244,5 +258,6 @@ class QRCard {
     // dateTime = json['qrcodeId']?['createdAt'];
     qrId = json['qrcodeId']?['_id']; // Nested access
     addressString = json['address'];
+    base64selfie = json['selfieImage'];
   }
 }

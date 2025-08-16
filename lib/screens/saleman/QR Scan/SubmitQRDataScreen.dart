@@ -5,6 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCard.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/SelfieTakingScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
 
 import 'QRCardsController.dart';
@@ -36,6 +37,7 @@ class Submitqrdatascreen extends StatelessWidget {
       body: Padding(
           padding: const EdgeInsets.all(17.0),
           child: Obx(() {
+            controller.getAddress();
             if (controller.isLoading.value) {
               return const AlertDialog(
                 backgroundColor: Colors.white,
@@ -49,14 +51,34 @@ class Submitqrdatascreen extends StatelessWidget {
               return Column(
                 children: [
                   Spacer(),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(8.0),
-                  //   child: Text(
-                  //     'To: $adminName',
-                  //     style:
-                  //         TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  //   ),
-                  // ),
+                  controller.salesManSelfie.value != null
+                      ? Image.file(
+                          controller.salesManSelfie.value!,
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.cover,
+                        )
+                      : OutlinedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Selfietakingscreen()));
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.person_2_outlined,
+                                color: MyColor.dashbord,
+                              ),
+                              Icon(
+                                Icons.question_mark_sharp,
+                                color: Colors.redAccent,
+                              ),
+                            ],
+                          )),
                   Qrcard(
                     cardIdString: cardIdString,
                     cardNameString: cardNameString,
@@ -80,6 +102,7 @@ class Submitqrdatascreen extends StatelessWidget {
                                     WidgetStateProperty.all(Colors.redAccent)),
                             onPressed: () {
                               // Navigator.pop(context);
+                              controller.salesManSelfie.value = null;
                               Navigator.pushAndRemoveUntil<dynamic>(
                                   context,
                                   MaterialPageRoute<dynamic>(
@@ -107,10 +130,13 @@ class Submitqrdatascreen extends StatelessWidget {
                                               BorderRadius.circular(8.0),
                                           side:
                                               BorderSide(color: Colors.green))),
-                                  backgroundColor: isGettingLocation
+                                  backgroundColor: isGettingLocation ||
+                                          controller.salesManSelfie.value ==
+                                              null
                                       ? WidgetStateProperty.all(Colors.grey)
                                       : WidgetStateProperty.all(Colors.green)),
-                              onPressed: isGettingLocation
+                              onPressed: isGettingLocation ||
+                                      controller.salesManSelfie.value == null
                                   ? null
                                   : () {
                                       controller.postQR(

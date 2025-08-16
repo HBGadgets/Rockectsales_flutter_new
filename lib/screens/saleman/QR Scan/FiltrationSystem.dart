@@ -123,33 +123,30 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
           children: [
             Row(
               children: [
-                // Date box takes 2/3rd
-                OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    side: const BorderSide(color: Colors.black54),
-                  ),
-                  onPressed: () => _selectFromDate(context),
-                  icon: const Icon(
-                    Icons.date_range,
-                    color: Colors.black,
-                  ),
-                  label: Row(
-                    children: [
-                      Text(
-                        fromDate != null
-                            ? DateFormat('dd/MM/yyyy').format(fromDate!)
-                            // : DateFormat('dd/MM/yyyy').format(Today),
-                            : '...',
-                        style: const TextStyle(color: Colors.black),
+                // From date button
+                Expanded(
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
                       ),
-                    ],
+                      side: const BorderSide(color: Colors.black54),
+                    ),
+                    onPressed: () => _selectFromDate(context),
+                    icon: const Icon(
+                      Icons.date_range,
+                      color: Colors.black,
+                    ),
+                    label: Text(
+                      fromDate != null
+                          ? DateFormat('dd/MM/yyyy').format(fromDate!)
+                          : '...',
+                      style: const TextStyle(color: Colors.black),
+                      overflow: TextOverflow.ellipsis, // prevent overflow
+                    ),
                   ),
                 ),
 
-                // const SizedBox(width: 10),
                 const Padding(
                   padding: EdgeInsets.all(2.0),
                   child: Icon(
@@ -158,41 +155,40 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                   ),
                 ),
 
-                OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    side: const BorderSide(color: Colors.black54),
-                  ),
-                  onPressed: () => _selectTillDate(context),
-                  icon: const Icon(
-                    Icons.date_range,
-                    color: Colors.black,
-                  ),
-                  label: Row(
-                    children: [
-                      Text(
-                        tillDate != null
-                            ? DateFormat('dd/MM/yyyy').format(tillDate!)
-                            : DateFormat('dd/MM/yyyy').format(Today),
-                        style: const TextStyle(color: Colors.black),
+                // Till date button
+                Expanded(
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
                       ),
-                    ],
+                      side: const BorderSide(color: Colors.black54),
+                    ),
+                    onPressed: () => _selectTillDate(context),
+                    icon: const Icon(
+                      Icons.date_range,
+                      color: Colors.black,
+                    ),
+                    label: Text(
+                      tillDate != null
+                          ? DateFormat('dd/MM/yyyy').format(tillDate!)
+                          : DateFormat('dd/MM/yyyy').format(Today),
+                      style: const TextStyle(color: Colors.black),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
 
                 const SizedBox(width: 10),
 
-                // Apply button takes 1/3rd
+                // Apply button
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7),
-                      ),
-                      // backgroundColor: MyColor.dashbord,
-                      // side: const BorderSide(color: Colors.black54),
-                      side: const BorderSide(color: Colors.black)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    side: const BorderSide(color: Colors.black),
+                  ),
                   onPressed: () {
                     controller.dateTimeFilter.value = filterString(
                         fromDate ?? DateTime.now(), tillDate ?? DateTime.now());
@@ -205,6 +201,91 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                 ),
               ],
             ),
+
+            // Row(
+            //   children: [
+            //     // Date box takes 2/3rd
+            //     OutlinedButton.icon(
+            //       style: OutlinedButton.styleFrom(
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(7),
+            //         ),
+            //         side: const BorderSide(color: Colors.black54),
+            //       ),
+            //       onPressed: () => _selectFromDate(context),
+            //       icon: const Icon(
+            //         Icons.date_range,
+            //         color: Colors.black,
+            //       ),
+            //       label: Row(
+            //         children: [
+            //           Text(
+            //             fromDate != null
+            //                 ? DateFormat('dd/MM/yyyy').format(fromDate!)
+            //                 // : DateFormat('dd/MM/yyyy').format(Today),
+            //                 : '...',
+            //             style: const TextStyle(color: Colors.black),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //
+            //     // const SizedBox(width: 10),
+            //     const Padding(
+            //       padding: EdgeInsets.all(2.0),
+            //       child: Icon(
+            //         Icons.arrow_forward_outlined,
+            //         size: 15,
+            //       ),
+            //     ),
+            //
+            //     OutlinedButton.icon(
+            //       style: OutlinedButton.styleFrom(
+            //         shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(7),
+            //         ),
+            //         side: const BorderSide(color: Colors.black54),
+            //       ),
+            //       onPressed: () => _selectTillDate(context),
+            //       icon: const Icon(
+            //         Icons.date_range,
+            //         color: Colors.black,
+            //       ),
+            //       label: Row(
+            //         children: [
+            //           Text(
+            //             tillDate != null
+            //                 ? DateFormat('dd/MM/yyyy').format(tillDate!)
+            //                 : DateFormat('dd/MM/yyyy').format(Today),
+            //             style: const TextStyle(color: Colors.black),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //
+            //     const SizedBox(width: 10),
+            //
+            //     // Apply button takes 1/3rd
+            //     OutlinedButton.icon(
+            //       style: OutlinedButton.styleFrom(
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(7),
+            //           ),
+            //           // backgroundColor: MyColor.dashbord,
+            //           // side: const BorderSide(color: Colors.black54),
+            //           side: const BorderSide(color: Colors.black)),
+            //       onPressed: () {
+            //         controller.dateTimeFilter.value = filterString(
+            //             fromDate ?? DateTime.now(), tillDate ?? DateTime.now());
+            //         controller.getQRCards();
+            //       },
+            //       label: const Icon(
+            //         Icons.check,
+            //         color: Colors.black,
+            //       ),
+            //     ),
+            //   ],
+            // ),
             Container(
               margin: const EdgeInsets.only(top: 7, bottom: 7),
               padding: const EdgeInsets.symmetric(horizontal: 12),

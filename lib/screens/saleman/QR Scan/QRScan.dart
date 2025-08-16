@@ -35,7 +35,7 @@ class _QrscanScreenState extends State<QrscanScreen>
       MobileScanner(
         controller: scannerController,
         onDetect: (result) {
-          controller.getAddress();
+          // controller.getAddress();
           final List<Barcode> barcodes = result.barcodes;
           for (final barcode in barcodes) {
             final jsonData = json.decode(barcode.rawValue ?? '');
