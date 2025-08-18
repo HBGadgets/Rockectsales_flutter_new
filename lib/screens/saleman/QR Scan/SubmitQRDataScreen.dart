@@ -10,16 +10,27 @@ import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
 
 import 'QRCardsController.dart';
 
-class Submitqrdatascreen extends StatelessWidget {
+class Submitqrdatascreen extends StatefulWidget {
   final cardNameString;
   final cardIdString;
 
-  // final addressString;
-
-  final QRCardsController controller = Get.put(QRCardsController());
-
   Submitqrdatascreen(
       {super.key, required this.cardNameString, required this.cardIdString});
+
+  @override
+  State<Submitqrdatascreen> createState() => _SubmitqrdatascreenState();
+}
+
+class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
+  // final addressString;
+  final QRCardsController controller = Get.put(QRCardsController());
+
+  @override
+  void dispose() {
+    controller.salesManSelfie.value = null;
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,36 +63,52 @@ class Submitqrdatascreen extends StatelessWidget {
                 children: [
                   Spacer(),
                   controller.salesManSelfie.value != null
-                      ? Image.file(
-                          controller.salesManSelfie.value!,
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.cover,
-                        )
-                      : OutlinedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        Selfietakingscreen()));
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.person_2_outlined,
+                      ? Column(
+                          children: [
+                            Image.file(
+                              controller.salesManSelfie.value!,
+                              width: 200,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const Selfietakingscreen()));
+                              },
+                              child: const Icon(
+                                Icons.edit,
                                 color: MyColor.dashbord,
                               ),
-                              Icon(
-                                Icons.question_mark_sharp,
-                                color: Colors.redAccent,
-                              ),
-                            ],
-                          )),
+                            )
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            OutlinedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const Selfietakingscreen()));
+                                },
+                                child: const Icon(
+                                  Icons.camera_alt_outlined,
+                                  color: MyColor.dashbord,
+                                )),
+                            Text(
+                              'Take selfie before submitting',
+                              style: TextStyle(color: Colors.redAccent),
+                            )
+                          ],
+                        ),
                   Qrcard(
-                    cardIdString: cardIdString,
-                    cardNameString: cardNameString,
+                    cardIdString: widget.cardIdString,
+                    cardNameString: widget.cardNameString,
                     date: DateTime.now().toString(),
                     time: DateTime.now().toString(),
                     addressString: controller.addressString.value,
@@ -121,35 +148,32 @@ class Submitqrdatascreen extends StatelessWidget {
                         final isGettingLocation =
                             controller.gettingLocation.value;
                         return Expanded(
-                          child: ElevatedButton(
-                              style: ButtonStyle(
-                                  shape: WidgetStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          side:
-                                              BorderSide(color: Colors.green))),
-                                  backgroundColor: isGettingLocation ||
-                                          controller.salesManSelfie.value ==
-                                              null
-                                      ? WidgetStateProperty.all(Colors.grey)
-                                      : WidgetStateProperty.all(Colors.green)),
-                              onPressed: isGettingLocation ||
+                            child: ElevatedButton(
+                          style: ButtonStyle(
+                              shape: WidgetStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      side: BorderSide(color: Colors.green))),
+                              backgroundColor: isGettingLocation ||
                                       controller.salesManSelfie.value == null
-                                  ? null
-                                  : () {
-                                      controller.postQR(
-                                        boxNumber: cardNameString,
-                                        qrID: cardIdString,
-                                        context: context,
-                                      );
-                                    },
-                              child: const Text(
-                                "Submit",
-                                style: TextStyle(color: Colors.white),
-                              )),
-                        );
+                                  ? WidgetStateProperty.all(Colors.grey)
+                                  : WidgetStateProperty.all(Colors.green)),
+                          onPressed: isGettingLocation ||
+                                  controller.salesManSelfie.value == null
+                              ? null
+                              : () {
+                                  controller.postQR(
+                                    boxNumber: widget.cardNameString,
+                                    qrID: widget.cardIdString,
+                                    context: context,
+                                  );
+                                },
+                          child: const Text(
+                            "Submit",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ));
                       })
                     ],
                   ),

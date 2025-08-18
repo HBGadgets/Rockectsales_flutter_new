@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import '../../../resources/my_colors.dart';
 import 'QRCardsController.dart';
 
 class Selfietakingscreen extends StatefulWidget {
@@ -35,9 +36,22 @@ class _SelfietakingscreenState extends State<Selfietakingscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: MyColor.dashbord,
+          title: const Text(
+            'Submit Info',
+            style: TextStyle(color: Colors.white),
+          ),
+          leading: const BackButton(
+            color: Colors.white,
+          ),
+        ),
         body: SmartFaceCamera(
-      controller: selfieController,
-      message: 'Center your face in the square',
-    ));
+          showFlashControl: false,
+          showCameraLensControl: false,
+          showCaptureControl: false,
+          controller: selfieController,
+          message: 'Center your face in the square',
+        ));
   }
 }
