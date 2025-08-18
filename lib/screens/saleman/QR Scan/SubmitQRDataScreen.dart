@@ -48,7 +48,9 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
       body: Padding(
           padding: const EdgeInsets.all(17.0),
           child: Obx(() {
-            controller.getAddress();
+            if (controller.addressString.value.isEmpty) {
+              controller.getAddress();
+            }
             if (controller.isLoading.value) {
               return const AlertDialog(
                 backgroundColor: Colors.white,
@@ -100,7 +102,7 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                                   Icons.camera_alt_outlined,
                                   color: MyColor.dashbord,
                                 )),
-                            Text(
+                            const Text(
                               'Take selfie before submitting',
                               style: TextStyle(color: Colors.redAccent),
                             )

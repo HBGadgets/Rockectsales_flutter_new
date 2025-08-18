@@ -16,9 +16,11 @@ import '../../../utils/token_manager.dart';
 
 class QRCardsController extends GetxController {
   var qrCards = <QRCard>[].obs;
+  var singleQrCard = QRCardInfo().obs;
   final isLoading = false.obs;
   final adminName = ''.obs;
   final addressString = ''.obs;
+  final isCardLoading = false.obs;
 
   // final salesManId = ''.obs;
   // final companyId = ''.obs;
@@ -58,6 +60,43 @@ class QRCardsController extends GetxController {
     } finally {
       // ✅ Always reset to false, even if error
       gettingLocation.value = false;
+    }
+  }
+
+  void getSingleQRCard(String qrIdString) async {
+    print('fetching qr info for ${qrIdString}');
+    isCardLoading.value = true;
+    try {
+      final token = await TokenManager.getToken();
+
+      if (token == null || token.isEmpty) {
+        Get.snackbar("Auth Error", "Token not found");
+        return;
+      }
+
+      final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/scanqr/getbyid/$qrIdString');
+      print(url);
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        print('QR card Info==========>>>>>>>>>> $jsonData');
+        singleQrCard.value = QRCardInfo.fromJson(jsonData);
+      } else {
+        Get.snackbar("Error connect",
+            "Failed to Connect to DB (Code: ${response.statusCode})");
+      }
+    } catch (e) {
+      Get.snackbar("Exception", "Couldn't get QR Info");
+    } finally {
+      isCardLoading.value = false;
     }
   }
 
@@ -157,12 +196,6 @@ class QRCardsController extends GetxController {
     adminName.value = decodedToken['chatusername'];
   }
 
-  // Future<String> imageToBase64(File imageFile) async {
-  //   List<int> imageBytes = await imageFile.readAsBytes();
-  //   String base64String = base64Encode(imageBytes);
-  //   return base64String;
-  // }
-
   Future<void> postQR(
       {required String boxNumber,
       required String qrID,
@@ -171,7 +204,10 @@ class QRCardsController extends GetxController {
     try {
       final salesManLocation = await controller.determinePosition();
       try {
-        // String imageString = await imageToBase64(salesManSelfie.value!);
+        //trying to convert image to string
+        final bytes = await salesManSelfie.value!.readAsBytes();
+        final base64Image = base64Encode(bytes);
+
         final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/api/scanqr');
 
         final token = await TokenManager.getToken();
@@ -190,7 +226,7 @@ class QRCardsController extends GetxController {
             'Content-Type': 'application/json; charset=UTF-8',
             'Authorization': 'Bearer $token'
           },
-          body: jsonEncode(<String, String>{
+          body: jsonEncode(<String, dynamic>{
             'boxNo': boxNumber,
             'companyId': companyId,
             'branchId': branchId,
@@ -200,9 +236,11 @@ class QRCardsController extends GetxController {
             'lat': salesManLocation.latitude.toString(),
             'long': salesManLocation.longitude.toString(),
             'address': addressString.value,
-            'selfieImage': salesManSelfie.value.toString()
+            'selfieImage': base64Image
           }),
         );
+
+        print('response body ==========>>>>>>>>>>>> ${base64Image}');
 
         if (response.statusCode == 201) {
           isLoading.value = false;
@@ -240,24 +278,58 @@ class QRCardsController extends GetxController {
 class QRCard {
   String? cardTitle;
   String? dateTime;
+  String? qrObjectId;
   String? qrId;
   String? addressString;
-  String? base64selfie;
 
-  QRCard(
-      {this.cardTitle,
-      required this.dateTime,
-      required this.qrId,
-      required this.addressString,
-      required this.base64selfie});
+  QRCard({
+    this.cardTitle,
+    this.dateTime,
+    this.qrObjectId,
+    this.qrId,
+    this.addressString,
+  });
 
   QRCard.fromJson(Map<String, dynamic> json) {
-    // cardTitle = json['qrcodeId']?['boxNo'];
     cardTitle = json['boxNo']?.toString();
     dateTime = json['createdAt'];
-    // dateTime = json['qrcodeId']?['createdAt'];
-    qrId = json['qrcodeId']?['_id']; // Nested access
+    qrObjectId = json['_id'];
+    qrId = json['qrcodeId']?['_id'];
     addressString = json['address'];
-    base64selfie = json['selfieImage'];
+  }
+}
+
+class QRCardInfo {
+  String? cardTitle;
+  String? dateTime;
+  String? qrId;
+  String? addressString;
+  String? companyName;
+  String? branchName;
+  String? supervisorName;
+  String? salesmanName;
+  String? salesmanSelfie;
+
+  QRCardInfo(
+      {this.cardTitle,
+      this.dateTime,
+      this.qrId,
+      this.addressString,
+      this.companyName,
+      this.branchName,
+      this.supervisorName,
+      this.salesmanName,
+      this.salesmanSelfie});
+
+  QRCardInfo.fromJson(Map<String, dynamic> json) {
+    cardTitle = json['boxNo'];
+    dateTime = json['createdAt'];
+    qrId = json['qrcodeId']['_id'];
+    addressString = json['address'];
+    companyName = json['companyId']['companyName'];
+    branchName = json['branchId']['branchName'];
+    supervisorName = json['supervisorId']['supervisorName'];
+    salesmanName = json['salesmanId']['salesmanName'];
+    salesmanSelfie = json['selfieImage'];
   }
 }

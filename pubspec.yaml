@@ -81,6 +81,7 @@ dependencies:
   mobile_scanner: ^7.0.1
   chat_bubbles: ^1.7.0
   face_camera: ^0.1.4
+  flutter_image_compress: ^2.4.0
 
 
   #workmanager: ^0.5.0

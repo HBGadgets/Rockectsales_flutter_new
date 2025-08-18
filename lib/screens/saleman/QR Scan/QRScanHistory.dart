@@ -8,6 +8,7 @@ import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCard.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
 
 import '../../admin/attendance/attendance screen/FilterOnSpecificDate.dart';
+import 'QRInformationScreen.dart';
 
 class Qrscanhistory extends StatefulWidget {
   Qrscanhistory({super.key});
@@ -35,13 +36,12 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
     });
   }
 
-  @override
-  void dispose() {
-    scrollController.dispose();
-    Get.delete<QRCardsController>();
-    // controller.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   scrollController.dispose();
+  //   Get.delete<QRCardsController>();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -75,12 +75,19 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
                     itemBuilder: (context, index) {
                       if (index < controller.qrCards.length) {
                         final item = controller.qrCards[index];
-                        return Qrcard(
-                            cardIdString: item.qrId ?? '',
-                            cardNameString: item.cardTitle ?? '',
-                            date: item.dateTime ?? '',
-                            time: item.dateTime ?? '',
-                            addressString: item.addressString ?? '');
+                        return InkWell(
+                          onTap: () {
+                            Get.to(() => Qrinformationscreen(
+                                  qrCardId: item.qrObjectId!,
+                                ));
+                          },
+                          child: Qrcard(
+                              cardIdString: item.qrId ?? '',
+                              cardNameString: item.cardTitle ?? '',
+                              date: item.dateTime ?? '',
+                              time: item.dateTime ?? '',
+                              addressString: item.addressString ?? ''),
+                        );
                       } else {
                         if (controller.isMoreCardsAvailable.value) {
                           return const Padding(

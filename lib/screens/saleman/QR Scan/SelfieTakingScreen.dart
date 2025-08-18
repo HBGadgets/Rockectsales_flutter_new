@@ -23,6 +23,7 @@ class _SelfietakingscreenState extends State<Selfietakingscreen> {
   @override
   void initState() {
     selfieController = FaceCameraController(
+      imageResolution: ImageResolution.low,
       autoCapture: true,
       defaultCameraLens: CameraLens.front,
       onCapture: (File? image) {
