@@ -31,6 +31,7 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
         print('reached end');
+        controller.isMoreCardsAvailable.value = true;
         controller.getMoreQrCards();
       }
     });
@@ -65,8 +66,8 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
                   backgroundColor: Colors.white,
                   color: MyColor.dashbord,
                   onRefresh: () async {
-                    controller.isMoreCardsAvailable.value = true;
-                    controller.page.value = 1;
+                    // controller.isMoreCardsAvailable.value = true;
+                    // controller.page.value = 1;
                     controller.getQRCards();
                   },
                   child: ListView.builder(
@@ -77,8 +78,9 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
                         final item = controller.qrCards[index];
                         return InkWell(
                           onTap: () {
+                            controller.selectedQRid.value = item.qrObjectId!;
                             Get.to(() => Qrinformationscreen(
-                                  qrCardId: item.qrObjectId!,
+                                // qrCardId: item.qrObjectId!,
                                 ));
                           },
                           child: Qrcard(

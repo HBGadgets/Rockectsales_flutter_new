@@ -7,16 +7,29 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:rocketsale_rs/screens/saleman/SalesManLocationController.dart';
 import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
 
 import '../../../utils/token_manager.dart';
+import 'QRInformationScreen.dart';
 
 class QRCardsController extends GetxController {
   var qrCards = <QRCard>[].obs;
-  var singleQrCard = QRCardInfo().obs;
+
+  var singleQrCard = QRCardInfo(
+          cardTitle: '',
+          dateTime: '',
+          qrId: '',
+          addressString: '',
+          companyName: '',
+          branchName: '',
+          supervisorName: '',
+          salesmanName: '',
+          salesmanSelfie: '')
+      .obs;
   final isLoading = false.obs;
   final adminName = ''.obs;
   final addressString = ''.obs;
@@ -26,11 +39,12 @@ class QRCardsController extends GetxController {
   // final companyId = ''.obs;
   // final branchId = ''.obs;
   // final supervisorId = ''.obs;
-  RxInt page = 1.obs;
-  RxBool isMoreCardsAvailable = true.obs;
+  RxInt page = 2.obs;
+  RxBool isMoreCardsAvailable = false.obs;
   RxBool gettingLocation = false.obs;
   final dateTimeFilter = ''.obs;
   final searchString = ''.obs;
+  final selectedQRid = ''.obs;
   var salesManSelfie = Rxn<File?>();
 
   SalesManLocationController controller = SalesManLocationController();
@@ -63,45 +77,10 @@ class QRCardsController extends GetxController {
     }
   }
 
-  void getSingleQRCard(String qrIdString) async {
-    print('fetching qr info for ${qrIdString}');
-    isCardLoading.value = true;
-    try {
-      final token = await TokenManager.getToken();
-
-      if (token == null || token.isEmpty) {
-        Get.snackbar("Auth Error", "Token not found");
-        return;
-      }
-
-      final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/scanqr/getbyid/$qrIdString');
-      print(url);
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        print('QR card Info==========>>>>>>>>>> $jsonData');
-        singleQrCard.value = QRCardInfo.fromJson(jsonData);
-      } else {
-        Get.snackbar("Error connect",
-            "Failed to Connect to DB (Code: ${response.statusCode})");
-      }
-    } catch (e) {
-      Get.snackbar("Exception", "Couldn't get QR Info");
-    } finally {
-      isCardLoading.value = false;
-    }
-  }
-
   void getQRCards() async {
     isLoading.value = true;
+    isMoreCardsAvailable.value = false;
+    page.value = 2;
     try {
       final token = await TokenManager.getToken();
 
@@ -111,7 +90,7 @@ class QRCardsController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/scanqr/get?page=$page&limit=10$dateTimeFilter&search=$searchString');
+          '${dotenv.env['BASE_URL']}/api/api/scanqr/get?&limit=10$dateTimeFilter&search=$searchString');
       final response = await http.get(
         url,
         headers: {
@@ -143,9 +122,9 @@ class QRCardsController extends GetxController {
 
   void getMoreQrCards() async {
     print('fetching more');
-    if (isMoreCardsAvailable.value) {
-      page.value++;
-    }
+    // if (isMoreCardsAvailable.value) {
+    //   page.value++;
+    // }
     try {
       final token = await TokenManager.getToken();
 
@@ -175,6 +154,8 @@ class QRCardsController extends GetxController {
         if (qrcardsList.length < 1) {
           isMoreCardsAvailable.value = false;
           // page.value = 1;
+        } else {
+          page.value++;
         }
         qrCards.addAll(qrcardsList);
       } else {
@@ -311,15 +292,15 @@ class QRCardInfo {
   String? salesmanSelfie;
 
   QRCardInfo(
-      {this.cardTitle,
-      this.dateTime,
-      this.qrId,
-      this.addressString,
-      this.companyName,
-      this.branchName,
-      this.supervisorName,
-      this.salesmanName,
-      this.salesmanSelfie});
+      {required this.cardTitle,
+      required this.dateTime,
+      required this.qrId,
+      required this.addressString,
+      required this.companyName,
+      required this.branchName,
+      required this.supervisorName,
+      required this.salesmanName,
+      required this.salesmanSelfie});
 
   QRCardInfo.fromJson(Map<String, dynamic> json) {
     cardTitle = json['boxNo'];

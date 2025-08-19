@@ -127,9 +127,11 @@ class Qrcard extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        Text(formattedDate(date)),
+                        Text(formattedDate(
+                            date == '' ? DateTime.now().toString() : date)),
                         const Spacer(),
-                        Text(formattedTime(time)),
+                        Text(formattedTime(
+                            time == '' ? DateTime.now().toString() : time)),
                       ],
                     ),
                   )

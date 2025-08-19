@@ -9,17 +9,16 @@ import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'QRInformationScreenController.dart';
+
 class Qrinformationscreen extends StatelessWidget {
-  final String qrCardId;
+  Qrinformationscreen({super.key});
 
-  Qrinformationscreen({super.key, required this.qrCardId});
-
-  final QRCardsController controller = Get.find<QRCardsController>();
+  final Qrinformationscreencontroller controller =
+      Get.put(Qrinformationscreencontroller(), permanent: false);
 
   @override
   Widget build(BuildContext context) {
-    controller.getSingleQRCard(qrCardId);
-    final qrCard = controller.singleQrCard.value;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: MyColor.dashbord,
@@ -34,10 +33,13 @@ class Qrinformationscreen extends StatelessWidget {
         body: Obx(() {
           if (controller.isCardLoading.value) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: MyColor.dashbord,
+              ),
             );
           } else {
-            Uint8List bytes = base64Decode(qrCard.salesmanSelfie!);
+            Uint8List bytes = base64Decode(
+                controller.singleQrCard.value.salesmanSelfie ?? "");
             return Padding(
               padding: EdgeInsets.all(20),
               child: Column(
@@ -63,7 +65,8 @@ class Qrinformationscreen extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
-                            Text('${qrCard.salesmanName}'),
+                            Text(
+                                '${controller.singleQrCard.value.salesmanName}'),
                           ],
                         ),
                       ],
@@ -80,7 +83,8 @@ class Qrinformationscreen extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
-                            Text('${qrCard.supervisorName}'),
+                            Text(
+                                '${controller.singleQrCard.value.supervisorName}'),
                           ],
                         ),
                       ],
@@ -97,7 +101,8 @@ class Qrinformationscreen extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
-                            Text('${qrCard.companyName}'),
+                            Text(
+                                '${controller.singleQrCard.value.companyName}'),
                           ],
                         ),
                       ],
@@ -114,7 +119,7 @@ class Qrinformationscreen extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
                             ),
-                            Text('${qrCard.branchName}'),
+                            Text('${controller.singleQrCard.value.branchName}'),
                           ],
                         ),
                       ],
@@ -123,11 +128,13 @@ class Qrinformationscreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: Qrcard(
-                        cardIdString: qrCard.qrId!,
-                        cardNameString: qrCard.cardTitle!,
-                        date: qrCard.dateTime!,
-                        time: qrCard.dateTime!,
-                        addressString: qrCard.addressString!),
+                        cardIdString: controller.singleQrCard.value.qrId ?? '',
+                        cardNameString:
+                            controller.singleQrCard.value.cardTitle ?? '',
+                        date: controller.singleQrCard.value.dateTime ?? '',
+                        time: controller.singleQrCard.value.dateTime ?? '',
+                        addressString:
+                            controller.singleQrCard.value.addressString ?? ''),
                   )
                 ],
               ),

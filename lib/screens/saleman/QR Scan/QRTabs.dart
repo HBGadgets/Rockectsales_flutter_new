@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScan.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScanHistory.dart';
 
 import '../../../resources/my_colors.dart';
+import 'QRCardsController.dart';
 
 class Qrtabs extends StatefulWidget {
   const Qrtabs({super.key});
@@ -23,6 +26,7 @@ class _QrtabsState extends State<Qrtabs> with TickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
+    // Get.delete<QRCardsController>();
     super.dispose();
   }
 
