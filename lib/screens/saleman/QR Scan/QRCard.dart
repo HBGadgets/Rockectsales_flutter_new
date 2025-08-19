@@ -47,11 +47,6 @@ class Qrcard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            // const Icon(
-            //   Icons.qr_code,
-            //   size: 60,
-            //   color: Colors.black54,
-            // ),
             Expanded(
               child: Column(
                 children: [

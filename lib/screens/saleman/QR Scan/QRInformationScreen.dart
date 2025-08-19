@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCard.dart';
@@ -16,6 +17,18 @@ class Qrinformationscreen extends StatelessWidget {
 
   final Qrinformationscreencontroller controller =
       Get.put(Qrinformationscreencontroller(), permanent: false);
+
+  String formattedDate(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+    return DateFormat('dd/MM/yy').format(dateTime);
+  }
+
+  String formattedTime(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+
+    // Format to hh:mm a (12-hour format with AM/PM)
+    return DateFormat('hh:mm a').format(dateTime);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,32 +54,39 @@ class Qrinformationscreen extends StatelessWidget {
             Uint8List bytes = base64Decode(
                 controller.singleQrCard.value.salesmanSelfie ?? "");
             return Padding(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.only(top: 20, left: 40, right: 40),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      const Spacer(),
-                      CircleAvatar(
-                        radius: 100,
-                        backgroundImage: MemoryImage(bytes),
-                      ),
-                      const Spacer()
-                    ],
+                  CircleAvatar(
+                    radius: 100,
+                    backgroundImage: MemoryImage(bytes),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      textAlign: TextAlign.start,
+                      '${controller.singleQrCard.value.salesmanName}',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
                     child: Column(
                       children: [
                         Row(
                           children: [
-                            const Text(
-                              'Salesman Name: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            const Expanded(
+                              child: Text(
+                                'Supervisor: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
                             ),
-                            Text(
-                                '${controller.singleQrCard.value.salesmanName}'),
+                            Expanded(
+                              child: Text(
+                                  '${controller.singleQrCard.value.supervisorName}'),
+                            ),
                           ],
                         ),
                       ],
@@ -78,13 +98,17 @@ class Qrinformationscreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Text(
-                              'Supervisor: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            const Expanded(
+                              child: const Text(
+                                'Company Name: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
                             ),
-                            Text(
-                                '${controller.singleQrCard.value.supervisorName}'),
+                            Expanded(
+                              child: Text(
+                                  '${controller.singleQrCard.value.companyName}'),
+                            ),
                           ],
                         ),
                       ],
@@ -96,13 +120,16 @@ class Qrinformationscreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Text(
-                              'Company Name: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            const Expanded(
+                              child: const Text(
+                                'Branch Name: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
                             ),
-                            Text(
-                                '${controller.singleQrCard.value.companyName}'),
+                            Expanded(
+                                child: Text(
+                                    '${controller.singleQrCard.value.branchName}')),
                           ],
                         ),
                       ],
@@ -114,28 +141,105 @@ class Qrinformationscreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Text(
-                              'Branch Name: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            const Expanded(
+                              child: const Text(
+                                'QR id: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
                             ),
-                            Text('${controller.singleQrCard.value.branchName}'),
+                            Expanded(
+                                child: Text(
+                                    '${controller.singleQrCard.value.qrId}')),
                           ],
                         ),
                       ],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: Qrcard(
-                        cardIdString: controller.singleQrCard.value.qrId ?? '',
-                        cardNameString:
-                            controller.singleQrCard.value.cardTitle ?? '',
-                        date: controller.singleQrCard.value.dateTime ?? '',
-                        time: controller.singleQrCard.value.dateTime ?? '',
-                        addressString:
-                            controller.singleQrCard.value.addressString ?? ''),
-                  )
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: const Text(
+                                'Commodity no: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+                            Expanded(
+                                child: Text(
+                                    '${controller.singleQrCard.value.cardTitle}')),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: const Text(
+                                'Address: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+                            Expanded(
+                                child: Text(
+                                    '${controller.singleQrCard.value.addressString}')),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: const Text(
+                                'Date: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+                            Expanded(
+                                child: Text(
+                                    '${formattedDate(controller.singleQrCard.value.dateTime)}')),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: const Text(
+                                'Time: ',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+                            Expanded(
+                                child: Text(
+                                    '${formattedTime(controller.singleQrCard.value.dateTime)}')),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );
