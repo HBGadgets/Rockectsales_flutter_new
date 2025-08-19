@@ -110,6 +110,37 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Rocket Sales',
       theme: ThemeData(
+              elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ElevatedButton.styleFrom(
+                  textStyle: const TextStyle(
+                    fontFamily: 'NataSans-Bold', // 👈 change font here
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  textStyle: const TextStyle(
+                    fontFamily: 'NataSans-Regular', // 👈 for TextButton
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              outlinedButtonTheme: OutlinedButtonThemeData(
+                style: OutlinedButton.styleFrom(
+                  textStyle: const TextStyle(
+                    fontFamily: 'NataSans-Regular', // 👈 for OutlinedButton
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              textTheme: const TextTheme(
+                titleMedium: TextStyle(fontFamily: 'NataSans-Bold'),
+                titleLarge: TextStyle(fontFamily: 'NataSans-Bold'),
+                bodyLarge: TextStyle(fontFamily: 'NataSans-Bold'),
+                bodyMedium: TextStyle(fontFamily: 'NataSans-Regular'),
+                bodySmall: TextStyle(fontFamily: 'NataSans-Regular'),
+              ),
               primaryColor: Colors.white,
               scaffoldBackgroundColor: Colors.white,
               primarySwatch: Colors.blue)

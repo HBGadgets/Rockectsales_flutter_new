@@ -62,58 +62,120 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
               );
             } else {
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Spacer(),
-                  controller.salesManSelfie.value != null
-                      ? Column(
-                          children: [
-                            Image.file(
-                              controller.salesManSelfie.value!,
-                              width: 200,
-                              height: 200,
-                              fit: BoxFit.cover,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const Selfietakingscreen()));
-                              },
-                              child: const Icon(
-                                Icons.edit,
-                                color: MyColor.dashbord,
-                              ),
-                            )
-                          ],
-                        )
-                      : Column(
-                          children: [
-                            OutlinedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const Selfietakingscreen()));
-                                },
-                                child: const Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: MyColor.dashbord,
-                                )),
-                            const Text(
-                              'Take selfie before submitting',
-                              style: TextStyle(color: Colors.redAccent),
-                            )
-                          ],
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 8.0, bottom: 8, right: 4, left: 4),
+                        child: Container(
+                          width: double.infinity, // 👈 full width container
+                          height: 250,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                          ),
+                          child: Center(
+                            // 👈 centers the button
+                            child: controller.salesManSelfie.value != null
+                                ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Image.file(
+                                      //   controller.salesManSelfie.value!,
+                                      //   width: 200,
+                                      //   height: 200,
+                                      //   fit: BoxFit.cover,
+                                      // ),
+                                      CircleAvatar(
+                                        radius: 100, // half of width/height
+                                        backgroundImage: FileImage(
+                                            controller.salesManSelfie.value!),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const Selfietakingscreen()));
+                                        },
+                                        child: const Icon(
+                                          Icons.edit,
+                                          color: MyColor.dashbord,
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      OutlinedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const Selfietakingscreen(),
+                                            ),
+                                          );
+                                        },
+                                        style: OutlinedButton.styleFrom(
+                                            minimumSize: const Size(100,
+                                                100), // 👈 button's own size
+                                            side: const BorderSide(
+                                                color: Colors.white70),
+                                            backgroundColor: Colors.black12),
+                                        child: const Icon(
+                                          Icons.camera_alt_outlined,
+                                          color: Colors.black45,
+                                          size: 45,
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Tap to take selfie',
+                                        style: TextStyle(color: Colors.black54),
+                                      )
+                                    ],
+                                  ),
+                          ),
                         ),
-                  Qrcard(
-                    cardIdString: widget.cardIdString,
-                    cardNameString: widget.cardNameString,
-                    date: DateTime.now().toString(),
-                    time: DateTime.now().toString(),
-                    addressString: controller.addressString.value,
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "QR ID:",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          widget.cardIdString,
+                          style: TextStyle(color: Colors.black87),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Date:",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        // Text(
+                        //   widget,
+                        //   style: TextStyle(color: Colors.black87),
+                        // )
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Row(

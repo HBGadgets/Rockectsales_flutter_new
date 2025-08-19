@@ -127,25 +127,46 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
+  #  fonts:
+  #    - family: InterLight
+  #      fonts:
+  #        - asset: assets/fonts/Inter_24pt-Italic.ttf
+  #
+  #    - family: InterRegular
+  #      fonts:
+  #        - asset: assets/fonts/Inter_28pt-Regular.ttf
+  #
+  #    - family: InterMedium
+  #      fonts:
+  #        - asset: assets/fonts/Inter_28pt-Medium.ttf
+  #
+  #    - family: InterBold
+  #      fonts:
+  #        - asset: assets/fonts/Inter_28pt-Bold.ttf
+  #
+  #    - family: InterThin
+  #      fonts:
+  #        - asset: assets/fonts/Inter_24pt-Thin.ttf
+
   fonts:
     - family: InterLight
       fonts:
         - asset: assets/fonts/Inter_24pt-Italic.ttf
 
-    - family: InterRegular
+    - family: NataSans-Regular
       fonts:
-        - asset: assets/fonts/Inter_28pt-Regular.ttf
+        - asset: assets/fonts/NataSans-Regular.ttf
 
     - family: InterMedium
       fonts:
         - asset: assets/fonts/Inter_28pt-Medium.ttf
 
-    - family: InterBold
+    - family: NataSans-Bold
       fonts:
-        - asset: assets/fonts/Inter_28pt-Bold.ttf
+        - asset: assets/fonts/NataSans-Bold.ttf
 
     - family: InterThin
       fonts:
         - asset: assets/fonts/Inter_24pt-Thin.ttf
   # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+  # see https://flutter.dev/to/ font-from-package

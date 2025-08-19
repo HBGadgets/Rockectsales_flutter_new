@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScan.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScanHistory.dart';
 
@@ -15,12 +14,19 @@ class Qrtabs extends StatefulWidget {
 }
 
 class _QrtabsState extends State<Qrtabs> with TickerProviderStateMixin {
+  // final QRCardsController controller = Get.put(QRCardsController());
+
   late final TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    int initialIndex = Get.arguments ?? 0;
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: initialIndex,
+    );
   }
 
   @override

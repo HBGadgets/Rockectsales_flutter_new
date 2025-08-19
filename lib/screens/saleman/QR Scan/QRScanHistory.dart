@@ -47,7 +47,7 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 8),
+      padding: const EdgeInsets.only(top: 8),
       child: Column(
         children: [
           // SizedBox(height: size.width * 0.02),
@@ -76,19 +76,26 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
                     itemBuilder: (context, index) {
                       if (index < controller.qrCards.length) {
                         final item = controller.qrCards[index];
-                        return InkWell(
-                          onTap: () {
-                            controller.selectedQRid.value = item.qrObjectId!;
-                            Get.to(() => Qrinformationscreen(
-                                // qrCardId: item.qrObjectId!,
-                                ));
-                          },
-                          child: Qrcard(
-                              cardIdString: item.qrId ?? '',
-                              cardNameString: item.cardTitle ?? '',
-                              date: item.dateTime ?? '',
-                              time: item.dateTime ?? '',
-                              addressString: item.addressString ?? ''),
+                        // return InkWell(
+                        //   onTap: () {
+                        //     controller.selectedQRid.value = item.qrObjectId!;
+                        //     Get.to(() => Qrinformationscreen(
+                        //         ));
+                        //   },
+                        //   child: Qrcard(
+                        //       cardIdString: item.qrId ?? '',
+                        //       cardNameString: item.cardTitle ?? '',
+                        //       date: item.dateTime ?? '',
+                        //       time: item.dateTime ?? '',
+                        //       addressString: item.addressString ?? ''),
+                        // );
+                        return Qrcard(
+                          cardIdString: item.qrId ?? '',
+                          cardNameString: item.cardTitle ?? '',
+                          date: item.dateTime ?? '',
+                          time: item.dateTime ?? '',
+                          addressString: item.addressString ?? '',
+                          cardObjectId: item.qrObjectId ?? '',
                         );
                       } else {
                         if (controller.isMoreCardsAvailable.value) {

@@ -10,6 +10,7 @@ import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRInformationScreen.dart
 import 'QRCardsController.dart';
 
 class Qrcard extends StatelessWidget {
+  final String cardObjectId;
   final String cardIdString;
   final String cardNameString;
   final String date;
@@ -18,6 +19,7 @@ class Qrcard extends StatelessWidget {
 
   Qrcard(
       {super.key,
+      required this.cardObjectId,
       required this.cardIdString,
       required this.cardNameString,
       required this.date,
@@ -41,101 +43,175 @@ class Qrcard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Text('QR id: '),
-                        Expanded(
-                          child: Text(
-                            cardIdString,
-                            textAlign: TextAlign.start,
-                            softWrap: true,
-                            overflow: TextOverflow.visible,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        const Text('Commodity no: '),
-                        Expanded(
-                          child: Text(
-                            cardNameString,
-                            softWrap: true,
-                            overflow: TextOverflow.visible,
-                            textAlign: TextAlign.start,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Obx(() {
-                            final isGettingLocation =
-                                controller.gettingLocation.value;
-                            if (isGettingLocation) {
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  color: MyColor.dashbord,
-                                ),
-                              );
-                            } else {
-                              return Text(
-                                addressString,
-                                softWrap: true,
-                                overflow: TextOverflow.visible,
-                                textAlign: TextAlign.start,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              );
-                            }
-                          }),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Text(formattedDate(
-                            date == '' ? DateTime.now().toString() : date)),
-                        const Spacer(),
-                        Text(formattedTime(
-                            time == '' ? DateTime.now().toString() : time)),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0, left: 8, top: 4),
+      child: Card(
+        color: Colors.white,
+        elevation: 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          onTap: () {
+            controller.selectedQRid.value = cardObjectId;
+            Get.to(() => Qrinformationscreen());
+          },
+          leading: const Icon(
+            Icons.qr_code_2,
+            size: 60,
+          ),
+          title: Row(
+            children: [
+              Text(cardNameString),
+              const Spacer(),
+              Text(
+                formattedDate(date),
+                style: const TextStyle(
+                    fontFamily: 'NataSans-Regular', fontSize: 14),
+              )
+            ],
+          ),
+          subtitle: Text(addressString),
+          trailing: const Icon(
+            size: 15,
+            Icons.arrow_forward_ios,
+            color: MyColor.dashbord,
+          ),
+          titleAlignment: ListTileTitleAlignment.threeLine,
         ),
       ),
     );
+
+    // return Padding(
+    //   padding: const EdgeInsets.all(8.0),
+    //   child: ListTile(
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(15),
+    //     ),
+    //     onTap: () => Get.to(() => Qrinformationscreen()),
+    //     leading: const Icon(
+    //       Icons.qr_code_2,
+    //       size: 60,
+    //     ),
+    //     title: Row(
+    //       children: [
+    //         Text(cardNameString),
+    //         Spacer(),
+    //         Text(
+    //           formattedDate(date),
+    //           style: TextStyle(fontFamily: 'NataSans-Regular', fontSize: 14),
+    //         )
+    //       ],
+    //     ),
+    //     subtitle: Text(addressString),
+    //     trailing: const Icon(
+    //       size: 15,
+    //       Icons.arrow_forward_ios,
+    //       color: MyColor.dashbord,
+    //     ),
+    //     // isThreeLine: true,
+    //     titleAlignment: ListTileTitleAlignment.threeLine,
+    //   ),
+    // );
+
+    // return Card(
+    //   color: Colors.white,
+    //   child: Padding(
+    //     padding: const EdgeInsets.all(8.0),
+    //     child: Row(
+    //       children: [
+    //         Expanded(
+    //           child: Column(
+    //             children: [
+    //               Padding(
+    //                 padding: const EdgeInsets.all(8.0),
+    //                 child: Row(
+    //                   children: [
+    //                     Text('QR id: '),
+    //                     Expanded(
+    //                       child: Text(
+    //                         cardIdString,
+    //                         textAlign: TextAlign.start,
+    //                         softWrap: true,
+    //                         overflow: TextOverflow.visible,
+    //                         style: const TextStyle(
+    //                           fontWeight: FontWeight.bold,
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //               Padding(
+    //                 padding: const EdgeInsets.all(8.0),
+    //                 child: Row(
+    //                   children: [
+    //                     const Text('Commodity no: '),
+    //                     Expanded(
+    //                       child: Text(
+    //                         cardNameString,
+    //                         softWrap: true,
+    //                         overflow: TextOverflow.visible,
+    //                         textAlign: TextAlign.start,
+    //                         style: const TextStyle(
+    //                           fontWeight: FontWeight.bold,
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //               Padding(
+    //                 padding: const EdgeInsets.all(8.0),
+    //                 child: Row(
+    //                   children: [
+    //                     Expanded(
+    //                       child: Obx(() {
+    //                         final isGettingLocation =
+    //                             controller.gettingLocation.value;
+    //                         if (isGettingLocation) {
+    //                           return const Center(
+    //                             child: CircularProgressIndicator(
+    //                               color: MyColor.dashbord,
+    //                             ),
+    //                           );
+    //                         } else {
+    //                           return Text(
+    //                             addressString,
+    //                             softWrap: true,
+    //                             overflow: TextOverflow.visible,
+    //                             textAlign: TextAlign.start,
+    //                             style: const TextStyle(
+    //                               fontWeight: FontWeight.bold,
+    //                             ),
+    //                           );
+    //                         }
+    //                       }),
+    //                     )
+    //                   ],
+    //                 ),
+    //               ),
+    //               Padding(
+    //                 padding: const EdgeInsets.all(8.0),
+    //                 child: Row(
+    //                   children: [
+    //                     Text(formattedDate(
+    //                         date == '' ? DateTime.now().toString() : date)),
+    //                     const Spacer(),
+    //                     Text(formattedTime(
+    //                         time == '' ? DateTime.now().toString() : time)),
+    //                   ],
+    //                 ),
+    //               )
+    //             ],
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }

@@ -10,6 +10,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRTabs.dart';
 import 'package:rocketsale_rs/screens/saleman/SalesManLocationController.dart';
 import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
 
@@ -18,22 +19,9 @@ import 'QRInformationScreen.dart';
 
 class QRCardsController extends GetxController {
   var qrCards = <QRCard>[].obs;
-
-  var singleQrCard = QRCardInfo(
-          cardTitle: '',
-          dateTime: '',
-          qrId: '',
-          addressString: '',
-          companyName: '',
-          branchName: '',
-          supervisorName: '',
-          salesmanName: '',
-          salesmanSelfie: '')
-      .obs;
   final isLoading = false.obs;
   final adminName = ''.obs;
   final addressString = ''.obs;
-  final isCardLoading = false.obs;
 
   // final salesManId = ''.obs;
   // final companyId = ''.obs;
@@ -227,16 +215,17 @@ class QRCardsController extends GetxController {
           isLoading.value = false;
           addressString.value = '';
           salesManSelfie.value = null;
-          print("✅ qr card Submitted");
-          // print("address field =========>>>>>${addressString.value}");
-          // Navigator.pop(context);
-          Navigator.pushAndRemoveUntil<dynamic>(
-            context,
-            MaterialPageRoute<dynamic>(
-              builder: (BuildContext context) => DashboardSalesman(),
-            ),
-            (route) => false, //if you want to disable back feature set to false
-          );
+
+          // Get.to(() => Qrtabs(), arguments: 1);
+          Get.off(() => Qrtabs(), arguments: 1);
+
+          // Navigator.pushAndRemoveUntil<dynamic>(
+          //   context,
+          //   MaterialPageRoute<dynamic>(
+          //     builder: (BuildContext context) => DashboardSalesman(),
+          //   ),
+          //   (route) => false, //if you want to disable back feature set to false
+          // );
           getQRCards();
           Get.snackbar("Success", "QR info submitted");
         } else {
