@@ -159,7 +159,7 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                       Image(image: chat, width: 50, height: 50),
                       "Chat",
                       onTap: () {
-                        Get.to(() => ChatPage());
+                        Get.to(() => ChatScreen());
                       },
                     ),
                     _buildMenuItem(

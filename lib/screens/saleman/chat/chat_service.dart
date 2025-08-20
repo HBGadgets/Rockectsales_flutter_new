@@ -1,41 +1,47 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class ChatService {
+class SocketService {
   late IO.Socket socket;
 
-  void connect(String userId, String otherUserId) {
-    socket = IO.io("${dotenv.env['BASE_URL']}", {
-      "transports": ["websocket"],
-      "autoConnect": false,
-    });
-
-    socket.connect();
+  void connect(String token) {
+    socket = IO.io(
+      "https://salestrack.rocketsalestracker.com", // your backend SOCKET URL
+      IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .setQuery({'token': token}) // pass token if backend checks auth
+          .enableAutoConnect()
+          .build(),
+    );
 
     socket.onConnect((_) {
-      print("✅ Connected to socket");
+      print("✅ Connected to socket server");
+    });
 
-      // Join a private room between two users
-      socket.emit("joinRoom", {
-        "userId": userId,
-        "otherUserId": otherUserId,
-      });
+    socket.onDisconnect((_) {
+      print("❌ Disconnected from socket server");
     });
   }
 
-  void sendMessage(String sender, String receiver, String message) {
-    socket.emit("chatMessage", {
+  void joinRoom(String room, String username) {
+    socket.emit('joinRoom', {
+      "room": room,
+      "username": username,
+    });
+  }
+
+  void sendMessage(
+      String room, String message, String sender, String receiver) {
+    socket.emit('sendMessage', {
+      "room": room,
+      "message": message,
       "sender": sender,
       "receiver": receiver,
-      "message": message,
     });
   }
 
-  void onMessage(Function(dynamic) callback) {
-    socket.on("chatMessage", callback);
-  }
-
-  void disconnect() {
-    socket.disconnect();
+  void onReceiveMessage(Function(Map<String, dynamic>) callback) {
+    socket.on("receiveMessage", (data) {
+      callback(Map<String, dynamic>.from(data));
+    });
   }
 }
