@@ -54,12 +54,25 @@ class Qrinformationscreen extends StatelessWidget {
             Uint8List bytes = base64Decode(
                 controller.singleQrCard.value.salesmanSelfie ?? "");
             return Padding(
-              padding: EdgeInsets.only(top: 20, left: 40, right: 40),
+              padding: EdgeInsets.only(top: 20, left: 20, right: 20),
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 100,
-                    backgroundImage: MemoryImage(bytes),
+                  Container(
+                    width: 160,
+                    // same as diameter of CircleAvatar (radius * 2)
+                    height: 160,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.green,
+                        // border color
+                        width: 2, // border width
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 80, // half of container size
+                      backgroundImage: MemoryImage(bytes),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -70,176 +83,287 @@ class Qrinformationscreen extends StatelessWidget {
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                'Supervisor: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(12), // inner spacing
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // background color
+                            borderRadius: BorderRadius.circular(12),
+                            // rounded corners
+                            border:
+                                Border.all(color: Colors.black12, width: 1.5),
+                            // border
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Supervisor : ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                  '${controller.singleQrCard.value.supervisorName}'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: const Text(
-                                'Company Name: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                  '${controller.singleQrCard.value.companyName}'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: const Text(
-                                'Branch Name: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                            ),
-                            Expanded(
+                              Expanded(
+                                // 👈 ensures long text wraps
                                 child: Text(
-                                    '${controller.singleQrCard.value.branchName}')),
-                          ],
+                                  '${controller.singleQrCard.value.supervisorName}',
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: const Text(
-                                'QR id: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(12), // inner spacing
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // background color
+                            borderRadius: BorderRadius.circular(12),
+                            // rounded corners
+                            border:
+                                Border.all(color: Colors.black12, width: 1.5),
+                            // border
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Company : ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Expanded(
+                                // 👈 ensures long text wraps
+                                child: Text(
+                                  '${controller.singleQrCard.value.companyName}',
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(12), // inner spacing
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // background color
+                            borderRadius: BorderRadius.circular(12),
+                            // rounded corners
+                            border:
+                                Border.all(color: Colors.black12, width: 1.5),
+                            // border
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Branch : ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Expanded(
+                                // 👈 ensures long text wraps
+                                child: Text(
+                                  '${controller.singleQrCard.value.branchName}',
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(12), // inner spacing
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // background color
+                            borderRadius: BorderRadius.circular(12),
+                            // rounded corners
+                            border:
+                                Border.all(color: Colors.black12, width: 1.5),
+                            // border
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "QR id : ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Expanded(
+                                // 👈 ensures long text wraps
+                                child: Text(
+                                  '${controller.singleQrCard.value.qrId}',
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(12), // inner spacing
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // background color
+                            borderRadius: BorderRadius.circular(12),
+                            // rounded corners
+                            border:
+                                Border.all(color: Colors.black12, width: 1.5),
+                            // border
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Commodity no: ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Expanded(
+                                // 👈 ensures long text wraps
+                                child: Text(
+                                  '${controller.singleQrCard.value.cardTitle}',
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(12), // inner spacing
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            // background color
+                            borderRadius: BorderRadius.circular(12),
+                            // rounded corners
+                            border:
+                                Border.all(color: Colors.black12, width: 1.5),
+                            // border
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Address : ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Expanded(
+                                // 👈 ensures long text wraps
+                                child: Text(
+                                  '${controller.singleQrCard.value.addressString}',
+                                  style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              // inner spacing
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                // background color
+                                borderRadius: BorderRadius.circular(12),
+                                // rounded corners
+                                border: Border.all(
+                                    color: Colors.black12, width: 1.5),
+                                // border
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Date:",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    controller.formattedDate(
+                                        controller.singleQrCard.value.dateTime),
+                                    style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
                               ),
                             ),
-                            Expanded(
-                                child: Text(
-                                    '${controller.singleQrCard.value.qrId}')),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: const Text(
-                                'Commodity no: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              // inner spacing
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                // background color
+                                borderRadius: BorderRadius.circular(12),
+                                // rounded corners
+                                border: Border.all(
+                                    color: Colors.black12, width: 1.5),
+                                // border
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Time:",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    controller.formattedTime(
+                                        controller.singleQrCard.value.dateTime),
+                                    style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
                               ),
                             ),
-                            Expanded(
-                                child: Text(
-                                    '${controller.singleQrCard.value.cardTitle}')),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: const Text(
-                                'Address: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                            ),
-                            Expanded(
-                                child: Text(
-                                    '${controller.singleQrCard.value.addressString}')),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: const Text(
-                                'Date: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                            ),
-                            Expanded(
-                                child: Text(
-                                    '${formattedDate(controller.singleQrCard.value.dateTime)}')),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: const Text(
-                                'Time: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 15),
-                              ),
-                            ),
-                            Expanded(
-                                child: Text(
-                                    '${formattedTime(controller.singleQrCard.value.dateTime)}')),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
                 ],
               ),
             );

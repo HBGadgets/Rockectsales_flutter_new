@@ -71,7 +71,7 @@ void main() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-  //Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+  // Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
 
   Get.put(AuthController());
   Get.put(DashboardSalesmanController());

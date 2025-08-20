@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRTabs.dart';
 import 'package:rocketsale_rs/screens/saleman/SalesManLocationController.dart';
@@ -43,6 +44,18 @@ class QRCardsController extends GetxController {
     getSalesmanAdminName();
     getQRCards();
     super.onInit();
+  }
+
+  String formattedDate(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+    return DateFormat('dd/MM/yy').format(dateTime);
+  }
+
+  String formattedTime(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+
+    // Format to hh:mm a (12-hour format with AM/PM)
+    return DateFormat('hh:mm a').format(dateTime);
   }
 
   void getAddress() async {

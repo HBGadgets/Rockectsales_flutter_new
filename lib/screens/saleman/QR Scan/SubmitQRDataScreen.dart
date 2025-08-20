@@ -38,7 +38,7 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
       appBar: AppBar(
         backgroundColor: MyColor.dashbord,
         title: const Text(
-          'Submit Info',
+          'Submit Information',
           style: TextStyle(color: Colors.white),
         ),
         leading: const BackButton(
@@ -64,6 +64,22 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "QR code Submission",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                        Text(
+                          "Complete your submission by capturing required photo",
+                        ),
+                      ],
+                    ),
+                  ),
                   Column(
                     children: [
                       Padding(
@@ -83,30 +99,70 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                                 ? Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      // Image.file(
-                                      //   controller.salesManSelfie.value!,
-                                      //   width: 200,
-                                      //   height: 200,
-                                      //   fit: BoxFit.cover,
-                                      // ),
-                                      CircleAvatar(
-                                        radius: 100, // half of width/height
-                                        backgroundImage: FileImage(
-                                            controller.salesManSelfie.value!),
+                                      Container(
+                                        width: 160,
+                                        // same as diameter of CircleAvatar (radius * 2)
+                                        height: 160,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.green,
+                                            // border color
+                                            width: 2, // border width
+                                          ),
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: 80, // half of container size
+                                          backgroundImage: FileImage(
+                                            controller.salesManSelfie.value!,
+                                          ),
+                                        ),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
+                                      Padding(
+                                        padding: EdgeInsets.all(7),
+                                        child: TextButton.icon(
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: MyColor.dashbord,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 12),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const Selfietakingscreen()));
-                                        },
-                                        child: const Icon(
-                                          Icons.edit,
-                                          color: MyColor.dashbord,
+                                                builder: (context) =>
+                                                    const Selfietakingscreen(),
+                                              ),
+                                            );
+                                          },
+                                          icon: const Icon(
+                                              Icons.camera_alt_outlined,
+                                              size: 20),
+                                          label: const Text(
+                                            'Retake',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
                                         ),
                                       )
+                                      // GestureDetector(
+                                      //   onTap: () {
+                                      //     Navigator.push(
+                                      //         context,
+                                      //         MaterialPageRoute(
+                                      //             builder: (context) =>
+                                      //                 const Selfietakingscreen()));
+                                      //   },
+                                      //   child: const Icon(
+                                      //     Icons.edit,
+                                      //     color: MyColor.dashbord,
+                                      //   ),
+                                      // )
                                     ],
                                   )
                                 : Column(
@@ -129,14 +185,42 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                                                 color: Colors.white70),
                                             backgroundColor: Colors.black12),
                                         child: const Icon(
-                                          Icons.camera_alt_outlined,
+                                          Icons.person_2_outlined,
                                           color: Colors.black45,
                                           size: 45,
                                         ),
                                       ),
-                                      const Text(
-                                        'Tap to take selfie',
-                                        style: TextStyle(color: Colors.black54),
+                                      Padding(
+                                        padding: EdgeInsets.all(7),
+                                        child: TextButton.icon(
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: MyColor.dashbord,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 12),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const Selfietakingscreen(),
+                                              ),
+                                            );
+                                          },
+                                          icon: const Icon(
+                                              Icons.camera_alt_outlined,
+                                              size: 20),
+                                          label: const Text(
+                                            'Start Camera',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
                                       )
                                     ],
                                   ),
@@ -150,13 +234,77 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "QR ID:",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
                           widget.cardIdString,
-                          style: TextStyle(color: Colors.black87),
+                          style: const TextStyle(
+                              color: Colors.black54,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Date:",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              controller
+                                  .formattedDate(DateTime.now().toString()),
+                              style: const TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
+                      Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Time:",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              controller
+                                  .formattedTime(DateTime.now().toString()),
+                              style: const TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
+                      Spacer()
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Commodity no:",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          widget.cardNameString,
+                          style: const TextStyle(
+                              color: Colors.black54,
+                              fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
@@ -166,14 +314,26 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Date:",
+                        const Text(
+                          "Address:",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        // Text(
-                        //   widget,
-                        //   style: TextStyle(color: Colors.black87),
-                        // )
+                        Obx(() {
+                          final isGettingLocation =
+                              controller.gettingLocation.value;
+                          if (isGettingLocation) {
+                            return CircularProgressIndicator(
+                              color: MyColor.dashbord,
+                            );
+                          } else {
+                            return Text(
+                              controller.addressString.value,
+                              style: const TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold),
+                            );
+                          }
+                        })
                       ],
                     ),
                   ),

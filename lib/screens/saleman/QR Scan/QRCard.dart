@@ -29,18 +29,6 @@ class Qrcard extends StatelessWidget {
   // final QRCardsController controller = QRCardsController();
   final QRCardsController controller = Get.find<QRCardsController>();
 
-  String formattedDate(String? dateTimeStr) {
-    DateTime dateTime = DateTime.parse(dateTimeStr!);
-    return DateFormat('dd/MM/yy').format(dateTime);
-  }
-
-  String formattedTime(String? dateTimeStr) {
-    DateTime dateTime = DateTime.parse(dateTimeStr!);
-
-    // Format to hh:mm a (12-hour format with AM/PM)
-    return DateFormat('hh:mm a').format(dateTime);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -68,7 +56,7 @@ class Qrcard extends StatelessWidget {
               Text(cardNameString),
               const Spacer(),
               Text(
-                formattedDate(date),
+                controller.formattedDate(date),
                 style: const TextStyle(
                     fontFamily: 'NataSans-Regular', fontSize: 14),
               )

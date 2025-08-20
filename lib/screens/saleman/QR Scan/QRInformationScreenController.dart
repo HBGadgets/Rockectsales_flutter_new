@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../../utils/token_manager.dart';
 import 'QRCardsController.dart';
@@ -32,6 +33,18 @@ class Qrinformationscreencontroller extends GetxController {
     // TODO: implement onInit
     getSingleQRCard(controller.selectedQRid.value);
     super.onInit();
+  }
+
+  String formattedDate(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+    return DateFormat('dd/MM/yy').format(dateTime);
+  }
+
+  String formattedTime(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+
+    // Format to hh:mm a (12-hour format with AM/PM)
+    return DateFormat('hh:mm a').format(dateTime);
   }
 
   void getSingleQRCard(String qrIdString) async {

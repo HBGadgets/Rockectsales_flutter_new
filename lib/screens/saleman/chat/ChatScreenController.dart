@@ -50,6 +50,8 @@ class ChatScreenController extends GetxController {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
+        print(
+            'messages with admin from room $roomName: =======>>>>>> $jsonData');
         final List<dynamic> dataList = jsonData['data'];
         final messagesList =
             dataList.map((item) => Message.fromJson(item)).toList();
