@@ -1,7 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_chat_types/flutter_chat_types.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+// import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -10,19 +9,50 @@ import 'package:uuid/uuid.dart';
 import '../../../utils/token_manager.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+import 'chat_service.dart';
+
 class ChatScreenController extends GetxController {
-  // var salesManName = ''.obs;
-  // var adminName = ''.obs;
+  var salesmanName = ''.obs;
+  var adminName = ''.obs;
   var chatRoomName = ''.obs;
+  var roomId = ''.obs;
   late IO.Socket socket;
-  var messages = <types.TextMessage>[].obs;
+  var messages = <Message>[].obs;
   final isLoading = false.obs;
+  late final SocketService socketService;
 
   @override
   void onInit() {
+    socketService = SocketService();
+    initSocket();
     getOldChats();
     // TODO: implement onInit
     super.onInit();
+  }
+
+  void initSocket() async {
+    String? token = await TokenManager.getToken();
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+    adminName.value = decodedToken['chatusername'];
+    salesmanName.value = decodedToken['username'];
+
+    socketService.connect(token);
+
+    final sortedUsers = [adminName.value, salesmanName.value]..sort();
+    roomId.value = "${sortedUsers[0]}_${sortedUsers[1]}";
+    socketService.joinRoom(roomId.value, salesmanName.value);
+
+    socketService.onReceiveMessage((data) {
+      // final message = types.TextMessage(
+      //   id: const Uuid().v4(),
+      //   author: types.User(id: data['sender'], firstName: salesmanName),
+      //   createdAt: DateTime.now().millisecondsSinceEpoch,
+      //   text: data['message'],
+      // );
+      final message = Message.fromJson(data);
+      messages.add(message);
+      print("recieved message =========>>>>>>> ${data}");
+    });
   }
 
   void getOldChats() async {
@@ -57,18 +87,18 @@ class ChatScreenController extends GetxController {
         final jsonData = json.decode(response.body);
         print('messages with admin from room $roomId: =======>>>>>> $jsonData');
         final List<dynamic> dataList = jsonData['data'];
-        // final messagesList =
-        //     dataList.map((item) => Message.fromJson(item)).toList();
-        final messagesList = dataList.map((item) {
-          return types.TextMessage(
-            id: item['_id'] ?? const Uuid().v4(),
-            author: types.User(id: item['sender']),
-            createdAt:
-                DateTime.tryParse(item['createdAt'])?.millisecondsSinceEpoch ??
-                    DateTime.now().millisecondsSinceEpoch,
-            text: item['Message'], // ✅ always mapped to .text
-          );
-        }).toList();
+        final messagesList =
+            dataList.map((item) => Message.fromJson(item)).toList();
+        // final messagesList = dataList.map((item) {
+        //   return types.TextMessage(
+        //     id: item['_id'] ?? const Uuid().v4(),
+        //     author: types.User(id: item['sender']),
+        //     createdAt:
+        //         DateTime.tryParse(item['createdAt'])?.millisecondsSinceEpoch ??
+        //             DateTime.now().millisecondsSinceEpoch,
+        //     text: item['Message'], // ✅ always mapped to .text
+        //   );
+        // }).toList();
         messages.assignAll(messagesList);
       } else {
         messages.clear();
@@ -82,65 +112,17 @@ class ChatScreenController extends GetxController {
       isLoading.value = false;
     }
   }
-
-  // void getSalesmanAdminName() async {
-  //   String? token = await TokenManager.getToken();
-  //   Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
-  //   print(decodedToken);
-  //   adminName.value = decodedToken['chatusername'];
-  //   salesManName.value = decodedToken['username'];
-  //   final chatRoomName = '${adminName.value}_${salesManName.value}';
-  //   print(adminName.value);
-  //   getOldChats(chatRoomName);
-  //   initSocket(token, chatRoomName, adminName.value);
-  // }
-
-  void initSocket(String token, String roomName, String username) {
-    print('Connecting to chat socket...');
-
-    socket = IO.io(
-      '${dotenv.env['BASE_URL']}',
-      <String, dynamic>{
-        'transports': ['websocket'],
-        'autoConnect': false,
-        'path': '/socket.io',
-        'auth': {
-          'token': 'token=$token',
-        },
-      },
-    );
-    socket.onConnect((_) {
-      // ✅ Send data TO server
-      print("Going into onConnect method");
-
-      socket.emit('joinRoom', {
-        'room': roomName,
-        'username': username,
-      });
-    });
-
-    // 📩 Listen for messages FROM server
-    socket.on('receiveMessage', (data) {
-      print('📩 Message from server: $data');
-    });
-
-    socket.onAny((event, data) {
-      print('📡 Event: $event -> $data');
-    });
-
-    socket.connect();
-  }
 }
 
-// class Message {
-//   String? text;
-//   bool? isUserMessage;
-//   String? reciever;
-//
-//   Message({this.text, this.isUserMessage, this.reciever});
-//
-//   Message.fromJson(Map<String, dynamic> json) {
-//     text = json['Message'];
-//     reciever = json['receiver'];
-//   }
-// }
+class Message {
+  String? text;
+  bool? isUserMessage;
+  String? reciever;
+
+  Message({this.text, this.isUserMessage, this.reciever});
+
+  Message.fromJson(Map<String, dynamic> json) {
+    text = json['Message'];
+    reciever = json['receiver'];
+  }
+}
