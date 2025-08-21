@@ -51,11 +51,11 @@ class _TaskManagementSalesManState extends State<TaskManagementSalesMan> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Tasks",
           style: TextStyle(color: Colors.white),
         ),
-        leading: BackButton(
+        leading: const BackButton(
           color: Colors.white,
         ),
         backgroundColor: MyColor.dashbord,
@@ -64,7 +64,10 @@ class _TaskManagementSalesManState extends State<TaskManagementSalesMan> {
         padding: const EdgeInsets.only(top: 8),
         child: Column(
           children: [
-            const Filtrationsystemtask(),
+            const Padding(
+              padding: EdgeInsets.only(top: 8, left: 8, right: 8),
+              child: Filtrationsystemtask(),
+            ),
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {

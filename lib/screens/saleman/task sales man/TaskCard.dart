@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/screens/saleman/Attendance/Attendance_Page.dart';
 import 'saleTask_controller.dart';
 import '../../../models/task_model/salesTask_model.dart';
 import '../../../resources/my_colors.dart';
@@ -16,7 +17,7 @@ class Taskcard extends StatefulWidget {
 }
 
 class _TaskcardState extends State<Taskcard> {
-  final TaskController taskController = Get.put(TaskController());
+  final TaskController controller = Get.put(TaskController());
 
   String formatDate(DateTime date) {
     return DateFormat('yyyy-MM-dd').format(date);
@@ -26,7 +27,7 @@ class _TaskcardState extends State<Taskcard> {
 
   void changeTaskStatus(String status, String taskId, BuildContext context) {
     try {
-      taskController.toggleTaskStatus(taskId, status);
+      controller.toggleTaskStatus(taskId, status);
       setState(() {
         taskStatus = status;
         print('Marked as ==============>>>>>>>>> $status');
@@ -89,43 +90,133 @@ class _TaskcardState extends State<Taskcard> {
               ));
     }
 
-    return ExpansionTile(
-      title: Text(widget.task.taskDescription),
-      trailing: Text(widget.task.status),
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      margin: const EdgeInsets.only(top: 20, right: 20, left: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        border: Border.all(
+          color: Colors.black12, // border color
+          width: 2, // border thickness
+        ),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.grey,
+        //     spreadRadius: 0.1,
+        //     blurRadius: 7,
+        //     offset: Offset(2, 0.2), // changes position of shadow
+        //   ),
+        // ],
+      ),
+      child: ExpansionTile(
+        title: Text(widget.task.taskDescription),
+        subtitle: Row(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
-              // mainAxisSize: MainAxisSize.min,
-              children: [
-                Text("Address:"),
-                Text(widget.task.address),
-              ],
+            const Icon(
+              Icons.watch_later_outlined,
+              size: 15,
             ),
-            Row(
-              children: [
-                Column(
-                  // mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("Shop:"),
-                    Text(widget.task.shopGeofence?.shopName ?? ""),
-                  ],
-                ),
-                Spacer(),
-                Column(
-                  // mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("Shop:"),
-                    Text(widget.task.shopGeofence?.shopName ?? ""),
-                  ],
-                ),
-              ],
+            const SizedBox(
+              width: 5,
             ),
+            Text(controller.formattedDate(widget.task.deadline.toString())),
           ],
         ),
-      ],
+        trailing: widget.task.status == "Completed"
+            ? Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(
+                      224, 247, 210, 1), // background color
+                  border: Border.all(
+                    color: Colors.green, // border color
+                    width: 2, // border thickness
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(6), // optional: rounded corners
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 1, left: 8, right: 8, bottom: 1),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.pending_actions,
+                        color: Color.fromRGBO(37, 87, 9, 1),
+                        size: 12,
+                      ),
+                      Text(
+                        widget.task.status,
+                        style: const TextStyle(
+                            color: Color.fromRGBO(37, 87, 9, 1)),
+                      ),
+                    ],
+                  ),
+                ))
+            : Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(
+                      247, 210, 210, 1), // background color
+                  border: Border.all(
+                    color: Colors.red, // border color
+                    width: 2, // border thickness
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(6), // optional: rounded corners
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 1, left: 8, right: 8, bottom: 1),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.pending_actions,
+                        color: Colors.red,
+                        size: 12,
+                      ),
+                      Text(
+                        widget.task.status,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                )),
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
+                // mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Address:"),
+                  Text(widget.task.address),
+                ],
+              ),
+              Row(
+                children: [
+                  Column(
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Shop:"),
+                      Text(widget.task.shopGeofence?.shopName ?? ""),
+                    ],
+                  ),
+                  const Spacer(),
+                  Column(
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Shop:"),
+                      Text(widget.task.shopGeofence?.shopName ?? ""),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
 
     //   return Container(
