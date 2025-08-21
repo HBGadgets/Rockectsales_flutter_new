@@ -36,7 +36,7 @@ class TaskController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/get-task?&limit=10$dateTimeFilter&search=$searchString');
+          '${dotenv.env['BASE_URL']}/api/api/get-task?&limit=20$dateTimeFilter&search=$searchString');
       final response = await http.get(
         url,
         headers: {

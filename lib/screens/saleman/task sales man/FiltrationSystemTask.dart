@@ -59,7 +59,7 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
 
   String filterString(DateTime fromDate, DateTime tillDate) {
     String filterString1 =
-        "&fromDate=${formatDate(fromDate)}&toDate=${formatDate(tillDate)}";
+        "&startDate=${formatDate(fromDate)}&endDate=${formatDate(tillDate)}";
     return filterString1;
   }
 
