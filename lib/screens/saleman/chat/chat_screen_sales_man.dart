@@ -107,14 +107,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   reverse: true, // so newest messages appear at the bottom
                   itemCount: controller.messages.length,
                   itemBuilder: (context, index) {
-                    final messageItem = controller.messages[index];
-                    final isSender =
-                        messageItem.reciever == controller.salesmanName.value
-                            ? true
-                            : false;
                     final reversedIndex =
                         controller.messages.length - 1 - index;
                     final message = controller.messages[reversedIndex];
+                    final isSender = message.isUserMessage!;
                     return BubbleSpecialThree(
                       text: message.text ?? '',
                       isSender: isSender,

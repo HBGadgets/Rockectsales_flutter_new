@@ -49,7 +49,12 @@ class ChatScreenController extends GetxController {
       //   createdAt: DateTime.now().millisecondsSinceEpoch,
       //   text: data['message'],
       // );
-      final message = Message.fromJson(data);
+      // final message = Message.fromJson(data);
+      final message = Message(
+          text: data['message'],
+          isUserMessage: data['receiver'] == salesmanName.value ? false : true,
+          reciever: data['receiver']);
+
       messages.add(message);
       print("recieved message =========>>>>>>> ${data}");
     });
@@ -59,12 +64,12 @@ class ChatScreenController extends GetxController {
     isLoading.value = true;
     try {
       String? token = await TokenManager.getToken();
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+      // Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
 
-      final adminName = decodedToken['chatusername'];
-      final salesmanName = decodedToken['username'];
+      // adminName = decodedToken['chatusername'];
+      // salesmanName = decodedToken['username'];
 
-      final sortedUsers = [adminName, salesmanName]..sort();
+      final sortedUsers = [adminName.value, salesmanName.value]..sort();
       final roomId = "${sortedUsers[0]}_${sortedUsers[1]}";
       print("roomId =========>>>>>>> $roomId");
 
@@ -87,8 +92,13 @@ class ChatScreenController extends GetxController {
         final jsonData = json.decode(response.body);
         print('messages with admin from room $roomId: =======>>>>>> $jsonData');
         final List<dynamic> dataList = jsonData['data'];
-        final messagesList =
-            dataList.map((item) => Message.fromJson(item)).toList();
+        final messagesList = dataList
+            .map((item) => Message(
+                text: item['Message'],
+                isUserMessage:
+                    item['receiver'] == salesmanName.value ? false : true,
+                reciever: item['receiver']))
+            .toList();
         // final messagesList = dataList.map((item) {
         //   return types.TextMessage(
         //     id: item['_id'] ?? const Uuid().v4(),
