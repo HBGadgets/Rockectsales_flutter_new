@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/saleman/task%20sales%20man/saleTask_controller.dart';
 
 class Filtrationsystemtask extends StatefulWidget {
@@ -31,6 +32,8 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
   final TextEditingController searchController = TextEditingController();
 
   final TaskController controller = Get.put(TaskController());
+
+  String selectedTag = "Show all";
 
   void _handleTextFieldChange(String value) {
     const duration = Duration(milliseconds: 500);
@@ -206,7 +209,147 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
                   const Icon(Icons.search),
                 ],
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: selectedTag == "Show all"
+                            ? MyColor.dashbord
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(
+                            10), // optional: rounded corners
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 5, bottom: 5, left: 15, right: 15),
+                        child: Text(
+                          "Show all",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: selectedTag == "Show all"
+                                  ? Colors.white
+                                  : MyColor.dashbord),
+                        ),
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: selectedTag == "Completed"
+                            ? MyColor.dashbord
+                            : Colors.green,
+                        borderRadius: BorderRadius.circular(
+                            10), // optional: rounded corners
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.only(
+                            top: 5, bottom: 5, left: 15, right: 15),
+                        child: Text(
+                          "Completed",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: selectedTag == "Pending"
+                            ? MyColor.dashbord
+                            : Colors.redAccent,
+                        borderRadius: BorderRadius.circular(
+                            10), // optional: rounded corners
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.only(
+                            top: 5, bottom: 5, left: 15, right: 15),
+                        child: Text(
+                          "Pending",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      )),
+                )
+              ],
             )
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     Flexible(
+            //       child: Padding(
+            //         padding:
+            //             const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+            //         child: ElevatedButton(
+            //           onPressed: () {},
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: selectedTag == "Show all"
+            //                 ? MyColor.dashbord
+            //                 : Colors.white,
+            //           ),
+            //           child: FittedBox(
+            //             fit: BoxFit.scaleDown,
+            //             child: Text(
+            //               "Show all",
+            //               style: TextStyle(
+            //                 color: selectedTag == "Show all"
+            //                     ? Colors.white
+            //                     : MyColor.dashbord,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     Flexible(
+            //       child: Padding(
+            //         padding:
+            //             const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+            //         child: ElevatedButton(
+            //           onPressed: () {},
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: selectedTag == "Completed"
+            //                 ? MyColor.dashbord
+            //                 : Colors.green,
+            //           ),
+            //           child: const FittedBox(
+            //             fit: BoxFit.scaleDown,
+            //             child: Text(
+            //               "Completed",
+            //               style: TextStyle(color: Colors.white),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     Flexible(
+            //       child: Padding(
+            //         padding:
+            //             const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+            //         child: ElevatedButton(
+            //           onPressed: () {},
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: selectedTag == "Pending"
+            //                 ? MyColor.dashbord
+            //                 : Colors.redAccent,
+            //           ),
+            //           child: const FittedBox(
+            //             fit: BoxFit.scaleDown,
+            //             child: Text(
+            //               "Pending",
+            //               style: TextStyle(color: Colors.white),
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // )
           ],
         ));
   }

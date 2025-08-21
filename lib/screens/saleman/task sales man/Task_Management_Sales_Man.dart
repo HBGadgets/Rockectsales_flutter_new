@@ -16,7 +16,7 @@ import '../../../resources/my_colors.dart';
 import '../../admin/task/task details/Task_Details.dart';
 
 class TaskManagementSalesMan extends StatefulWidget {
-  TaskManagementSalesMan({super.key});
+  const TaskManagementSalesMan({super.key});
 
   @override
   State<TaskManagementSalesMan> createState() => _TaskManagementSalesManState();
