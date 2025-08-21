@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
-import '../../../controllers/task_controller/saleTask_controller.dart';
+import 'saleTask_controller.dart';
 import '../../../models/task_model/salesTask_model.dart';
 import '../../../resources/my_colors.dart';
 
@@ -89,114 +89,154 @@ class _TaskcardState extends State<Taskcard> {
               ));
     }
 
-    return Container(
-      // padding: EdgeInsets.all(15),
-      margin: const EdgeInsets.only(top: 20, right: 20, left: 20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey,
-            spreadRadius: 0.5,
-            blurRadius: 10,
-            offset: Offset(2, 2), // changes position of shadow
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            leading: const Icon(
-              Icons.pending_actions,
-              size: 35,
-              color: Colors.black,
+    return ExpansionTile(
+      title: Text(widget.task.taskDescription),
+      trailing: Text(widget.task.status),
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
+              // mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Address:"),
+                Text(widget.task.address),
+              ],
             ),
-            title: Text(
-              widget.task.taskTitle,
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
+            Row(
+              children: [
+                Column(
+                  // mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("Shop:"),
+                    Text(widget.task.shopGeofence?.shopName ?? ""),
+                  ],
+                ),
+                Spacer(),
+                Column(
+                  // mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("Shop:"),
+                    Text(widget.task.shopGeofence?.shopName ?? ""),
+                  ],
+                ),
+              ],
             ),
-          ),
-          ExpansionTile(
-            leading: const Icon(
-              Icons.location_on,
-              color: Colors.red,
-              size: 35,
-            ),
-            title: Text(
-              widget.task.address,
-            ),
-            shape: const Border(),
-            collapsedShape: const Border(),
-            children: [
-              Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(
-                      Icons.description_outlined,
-                      size: 35,
-                      color: Colors.black,
-                    ),
-                    title: Text(widget.task.taskDescription),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10, left: 10),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(
-                            taskStatus == 'Pending'
-                                ? Colors.green
-                                : Colors.redAccent),
-                        foregroundColor:
-                            WidgetStateProperty.all<Color>(Colors.white),
-                      ),
-                      onPressed: () {
-                        String status =
-                            taskStatus == 'Completed' ? 'Pending' : 'Completed';
-                        changeStatusDialogue(status);
-                        // changeTaskStatus(status, widget.task.id, context);
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 5),
-                            child: Icon(taskStatus == 'Pending'
-                                ? Icons.check_circle_outline
-                                : Icons.block),
-                          ),
-                          Text(taskStatus == 'Pending'
-                              ? 'Mark as Completed'
-                              : 'Mark as Pending'),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 10),
-            padding: const EdgeInsets.only(top: 5, bottom: 5),
-            // height: 20,
-            decoration: BoxDecoration(
-              color:
-                  taskStatus == "Completed" ? Colors.green : Colors.redAccent,
-              borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(12),
-                  bottomRight: Radius.circular(12)),
-            ),
-            child: Center(
-              child: Text(
-                taskStatus,
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-          )
-        ],
-      ),
+          ],
+        ),
+      ],
     );
+
+    //   return Container(
+    //     // padding: EdgeInsets.all(15),
+    //     margin: const EdgeInsets.only(top: 20, right: 20, left: 20),
+    //     decoration: const BoxDecoration(
+    //       color: Colors.white,
+    //       borderRadius: BorderRadius.all(Radius.circular(12)),
+    //       boxShadow: [
+    //         BoxShadow(
+    //           color: Colors.grey,
+    //           spreadRadius: 0.5,
+    //           blurRadius: 10,
+    //           offset: Offset(2, 2), // changes position of shadow
+    //         ),
+    //       ],
+    //     ),
+    //     child: Column(
+    //       children: [
+    //         ListTile(
+    //           title: Text(
+    //             widget.task.taskDescription,
+    //             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 17),
+    //           ),
+    //           trailing: Container(
+    //             child: Text(widget.task.status),
+    //             decoration:
+    //                 BoxDecoration(color: Color.fromRGBO(250, 185, 185, 0)),
+    //           ),
+    //         ),
+    //         ExpansionTile(
+    //           leading: const Icon(
+    //             Icons.location_on,
+    //             color: Colors.red,
+    //             size: 35,
+    //           ),
+    //           title: Text(
+    //             widget.task.address,
+    //           ),
+    //           shape: const Border(),
+    //           collapsedShape: const Border(),
+    //           children: [
+    //             Column(
+    //               children: [
+    //                 ListTile(
+    //                   leading: const Icon(
+    //                     Icons.description_outlined,
+    //                     size: 35,
+    //                     color: Colors.black,
+    //                   ),
+    //                   title: Text(widget.task.taskDescription),
+    //                 ),
+    //                 Padding(
+    //                   padding: const EdgeInsets.only(right: 10, left: 10),
+    //                   child: ElevatedButton(
+    //                     style: ButtonStyle(
+    //                       backgroundColor: WidgetStateProperty.all(
+    //                           taskStatus == 'Pending'
+    //                               ? Colors.green
+    //                               : Colors.redAccent),
+    //                       foregroundColor:
+    //                           WidgetStateProperty.all<Color>(Colors.white),
+    //                     ),
+    //                     onPressed: () {
+    //                       String status =
+    //                           taskStatus == 'Completed' ? 'Pending' : 'Completed';
+    //                       changeStatusDialogue(status);
+    //                       // changeTaskStatus(status, widget.task.id, context);
+    //                     },
+    //                     child: Row(
+    //                       mainAxisSize: MainAxisSize.min,
+    //                       children: [
+    //                         Padding(
+    //                           padding: const EdgeInsets.only(right: 5),
+    //                           child: Icon(taskStatus == 'Pending'
+    //                               ? Icons.check_circle_outline
+    //                               : Icons.block),
+    //                         ),
+    //                         Text(taskStatus == 'Pending'
+    //                             ? 'Mark as Completed'
+    //                             : 'Mark as Pending'),
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 )
+    //               ],
+    //             )
+    //           ],
+    //         ),
+    //         Container(
+    //           margin: const EdgeInsets.only(top: 10),
+    //           padding: const EdgeInsets.only(top: 5, bottom: 5),
+    //           // height: 20,
+    //           decoration: BoxDecoration(
+    //             color:
+    //                 taskStatus == "Completed" ? Colors.green : Colors.redAccent,
+    //             borderRadius: const BorderRadius.only(
+    //                 bottomLeft: Radius.circular(12),
+    //                 bottomRight: Radius.circular(12)),
+    //           ),
+    //           child: Center(
+    //             child: Text(
+    //               taskStatus,
+    //               style: const TextStyle(
+    //                   color: Colors.white, fontWeight: FontWeight.bold),
+    //             ),
+    //           ),
+    //         )
+    //       ],
+    //     ),
+    //   );
+    // }
   }
 }

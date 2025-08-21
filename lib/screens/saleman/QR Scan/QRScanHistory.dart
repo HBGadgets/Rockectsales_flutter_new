@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:rocketsale_rs/resources/my_colors.dart';
-import 'package:rocketsale_rs/screens/saleman/QR%20Scan/FiltrationSystem.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/FiltrationSystemQR.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCard.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
 
@@ -22,7 +22,6 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
   final QRCardsController controller =
       Get.put(QRCardsController(), permanent: false);
   final scrollController = ScrollController();
-  int page = 2;
 
   @override
   void initState() {
@@ -50,8 +49,7 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
       padding: const EdgeInsets.only(top: 8),
       child: Column(
         children: [
-          // SizedBox(height: size.width * 0.02),
-          const Filtrationsystem(),
+          const FiltrationsystemQR(),
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
@@ -66,8 +64,6 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
                   backgroundColor: Colors.white,
                   color: MyColor.dashbord,
                   onRefresh: () async {
-                    // controller.isMoreCardsAvailable.value = true;
-                    // controller.page.value = 1;
                     controller.getQRCards();
                   },
                   child: ListView.builder(
@@ -76,19 +72,6 @@ class _QrscanhistoryState extends State<Qrscanhistory> {
                     itemBuilder: (context, index) {
                       if (index < controller.qrCards.length) {
                         final item = controller.qrCards[index];
-                        // return InkWell(
-                        //   onTap: () {
-                        //     controller.selectedQRid.value = item.qrObjectId!;
-                        //     Get.to(() => Qrinformationscreen(
-                        //         ));
-                        //   },
-                        //   child: Qrcard(
-                        //       cardIdString: item.qrId ?? '',
-                        //       cardNameString: item.cardTitle ?? '',
-                        //       date: item.dateTime ?? '',
-                        //       time: item.dateTime ?? '',
-                        //       addressString: item.addressString ?? ''),
-                        // );
                         return Qrcard(
                           cardIdString: item.qrId ?? '',
                           cardNameString: item.cardTitle ?? '',

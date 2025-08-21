@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-// import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:uuid/uuid.dart';
 import '../../../utils/token_manager.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -64,10 +62,6 @@ class ChatScreenController extends GetxController {
     isLoading.value = true;
     try {
       String? token = await TokenManager.getToken();
-      // Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
-
-      // adminName = decodedToken['chatusername'];
-      // salesmanName = decodedToken['username'];
 
       final sortedUsers = [adminName.value, salesmanName.value]..sort();
       final roomId = "${sortedUsers[0]}_${sortedUsers[1]}";
@@ -99,16 +93,6 @@ class ChatScreenController extends GetxController {
                     item['receiver'] == salesmanName.value ? false : true,
                 reciever: item['receiver']))
             .toList();
-        // final messagesList = dataList.map((item) {
-        //   return types.TextMessage(
-        //     id: item['_id'] ?? const Uuid().v4(),
-        //     author: types.User(id: item['sender']),
-        //     createdAt:
-        //         DateTime.tryParse(item['createdAt'])?.millisecondsSinceEpoch ??
-        //             DateTime.now().millisecondsSinceEpoch,
-        //     text: item['Message'], // ✅ always mapped to .text
-        //   );
-        // }).toList();
         messages.assignAll(messagesList);
       } else {
         messages.clear();

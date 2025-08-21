@@ -1,31 +1,18 @@
-import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-
-// import 'package:get/get_rx/src/rx_workers/rx_workers.dart';
-// import 'package:get/get_rx/src/rx_workers/utils/debouncer.dart';
-import 'package:intl/intl.dart';
-
 import 'package:flutter_debouncer/flutter_debouncer.dart';
-import 'package:rocketsale_rs/resources/my_assets.dart';
-import 'package:rocketsale_rs/resources/my_colors.dart';
-import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
+import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/screens/saleman/task%20sales%20man/saleTask_controller.dart';
 
-import '../../../../controllers/admin_attendance_controller.dart';
-import '../../../../controllers/attendance_tab_controller.dart';
-import '../../../../models/admin_attendance_model.dart' as adminModel;
-
-class Filtrationsystem extends StatefulWidget {
-  const Filtrationsystem({super.key});
+class Filtrationsystemtask extends StatefulWidget {
+  const Filtrationsystemtask({super.key});
 
   @override
-  State<Filtrationsystem> createState() => _FiltrationsystemState();
+  State<Filtrationsystemtask> createState() => _FiltrationsystemtaskState();
 }
 
-class _FiltrationsystemState extends State<Filtrationsystem> {
+class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
   DateTime? fromDate;
   DateTime? tillDate;
 
@@ -40,13 +27,10 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
   // late String dateTimeFilter = '';
 
   final Debouncer _debouncer = Debouncer();
-  late String salesmanName;
 
   final TextEditingController searchController = TextEditingController();
 
-  var filteredAttendanceList = <adminModel.Data>[];
-
-  final QRCardsController controller = Get.put(QRCardsController());
+  final TaskController controller = Get.put(TaskController());
 
   void _handleTextFieldChange(String value) {
     const duration = Duration(milliseconds: 500);
@@ -54,7 +38,7 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
       duration: duration,
       onDebounce: () {
         controller.searchString.value = value;
-        controller.getQRCards();
+        controller.getTasks();
       },
     );
   }
@@ -192,7 +176,7 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                   onPressed: () {
                     controller.dateTimeFilter.value = filterString(
                         fromDate ?? DateTime.now(), tillDate ?? DateTime.now());
-                    controller.getQRCards();
+                    controller.getTasks();
                   },
                   label: const Icon(
                     Icons.check,
@@ -201,91 +185,6 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                 ),
               ],
             ),
-
-            // Row(
-            //   children: [
-            //     // Date box takes 2/3rd
-            //     OutlinedButton.icon(
-            //       style: OutlinedButton.styleFrom(
-            //         shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(7),
-            //         ),
-            //         side: const BorderSide(color: Colors.black54),
-            //       ),
-            //       onPressed: () => _selectFromDate(context),
-            //       icon: const Icon(
-            //         Icons.date_range,
-            //         color: Colors.black,
-            //       ),
-            //       label: Row(
-            //         children: [
-            //           Text(
-            //             fromDate != null
-            //                 ? DateFormat('dd/MM/yyyy').format(fromDate!)
-            //                 // : DateFormat('dd/MM/yyyy').format(Today),
-            //                 : '...',
-            //             style: const TextStyle(color: Colors.black),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //
-            //     // const SizedBox(width: 10),
-            //     const Padding(
-            //       padding: EdgeInsets.all(2.0),
-            //       child: Icon(
-            //         Icons.arrow_forward_outlined,
-            //         size: 15,
-            //       ),
-            //     ),
-            //
-            //     OutlinedButton.icon(
-            //       style: OutlinedButton.styleFrom(
-            //         shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(7),
-            //         ),
-            //         side: const BorderSide(color: Colors.black54),
-            //       ),
-            //       onPressed: () => _selectTillDate(context),
-            //       icon: const Icon(
-            //         Icons.date_range,
-            //         color: Colors.black,
-            //       ),
-            //       label: Row(
-            //         children: [
-            //           Text(
-            //             tillDate != null
-            //                 ? DateFormat('dd/MM/yyyy').format(tillDate!)
-            //                 : DateFormat('dd/MM/yyyy').format(Today),
-            //             style: const TextStyle(color: Colors.black),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //
-            //     const SizedBox(width: 10),
-            //
-            //     // Apply button takes 1/3rd
-            //     OutlinedButton.icon(
-            //       style: OutlinedButton.styleFrom(
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.circular(7),
-            //           ),
-            //           // backgroundColor: MyColor.dashbord,
-            //           // side: const BorderSide(color: Colors.black54),
-            //           side: const BorderSide(color: Colors.black)),
-            //       onPressed: () {
-            //         controller.dateTimeFilter.value = filterString(
-            //             fromDate ?? DateTime.now(), tillDate ?? DateTime.now());
-            //         controller.getQRCards();
-            //       },
-            //       label: const Icon(
-            //         Icons.check,
-            //         color: Colors.black,
-            //       ),
-            //     ),
-            //   ],
-            // ),
             Container(
               margin: const EdgeInsets.only(top: 7, bottom: 7),
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -299,7 +198,7 @@ class _FiltrationsystemState extends State<Filtrationsystem> {
                     child: TextField(
                       onChanged: _handleTextFieldChange,
                       decoration: const InputDecoration(
-                        hintText: 'Search QR',
+                        hintText: 'Search Tasks',
                         border: InputBorder.none,
                       ),
                     ),

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/admin/task/task%20management/taskAdd.dart';
-import '../../../../controllers/task_controller/saleTask_controller.dart';
+import '../../../saleman/task sales man/saleTask_controller.dart';
 import '../../../../controllers/task_management_controller.dart';
 import '../../../../models/get_task_model.dart';
 import '../../../../resources/my_assets.dart';
