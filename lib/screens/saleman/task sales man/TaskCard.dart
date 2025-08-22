@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/resources/my_font_weight.dart';
 import 'package:rocketsale_rs/screens/saleman/Attendance/Attendance_Page.dart';
 import 'saleTask_controller.dart';
 import '../../../models/task_model/salesTask_model.dart';
@@ -19,8 +20,11 @@ class Taskcard extends StatefulWidget {
 class _TaskcardState extends State<Taskcard> {
   final TaskController controller = Get.put(TaskController());
 
+  final ExpansibleController expansionController = ExpansibleController();
+  bool _isExpanded = false;
+
   String formatDate(DateTime date) {
-    return DateFormat('yyyy-MM-dd').format(date);
+    return DateFormat('yyyy/MM/dd').format(date);
   }
 
   late String taskStatus;
@@ -99,124 +103,309 @@ class _TaskcardState extends State<Taskcard> {
           color: Colors.black12, // border color
           width: 2, // border thickness
         ),
-        // boxShadow: [
-        //   BoxShadow(
-        //     color: Colors.grey,
-        //     spreadRadius: 0.1,
-        //     blurRadius: 7,
-        //     offset: Offset(2, 0.2), // changes position of shadow
-        //   ),
-        // ],
       ),
-      child: ExpansionTile(
-        title: Text(widget.task.taskDescription,
-            maxLines: 1, softWrap: false, overflow: TextOverflow.fade),
-        subtitle: Row(
+      child: GestureDetector(
+        onTap: () {
+          if (expansionController.isExpanded) {
+            expansionController.collapse();
+          } else {
+            expansionController.expand();
+          }
+        },
+        child: ExpansionTile(
+          shape: const Border(),
+          collapsedShape: const Border(),
+          tilePadding:
+              const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
+          onExpansionChanged: (expanded) {
+            setState(() {
+              _isExpanded = expanded;
+            });
+          },
+          controller: expansionController,
+          title: Text(widget.task.taskDescription,
+              maxLines: _isExpanded ? 20 : 1,
+              softWrap: _isExpanded ? true : false,
+              overflow: TextOverflow.fade),
+          subtitle: _isExpanded
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    // crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              color: MyColor.dashbord,
+                              size: 20,
+                            ),
+                            Text(
+                              "Address:",
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        widget.task.address,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                )
+              : Row(
+                  children: [
+                    const Icon(
+                      Icons.watch_later_outlined,
+                      size: 20,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black54),
+                        controller
+                            .formattedDate(widget.task.deadline.toString())),
+                  ],
+                ),
+          trailing: widget.task.status == "Completed"
+              ? Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(
+                        224, 247, 210, 1), // background color
+                    border: Border.all(
+                      color: Colors.green, // border color
+                      width: 1, // border thickness
+                    ),
+                    borderRadius:
+                        BorderRadius.circular(6), // optional: rounded corners
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 1, left: 8, right: 8, bottom: 1),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.check_circle_outline,
+                          color: Color.fromRGBO(37, 87, 9, 1),
+                          size: 12,
+                        ),
+                        Text(
+                          widget.task.status,
+                          style: const TextStyle(
+                              color: Color.fromRGBO(37, 87, 9, 1)),
+                        ),
+                      ],
+                    ),
+                  ))
+              : Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(
+                        247, 210, 210, 1), // background color
+                    border: Border.all(
+                      color: Colors.red, // border color
+                      width: 1, // border thickness
+                    ),
+                    borderRadius:
+                        BorderRadius.circular(6), // optional: rounded corners
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 1, left: 8, right: 8, bottom: 1),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.pending_actions,
+                          color: Colors.red,
+                          size: 12,
+                        ),
+                        Text(
+                          widget.task.status,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  )),
           children: [
-            const Icon(
-              Icons.watch_later_outlined,
-              size: 15,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 2.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.warehouse_outlined,
+                              color: MyColor.dashbord,
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 3,
+                            ),
+                            Text(
+                              "Shop Name:",
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        widget.task.shopGeofence!.shopName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Padding(
+                        padding: const EdgeInsets.only(bottom: 2.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.watch_later_outlined,
+                              color: MyColor.dashbord,
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 3,
+                            ),
+                            Text(
+                              "Deadline:",
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        formatDate(widget.task.deadline),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(
-              width: 5,
-            ),
-            Text(controller.formattedDate(widget.task.deadline.toString())),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 8.0, bottom: 8, right: 4),
+                  child: Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: MyColor.dashbord,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10), // Adjust radius as needed
+                          ),
+                        ),
+                        onPressed: () {},
+                        child: const Row(
+                          children: [
+                            Icon(
+                              Icons.map,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 2),
+                            Text(
+                              "Set destination",
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(right: 8.0, bottom: 8, left: 4),
+                  child: Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                        style: ElevatedButton.styleFrom(
+                          side: BorderSide(
+                            color: widget.task.status == "Completed"
+                                ? Colors.red
+                                : Colors.green,
+                            width: 1.5, // thickness of border
+                          ),
+                          backgroundColor: widget.task.status == "Completed"
+                              ? const Color.fromRGBO(247, 210, 210, 1)
+                              : const Color.fromRGBO(224, 247, 210, 1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10), // Adjust radius as needed
+                          ),
+                        ),
+                        onPressed: () {},
+                        child: widget.task.status == "Completed"
+                            ? const Row(
+                                children: [
+                                  Icon(
+                                    Icons.pending_actions,
+                                    color: Colors.red,
+                                  ),
+                                  Text(
+                                    "Mark as Pending",
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              )
+                            : const Row(
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    size: 15,
+                                    color: Color.fromRGBO(37, 87, 9, 1),
+                                  ),
+                                  Text(
+                                    "Mark as complete",
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color.fromRGBO(37, 87, 9, 1),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              )),
+                  ),
+                )
+              ],
+            )
           ],
         ),
-        trailing: widget.task.status == "Completed"
-            ? Container(
-                decoration: BoxDecoration(
-                  color: const Color.fromRGBO(
-                      224, 247, 210, 1), // background color
-                  border: Border.all(
-                    color: Colors.green, // border color
-                    width: 1, // border thickness
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(6), // optional: rounded corners
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 1, left: 8, right: 8, bottom: 1),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.pending_actions,
-                        color: Color.fromRGBO(37, 87, 9, 1),
-                        size: 12,
-                      ),
-                      Text(
-                        widget.task.status,
-                        style: const TextStyle(
-                            color: Color.fromRGBO(37, 87, 9, 1)),
-                      ),
-                    ],
-                  ),
-                ))
-            : Container(
-                decoration: BoxDecoration(
-                  color: const Color.fromRGBO(
-                      247, 210, 210, 1), // background color
-                  border: Border.all(
-                    color: Colors.red, // border color
-                    width: 1, // border thickness
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(6), // optional: rounded corners
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 1, left: 8, right: 8, bottom: 1),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.pending_actions,
-                        color: Colors.red,
-                        size: 12,
-                      ),
-                      Text(
-                        widget.task.status,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    ],
-                  ),
-                )),
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
-                // mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("Address:"),
-                  Text(widget.task.address),
-                ],
-              ),
-              Row(
-                children: [
-                  Column(
-                    // mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("Shop:"),
-                      Text(widget.task.shopGeofence?.shopName ?? ""),
-                    ],
-                  ),
-                  const Spacer(),
-                  Column(
-                    // mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("Shop:"),
-                      Text(widget.task.shopGeofence?.shopName ?? ""),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

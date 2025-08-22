@@ -61,76 +61,107 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                 ),
               );
             } else {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "QR code Submission",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                        Text(
-                          "Complete your submission by capturing required photo",
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 8.0, bottom: 8, right: 4, left: 4),
-                        child: Container(
-                          width: double.infinity, // 👈 full width container
-                          height: 250,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10)),
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "QR code Submission",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
                           ),
-                          child: Center(
-                            // 👈 centers the button
-                            child: controller.salesManSelfie.value != null
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 160,
-                                        // same as diameter of CircleAvatar (radius * 2)
-                                        height: 160,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.green,
-                                            // border color
-                                            width: 2, // border width
-                                          ),
-                                        ),
-                                        child: CircleAvatar(
-                                          radius: 80, // half of container size
-                                          backgroundImage: FileImage(
-                                            controller.salesManSelfie.value!,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(7),
-                                        child: TextButton.icon(
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: MyColor.dashbord,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 12),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
+                          Text(
+                            "Complete your submission by capturing required photo",
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 8.0, bottom: 8, right: 4, left: 4),
+                          child: Container(
+                            width: double.infinity, // 👈 full width container
+                            height: 250,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: Center(
+                              // 👈 centers the button
+                              child: controller.salesManSelfie.value != null
+                                  ? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 160,
+                                          // same as diameter of CircleAvatar (radius * 2)
+                                          height: 160,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors.green,
+                                              // border color
+                                              width: 2, // border width
                                             ),
                                           ),
+                                          child: CircleAvatar(
+                                            radius:
+                                                80, // half of container size
+                                            backgroundImage: FileImage(
+                                              controller.salesManSelfie.value!,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(7),
+                                          child: TextButton.icon(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.white,
+                                              backgroundColor: MyColor.dashbord,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const Selfietakingscreen(),
+                                                ),
+                                              );
+                                            },
+                                            icon: const Icon(
+                                                Icons.camera_alt_outlined,
+                                                size: 20),
+                                            label: const Text(
+                                              'Retake',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  : Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        OutlinedButton(
                                           onPressed: () {
                                             Navigator.push(
                                               context,
@@ -140,269 +171,235 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                                               ),
                                             );
                                           },
-                                          icon: const Icon(
-                                              Icons.camera_alt_outlined,
-                                              size: 20),
-                                          label: const Text(
-                                            'Retake',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                          style: OutlinedButton.styleFrom(
+                                              minimumSize: const Size(100,
+                                                  100), // 👈 button's own size
+                                              side: const BorderSide(
+                                                  color: Colors.white70),
+                                              backgroundColor: Colors.black12),
+                                          child: const Icon(
+                                            Icons.person_2_outlined,
+                                            color: Colors.black45,
+                                            size: 45,
                                           ),
                                         ),
-                                      )
-                                      // GestureDetector(
-                                      //   onTap: () {
-                                      //     Navigator.push(
-                                      //         context,
-                                      //         MaterialPageRoute(
-                                      //             builder: (context) =>
-                                      //                 const Selfietakingscreen()));
-                                      //   },
-                                      //   child: const Icon(
-                                      //     Icons.edit,
-                                      //     color: MyColor.dashbord,
-                                      //   ),
-                                      // )
-                                    ],
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      OutlinedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const Selfietakingscreen(),
-                                            ),
-                                          );
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                            minimumSize: const Size(100,
-                                                100), // 👈 button's own size
-                                            side: const BorderSide(
-                                                color: Colors.white70),
-                                            backgroundColor: Colors.black12),
-                                        child: const Icon(
-                                          Icons.person_2_outlined,
-                                          color: Colors.black45,
-                                          size: 45,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(7),
-                                        child: TextButton.icon(
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: Colors.white,
-                                            backgroundColor: MyColor.dashbord,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 12),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const Selfietakingscreen(),
+                                        Padding(
+                                          padding: EdgeInsets.all(7),
+                                          child: TextButton.icon(
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.white,
+                                              backgroundColor: MyColor.dashbord,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
-                                            );
-                                          },
-                                          icon: const Icon(
-                                              Icons.camera_alt_outlined,
-                                              size: 20),
-                                          label: const Text(
-                                            'Start Camera',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const Selfietakingscreen(),
+                                                ),
+                                              );
+                                            },
+                                            icon: const Icon(
+                                                Icons.camera_alt_outlined,
+                                                size: 20),
+                                            label: const Text(
+                                              'Start Camera',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                        )
+                                      ],
+                                    ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "QR ID:",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          widget.cardIdString,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold),
-                        )
                       ],
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Date:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              controller
-                                  .formattedDate(DateTime.now().toString()),
-                              style: const TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "QR ID:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            widget.cardIdString,
+                            style: const TextStyle(
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
                       ),
-                      Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Time:",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              controller
-                                  .formattedTime(DateTime.now().toString()),
-                              style: const TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                      ),
-                      Spacer()
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                    Row(
                       children: [
-                        const Text(
-                          "Commodity no:",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Date:",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                controller
+                                    .formattedDate(DateTime.now().toString()),
+                                style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
                         ),
-                        Text(
-                          widget.cardNameString,
-                          style: const TextStyle(
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold),
-                        )
+                        Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Time:",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                controller
+                                    .formattedTime(DateTime.now().toString()),
+                                style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        ),
+                        Spacer()
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Commodity no:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            widget.cardNameString,
+                            style: const TextStyle(
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Address:",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Obx(() {
+                            final isGettingLocation =
+                                controller.gettingLocation.value;
+                            if (isGettingLocation) {
+                              return CircularProgressIndicator(
+                                color: MyColor.dashbord,
+                              );
+                            } else {
+                              return Text(
+                                controller.addressString.value,
+                                style: const TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold),
+                              );
+                            }
+                          })
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
                       children: [
-                        const Text(
-                          "Address:",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Expanded(
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  shape: WidgetStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          side: BorderSide(color: Colors.red))),
+                                  backgroundColor: WidgetStateProperty.all(
+                                      Colors.redAccent)),
+                              onPressed: () {
+                                // Navigator.pop(context);
+                                controller.salesManSelfie.value = null;
+                                Navigator.pushAndRemoveUntil<dynamic>(
+                                    context,
+                                    MaterialPageRoute<dynamic>(
+                                      builder: (BuildContext context) =>
+                                          DashboardSalesman(),
+                                    ),
+                                    (Route<dynamic> route) =>
+                                        false //if you want to disable back feature set to false
+                                    );
+                              },
+                              child: const Text('Cancel',
+                                  style: TextStyle(color: Colors.white))),
                         ),
+                        const SizedBox(width: 8),
                         Obx(() {
                           final isGettingLocation =
                               controller.gettingLocation.value;
-                          if (isGettingLocation) {
-                            return CircularProgressIndicator(
-                              color: MyColor.dashbord,
-                            );
-                          } else {
-                            return Text(
-                              controller.addressString.value,
-                              style: const TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.bold),
-                            );
-                          }
-                        })
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
+                          return Expanded(
+                              child: ElevatedButton(
                             style: ButtonStyle(
                                 shape: WidgetStateProperty.all<
                                         RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.0),
-                                        side: BorderSide(color: Colors.red))),
-                                backgroundColor:
-                                    WidgetStateProperty.all(Colors.redAccent)),
-                            onPressed: () {
-                              // Navigator.pop(context);
-                              controller.salesManSelfie.value = null;
-                              Navigator.pushAndRemoveUntil<dynamic>(
-                                  context,
-                                  MaterialPageRoute<dynamic>(
-                                    builder: (BuildContext context) =>
-                                        DashboardSalesman(),
-                                  ),
-                                  (Route<dynamic> route) =>
-                                      false //if you want to disable back feature set to false
-                                  );
-                            },
-                            child: const Text('Cancel',
-                                style: TextStyle(color: Colors.white))),
-                      ),
-                      const SizedBox(width: 8),
-                      Obx(() {
-                        final isGettingLocation =
-                            controller.gettingLocation.value;
-                        return Expanded(
-                            child: ElevatedButton(
-                          style: ButtonStyle(
-                              shape: WidgetStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      side: BorderSide(color: Colors.green))),
-                              backgroundColor: isGettingLocation ||
-                                      controller.salesManSelfie.value == null
-                                  ? WidgetStateProperty.all(Colors.grey)
-                                  : WidgetStateProperty.all(Colors.green)),
-                          onPressed: isGettingLocation ||
-                                  controller.salesManSelfie.value == null
-                              ? null
-                              : () {
-                                  controller.postQR(
-                                    boxNumber: widget.cardNameString,
-                                    qrID: widget.cardIdString,
-                                    context: context,
-                                  );
-                                },
-                          child: const Text(
-                            "Submit",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ));
-                      })
-                    ],
-                  ),
-                  Spacer(),
-                ],
+                                        side: BorderSide(color: Colors.green))),
+                                backgroundColor: isGettingLocation ||
+                                        controller.salesManSelfie.value == null
+                                    ? WidgetStateProperty.all(Colors.grey)
+                                    : WidgetStateProperty.all(Colors.green)),
+                            onPressed: isGettingLocation ||
+                                    controller.salesManSelfie.value == null
+                                ? null
+                                : () {
+                                    controller.postQR(
+                                      boxNumber: widget.cardNameString,
+                                      qrID: widget.cardIdString,
+                                      context: context,
+                                    );
+                                  },
+                            child: const Text(
+                              "Submit",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ));
+                        })
+                      ],
+                    ),
+                    // Spacer(),
+                  ],
+                ),
               );
             }
           })),

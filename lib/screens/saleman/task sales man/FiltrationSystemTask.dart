@@ -33,8 +33,6 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
 
   final TaskController controller = Get.put(TaskController());
 
-  String selectedTag = "Show all";
-
   void _handleTextFieldChange(String value) {
     const duration = Duration(milliseconds: 500);
     _debouncer.debounce(
@@ -105,7 +103,7 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.only(left: 5, right: 5),
+        margin: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
         child: Column(
           children: [
             Row(
@@ -213,68 +211,98 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: selectedTag == "Show all"
-                            ? MyColor.dashbord
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(
-                            10), // optional: rounded corners
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 5, bottom: 5, left: 15, right: 15),
-                        child: Text(
-                          "Show all",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: selectedTag == "Show all"
-                                  ? Colors.white
-                                  : MyColor.dashbord),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      print("show all clicked");
+                      controller.selectedTag.value = "";
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
+                    child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: MyColor.dashbord, // border color
+                            width: 1, // border thickness
+                          ),
+                          color: controller.selectedTag.value == ""
+                              ? MyColor.dashbord
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(
+                              10), // optional: rounded corners
                         ),
-                      )),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, bottom: 10, left: 20, right: 20),
+                          child: Text(
+                            "Show all",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: controller.selectedTag.value == ""
+                                    ? Colors.white
+                                    : MyColor.dashbord),
+                          ),
+                        )),
+                  ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: selectedTag == "Completed"
-                            ? MyColor.dashbord
-                            : Colors.green,
-                        borderRadius: BorderRadius.circular(
-                            10), // optional: rounded corners
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(
-                            top: 5, bottom: 5, left: 15, right: 15),
-                        child: Text(
-                          "Completed",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      print("completed clicked");
+                      controller.selectedTag.value = "completed";
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: controller.selectedTag.value == "completed"
+                              ? MyColor.dashbord
+                              : Colors.green,
+                          borderRadius: BorderRadius.circular(
+                              10), // optional: rounded corners
                         ),
-                      )),
+                        child: const Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, bottom: 10, left: 20, right: 20),
+                          child: Text(
+                            "Completed.",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        )),
+                  ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: selectedTag == "Pending"
-                            ? MyColor.dashbord
-                            : Colors.redAccent,
-                        borderRadius: BorderRadius.circular(
-                            10), // optional: rounded corners
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.only(
-                            top: 5, bottom: 5, left: 15, right: 15),
-                        child: Text(
-                          "Pending",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      print("pending clicked");
+                      controller.selectedTag.value = "pending";
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: controller.selectedTag.value == "pending"
+                              ? MyColor.dashbord
+                              : Colors.redAccent,
+                          borderRadius: BorderRadius.circular(
+                              10), // optional: rounded corners
                         ),
-                      )),
+                        child: const Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, bottom: 10, left: 20, right: 20),
+                          child: Text(
+                            "Pending",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        )),
+                  ),
                 )
               ],
             )

@@ -14,6 +14,7 @@ class TaskController extends GetxController {
   final RxString error = ''.obs;
   final dateTimeFilter = ''.obs;
   final searchString = ''.obs;
+  final RxString selectedTag = "".obs;
 
   RxInt page = 2.obs;
   RxBool isMoreCardsAvailable = false.obs;
