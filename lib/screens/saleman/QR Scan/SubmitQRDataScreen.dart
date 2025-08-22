@@ -317,7 +317,7 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                             final isGettingLocation =
                                 controller.gettingLocation.value;
                             if (isGettingLocation) {
-                              return CircularProgressIndicator(
+                              return const CircularProgressIndicator(
                                 color: MyColor.dashbord,
                               );
                             } else {

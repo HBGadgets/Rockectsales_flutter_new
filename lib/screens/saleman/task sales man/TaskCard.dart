@@ -24,7 +24,7 @@ class _TaskcardState extends State<Taskcard> {
   bool _isExpanded = false;
 
   String formatDate(DateTime date) {
-    return DateFormat('yyyy/MM/dd').format(date);
+    return DateFormat('dd/MM/yyyy').format(date);
   }
 
   late String taskStatus;
@@ -78,11 +78,6 @@ class _TaskcardState extends State<Taskcard> {
                   TextButton(
                     onPressed: () async {
                       changeTaskStatus(status, widget.task.id, context);
-                      // setState(() {
-                      //   taskStatus = widget.task.status == 'Completed'
-                      //       ? 'Pending'
-                      //       : 'Completed';
-                      // });
                       Navigator.of(context).pop();
                     },
                     child: const Text(
@@ -311,12 +306,11 @@ class _TaskcardState extends State<Taskcard> {
                 ),
               ],
             ),
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8.0, bottom: 8, right: 4),
+                  padding: const EdgeInsets.only(right: 15, left: 15),
                   child: Expanded(
                     flex: 1,
                     child: OutlinedButton(
@@ -329,6 +323,7 @@ class _TaskcardState extends State<Taskcard> {
                         ),
                         onPressed: () {},
                         child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.map,
@@ -348,7 +343,7 @@ class _TaskcardState extends State<Taskcard> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.only(right: 8.0, bottom: 8, left: 4),
+                      const EdgeInsets.only(right: 15, left: 15, bottom: 8),
                   child: Expanded(
                     flex: 1,
                     child: OutlinedButton(
@@ -370,6 +365,7 @@ class _TaskcardState extends State<Taskcard> {
                         onPressed: () {},
                         child: widget.task.status == "Completed"
                             ? const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
                                     Icons.pending_actions,
@@ -385,6 +381,7 @@ class _TaskcardState extends State<Taskcard> {
                                 ],
                               )
                             : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
                                     Icons.check_circle_outline,
