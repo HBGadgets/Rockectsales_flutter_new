@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:rocketsale_rs/resources/my_font_weight.dart';
 import 'package:rocketsale_rs/screens/saleman/Attendance/Attendance_Page.dart';
+import '../../../utils/token_manager.dart';
 import 'saleTask_controller.dart';
 import '../../../models/task_model/salesTask_model.dart';
 import '../../../resources/my_colors.dart';
@@ -29,19 +31,150 @@ class _TaskcardState extends State<Taskcard> {
 
   late String taskStatus;
 
-  void changeTaskStatus(String status, String taskId, BuildContext context) {
+  bool _isLoading = false;
+
+  void changeTaskStatus(
+      String status, String taskId, BuildContext buildContext) {
     try {
-      controller.toggleTaskStatus(taskId, status);
-      setState(() {
-        taskStatus = status;
-        print('Marked as ==============>>>>>>>>> $status');
-      });
+      toggleTaskStatus(taskId, status, buildContext);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text('There was an error!'),
       ));
       print("Failed to update task: $e");
     }
+  }
+
+  void showSnackbar(String message) {
+    Get.snackbar('Message', message);
+  }
+
+  Future<void> toggleTaskStatus(
+      String taskId, String newStatus, BuildContext buildContext) async {
+    setState(() {
+      _isLoading = true;
+    });
+    final url = '${dotenv.env['BASE_URL']}/api/api/task/status/$taskId';
+
+    final id = await TokenManager.getSupervisorId(); // Get user ID from token
+    if (id == null) {
+      showSnackbar("User ID not found from token");
+      return;
+    }
+    final token = await TokenManager.getToken(); // Get the full token
+
+    if (token == null) {
+      showSnackbar("Auth token not found");
+      return;
+    }
+    try {
+      final response = await GetConnect().put(
+        url,
+        {
+          'status': newStatus,
+          'userId': id,
+        },
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      // Debug: Print response status and body
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Update the task list locally after a successful update
+        // final index = tasks.indexWhere((t) => t.id == taskId);
+        // if (index != -1) {
+        //   tasks[index].status =
+        //       newStatus; // Directly update status without using copyWith
+        // }
+
+        setState(() {
+          _isLoading = false;
+          taskStatus = newStatus;
+        });
+        Navigator.of(buildContext).pop();
+        Navigator.of(buildContext).pop();
+
+        showSnackbar("Task marked as $newStatus");
+      } else {
+        showSnackbar("Failed to update status: ${response.statusText}");
+      }
+    } catch (e) {
+      print("Error updating status: $e");
+      showSnackbar("Error updating status: $e");
+    }
+  }
+
+  void showLoading() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: MyColor.dashbord),
+                SizedBox(width: 20),
+                Text("Loading..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String?> changeStatusDialogue(String status) {
+    return showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => AlertDialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              title: const Text('Change task status'),
+              content:
+                  Text('Are you sure you want to mark this task as $status ?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'No',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                _isLoading
+                    ? const CircularProgressIndicator(
+                        color: MyColor.dashbord,
+                      )
+                    : TextButton(
+                        onPressed: () async {
+                          showLoading();
+                          changeTaskStatus(status, widget.task.id, context);
+                        },
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+              ],
+            ));
   }
 
   @override
@@ -53,42 +186,6 @@ class _TaskcardState extends State<Taskcard> {
 
   @override
   Widget build(BuildContext context) {
-    Future<String?> changeStatusDialogue(String status) {
-      return showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-                backgroundColor: Colors.white,
-                surfaceTintColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                title: const Text('Change task status'),
-                content: Text(
-                    'Are you sure you want to mark this task as $status ?'),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'No',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      changeTaskStatus(status, widget.task.id, context);
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Yes',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                ],
-              ));
-    }
-
     return Container(
       margin: const EdgeInsets.only(top: 20, right: 20, left: 20),
       decoration: BoxDecoration(
@@ -170,7 +267,7 @@ class _TaskcardState extends State<Taskcard> {
                             .formattedDate(widget.task.deadline.toString())),
                   ],
                 ),
-          trailing: widget.task.status == "Completed"
+          trailing: taskStatus == "Completed"
               ? Container(
                   decoration: BoxDecoration(
                     color: const Color.fromRGBO(
@@ -194,7 +291,7 @@ class _TaskcardState extends State<Taskcard> {
                           size: 12,
                         ),
                         Text(
-                          widget.task.status,
+                          taskStatus,
                           style: const TextStyle(
                               color: Color.fromRGBO(37, 87, 9, 1)),
                         ),
@@ -224,7 +321,7 @@ class _TaskcardState extends State<Taskcard> {
                           size: 12,
                         ),
                         Text(
-                          widget.task.status,
+                          taskStatus,
                           style: const TextStyle(color: Colors.red),
                         ),
                       ],
@@ -349,12 +446,12 @@ class _TaskcardState extends State<Taskcard> {
                     child: OutlinedButton(
                         style: ElevatedButton.styleFrom(
                           side: BorderSide(
-                            color: widget.task.status == "Completed"
+                            color: taskStatus == "Completed"
                                 ? Colors.red
                                 : Colors.green,
                             width: 1.5, // thickness of border
                           ),
-                          backgroundColor: widget.task.status == "Completed"
+                          backgroundColor: taskStatus == "Completed"
                               ? const Color.fromRGBO(247, 210, 210, 1)
                               : const Color.fromRGBO(224, 247, 210, 1),
                           shape: RoundedRectangleBorder(
@@ -362,8 +459,12 @@ class _TaskcardState extends State<Taskcard> {
                                 10), // Adjust radius as needed
                           ),
                         ),
-                        onPressed: () {},
-                        child: widget.task.status == "Completed"
+                        onPressed: () {
+                          changeStatusDialogue(taskStatus == "Completed"
+                              ? "Pending"
+                              : "Completed");
+                        },
+                        child: taskStatus == "Completed"
                             ? const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
