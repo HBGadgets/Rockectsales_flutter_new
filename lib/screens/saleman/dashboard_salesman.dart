@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rocketsale_rs/screens/saleman/Attendance/AttendanceSalesmanScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScan.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRTabs.dart';
 import 'package:rocketsale_rs/screens/saleman/task%20sales%20man/Task_Management_Sales_Man.dart';
@@ -145,14 +146,14 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                       Image(image: attendance, width: 50, height: 50),
                       "Attendance",
                       onTap: () {
-                        Get.to(() => AttendancePage());
+                        Get.to(() => Attendancescreen());
                       },
                     ),
                     _buildMenuItem(
                       Image(image: order, width: 50, height: 50),
                       "Order",
                       onTap: () {
-                        Get.to(() => AllOrders());
+                        Get.to(() => OrdersHistoryScreen());
                       },
                     ),
                     _buildMenuItem(

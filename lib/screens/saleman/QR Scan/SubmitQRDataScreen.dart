@@ -65,9 +65,9 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: const Column(
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
