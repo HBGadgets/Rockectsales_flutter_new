@@ -4,7 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:intl/intl.dart';
 import 'package:rocketsale_rs/resources/my_colors.dart';
-import 'package:rocketsale_rs/screens/saleman/Orders/order/OrdersController.dart';
+import 'package:rocketsale_rs/screens/saleman/Orders/OrdersController.dart';
 import 'package:rocketsale_rs/screens/saleman/task%20sales%20man/saleTask_controller.dart';
 
 class Filtrationsystemorder extends StatefulWidget {
@@ -220,6 +220,7 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                         print("show all clicked");
                         controller.selectedTag.value = "";
                       });
+                      controller.getTaggedOrders();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -253,14 +254,16 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                     onTap: () {
                       setState(() {
                         print("completed clicked");
-                        controller.selectedTag.value = "completed";
+                        controller.selectedTag.value = "Completed";
                       });
+
+                      controller.getTaggedOrders();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
                       child: Container(
                           decoration: BoxDecoration(
-                            color: controller.selectedTag.value == "completed"
+                            color: controller.selectedTag.value == "Completed"
                                 ? MyColor.dashbord
                                 : Colors.green,
                             borderRadius: BorderRadius.circular(
@@ -282,14 +285,16 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                     onTap: () {
                       setState(() {
                         print("pending clicked");
-                        controller.selectedTag.value = "pending";
+                        controller.selectedTag.value = "Pending";
                       });
+
+                      controller.getTaggedOrders();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
                       child: Container(
                           decoration: BoxDecoration(
-                            color: controller.selectedTag.value == "pending"
+                            color: controller.selectedTag.value == "Pending"
                                 ? MyColor.dashbord
                                 : Colors.redAccent,
                             borderRadius: BorderRadius.circular(

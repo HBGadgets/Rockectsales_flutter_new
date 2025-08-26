@@ -20,7 +20,7 @@ class Taskcard extends StatefulWidget {
 }
 
 class _TaskcardState extends State<Taskcard> {
-  final TaskController controller = Get.put(TaskController());
+  final TaskController controller = Get.find<TaskController>();
 
   final ExpansibleController expansionController = ExpansibleController();
   bool _isExpanded = false;
