@@ -311,6 +311,37 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                             ),
                           )),
                     ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        print("cancelled clicked");
+                        controller.selectedTag.value = "Cancelled";
+                      });
+
+                      controller.getTaggedOrders();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: controller.selectedTag.value == "Cancelled"
+                                ? MyColor.dashbord
+                                : Colors.red,
+                            borderRadius: BorderRadius.circular(
+                                10), // optional: rounded corners
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.only(
+                                top: 10, bottom: 10, left: 20, right: 20),
+                            child: Text(
+                              "Cancelled",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          )),
+                    ),
                   )
                 ],
               ),

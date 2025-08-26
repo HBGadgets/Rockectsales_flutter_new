@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:rocketsale_rs/screens/saleman/Orders/CreateOrderScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/FiltrationSystemOrder.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/OrderCard.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/OrdersController.dart';
@@ -42,6 +43,18 @@ class _OrdersHistoryScreenState extends State<OrdersHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Get.to(CreateOrderScreen());
+        },
+        icon: const Icon(Icons.add),
+        // Optional icon
+        label: const Text('Create Order'),
+        // The text label
+        backgroundColor: MyColor.dashbord,
+        // Optional background color
+        foregroundColor: Colors.white, // Optional text and icon color
+      ),
       appBar: AppBar(
         title: const Text(
           "Orders",

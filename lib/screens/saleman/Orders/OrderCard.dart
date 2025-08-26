@@ -28,7 +28,9 @@ class OrderCard extends StatelessWidget {
     });
     return GestureDetector(
       onTap: () {
-        Get.to(const OrderDetailScreen());
+        Get.to(OrderDetailScreen(
+          order: order,
+        ));
       },
       child: Container(
         margin: const EdgeInsets.only(top: 20, right: 20, left: 20),
