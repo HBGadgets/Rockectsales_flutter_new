@@ -219,6 +219,8 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
                         print("show all clicked");
                         controller.selectedTag.value = "";
                       });
+
+                      controller.getTaggedTasks();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -252,14 +254,16 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
                     onTap: () {
                       setState(() {
                         print("completed clicked");
-                        controller.selectedTag.value = "completed";
+                        controller.selectedTag.value = "Completed";
                       });
+
+                      controller.getTaggedTasks();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
                       child: Container(
                           decoration: BoxDecoration(
-                            color: controller.selectedTag.value == "completed"
+                            color: controller.selectedTag.value == "Completed"
                                 ? MyColor.dashbord
                                 : Colors.green,
                             borderRadius: BorderRadius.circular(
@@ -281,14 +285,15 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
                     onTap: () {
                       setState(() {
                         print("pending clicked");
-                        controller.selectedTag.value = "pending";
+                        controller.selectedTag.value = "Pending";
                       });
+                      controller.getTaggedTasks();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
                       child: Container(
                           decoration: BoxDecoration(
-                            color: controller.selectedTag.value == "pending"
+                            color: controller.selectedTag.value == "Pending"
                                 ? MyColor.dashbord
                                 : Colors.redAccent,
                             borderRadius: BorderRadius.circular(
@@ -309,78 +314,6 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
                 ],
               ),
             )
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     Flexible(
-            //       child: Padding(
-            //         padding:
-            //             const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-            //         child: ElevatedButton(
-            //           onPressed: () {},
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: selectedTag == "Show all"
-            //                 ? MyColor.dashbord
-            //                 : Colors.white,
-            //           ),
-            //           child: FittedBox(
-            //             fit: BoxFit.scaleDown,
-            //             child: Text(
-            //               "Show all",
-            //               style: TextStyle(
-            //                 color: selectedTag == "Show all"
-            //                     ? Colors.white
-            //                     : MyColor.dashbord,
-            //               ),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     Flexible(
-            //       child: Padding(
-            //         padding:
-            //             const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-            //         child: ElevatedButton(
-            //           onPressed: () {},
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: selectedTag == "Completed"
-            //                 ? MyColor.dashbord
-            //                 : Colors.green,
-            //           ),
-            //           child: const FittedBox(
-            //             fit: BoxFit.scaleDown,
-            //             child: Text(
-            //               "Completed",
-            //               style: TextStyle(color: Colors.white),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //     Flexible(
-            //       child: Padding(
-            //         padding:
-            //             const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-            //         child: ElevatedButton(
-            //           onPressed: () {},
-            //           style: ElevatedButton.styleFrom(
-            //             backgroundColor: selectedTag == "Pending"
-            //                 ? MyColor.dashbord
-            //                 : Colors.redAccent,
-            //           ),
-            //           child: const FittedBox(
-            //             fit: BoxFit.scaleDown,
-            //             child: Text(
-            //               "Pending",
-            //               style: TextStyle(color: Colors.white),
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // )
           ],
         ));
   }

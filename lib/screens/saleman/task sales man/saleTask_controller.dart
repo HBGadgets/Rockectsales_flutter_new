@@ -37,6 +37,49 @@ class TaskController extends GetxController {
     return DateFormat('hh:mm a').format(dateTime);
   }
 
+  void getTaggedTasks() async {
+    isLoading.value = true;
+    isMoreCardsAvailable.value = false;
+    page.value = 2;
+    try {
+      final token = await TokenManager.getToken();
+
+      if (token == null || token.isEmpty) {
+        Get.snackbar("Auth Error", "Token not found");
+        return;
+      }
+
+      final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/get-task?&limit=20$dateTimeFilter&search=$searchString&status=$selectedTag');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        print(jsonData);
+        final List<dynamic> dataList = jsonData['tasks'];
+        print("dataList ========>>>>>> $dataList");
+        final taskList = dataList.map((item) => Task.fromJson(item)).toList();
+        tasks.assignAll(taskList);
+      } else {
+        tasks.clear();
+        Get.snackbar("Error connect",
+            "Failed to Connect to DB (Code: ${response.statusCode})");
+      }
+    } catch (e) {
+      tasks.clear();
+      // Get.snackbar("Exception", e.toString());
+      Get.snackbar("Exception", "Couldn't get Tasks");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void getTasks() async {
     isLoading.value = true;
     isMoreCardsAvailable.value = false;
