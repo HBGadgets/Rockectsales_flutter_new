@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../resources/my_colors.dart';
+import '../../../../resources/my_colors.dart';
 
 class EditOrderScreen extends StatelessWidget {
   const EditOrderScreen({super.key});

@@ -89,6 +89,18 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
       initialDate: tillDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: MyColor.dashbord,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
@@ -220,7 +232,7 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
                         controller.selectedTag.value = "";
                       });
 
-                      controller.getTaggedTasks();
+                      controller.getTasks();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -257,7 +269,7 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
                         controller.selectedTag.value = "Completed";
                       });
 
-                      controller.getTaggedTasks();
+                      controller.getTasks();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -287,7 +299,7 @@ class _FiltrationsystemtaskState extends State<Filtrationsystemtask> {
                         print("pending clicked");
                         controller.selectedTag.value = "Pending";
                       });
-                      controller.getTaggedTasks();
+                      controller.getTasks();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),

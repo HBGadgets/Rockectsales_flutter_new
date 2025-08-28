@@ -45,14 +45,15 @@ class Product {
   final String productName;
   final String quantity;
   final String price;
-  final String id;
+  final String? id;
+  final String hsnCode;
 
-  Product({
-    required this.productName,
-    required this.quantity,
-    required this.price,
-    required this.id,
-  });
+  Product(
+      {required this.productName,
+      required this.quantity,
+      required this.price,
+      this.id,
+      required this.hsnCode});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
@@ -60,6 +61,7 @@ class Product {
       quantity: json['quantity']?.toString() ?? '',
       price: json['price']?.toString() ?? '',
       id: json['_id'] ?? '',
+      hsnCode: json['hsnCode'] ?? '',
     );
   }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/screens/saleman/Orders/Edit/EditOrderScreen.dart';
+import 'package:rocketsale_rs/screens/saleman/Orders/OrdersController.dart';
 
 import '../../../resources/my_colors.dart';
 import 'OrdersAndProductsClass.dart';
@@ -7,7 +11,9 @@ import 'OrdersAndProductsClass.dart';
 class OrderDetailScreen extends StatelessWidget {
   final Order order;
 
-  const OrderDetailScreen({super.key, required this.order});
+  OrderDetailScreen({super.key, required this.order});
+
+  final OrdersController controller = Get.find<OrdersController>();
 
   String formattedDate(DateTime? date) {
     if (date == null) {
@@ -134,7 +140,9 @@ class OrderDetailScreen extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              controller.cancelOrder(order.id, context);
+                            },
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 8, right: 8, top: 2),
@@ -164,7 +172,9 @@ class OrderDetailScreen extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Get.to(EditOrderScreen());
+                            },
                             child: Padding(
                               padding: const EdgeInsets.only(
                                   left: 8, right: 8, top: 2),

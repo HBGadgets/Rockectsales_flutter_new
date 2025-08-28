@@ -85,13 +85,6 @@ class _TaskcardState extends State<Taskcard> {
       print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Update the task list locally after a successful update
-        // final index = tasks.indexWhere((t) => t.id == taskId);
-        // if (index != -1) {
-        //   tasks[index].status =
-        //       newStatus; // Directly update status without using copyWith
-        // }
-
         setState(() {
           _isLoading = false;
           taskStatus = newStatus;

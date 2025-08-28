@@ -9,7 +9,10 @@ import 'OrdersAndProductsClass.dart';
 class OrderCard extends StatelessWidget {
   final Order order;
 
-  const OrderCard({super.key, required this.order});
+  OrderCard({super.key, required this.order});
+
+  late Color orderStatusTextColor;
+  late Color orderStatusContainerColor;
 
   String formatDate(DateTime? date) {
     if (date == null) {
@@ -21,6 +24,16 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (order.status == "Pending") {
+      orderStatusContainerColor = Colors.yellow;
+      orderStatusTextColor = Colors.black87;
+    } else if (order.status == "Cancelled") {
+      orderStatusContainerColor = Colors.red.shade100;
+      orderStatusTextColor = Colors.red;
+    } else {
+      orderStatusContainerColor = Colors.green.shade50;
+      orderStatusTextColor = Colors.green;
+    }
     int totalAmount = order.product.fold(0, (sum, p) {
       int price = int.tryParse(p.price) ?? 0;
       int qty = int.tryParse(p.quantity) ?? 0;
@@ -54,17 +67,13 @@ class OrderCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: order.status == "Pending"
-                        ? Colors.red.shade100
-                        : Colors.green.shade50,
+                    color: orderStatusContainerColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     order.status,
                     style: TextStyle(
-                      color: order.status == "Pending"
-                          ? Colors.red
-                          : Colors.green.shade900,
+                      color: orderStatusTextColor,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

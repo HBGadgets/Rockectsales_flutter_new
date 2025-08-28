@@ -220,7 +220,7 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                         print("show all clicked");
                         controller.selectedTag.value = "";
                       });
-                      controller.getTaggedOrders();
+                      controller.getOrders();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -257,7 +257,7 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                         controller.selectedTag.value = "Completed";
                       });
 
-                      controller.getTaggedOrders();
+                      controller.getOrders();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -288,7 +288,7 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                         controller.selectedTag.value = "Pending";
                       });
 
-                      controller.getTaggedOrders();
+                      controller.getOrders();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -296,18 +296,21 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                           decoration: BoxDecoration(
                             color: controller.selectedTag.value == "Pending"
                                 ? MyColor.dashbord
-                                : Colors.redAccent,
+                                : Colors.yellow,
                             borderRadius: BorderRadius.circular(
                                 10), // optional: rounded corners
                           ),
-                          child: const Padding(
-                            padding: EdgeInsets.only(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
                                 top: 10, bottom: 10, left: 20, right: 20),
                             child: Text(
                               "Pending",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white),
+                                  color:
+                                      controller.selectedTag.value == "Pending"
+                                          ? Colors.white
+                                          : Colors.black87),
                             ),
                           )),
                     ),
@@ -319,7 +322,7 @@ class _FiltrationsystemorderState extends State<Filtrationsystemorder> {
                         controller.selectedTag.value = "Cancelled";
                       });
 
-                      controller.getTaggedOrders();
+                      controller.getOrders();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),

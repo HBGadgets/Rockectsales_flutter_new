@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
 
+import '../../../resources/my_colors.dart';
+
 class FiltrationsystemQR extends StatefulWidget {
   const FiltrationsystemQR({super.key});
 
@@ -74,6 +76,18 @@ class _FiltrationsystemQRState extends State<FiltrationsystemQR> {
       initialDate: fromDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: MyColor.dashbord,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) {
       setState(() {
