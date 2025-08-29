@@ -145,13 +145,25 @@ class _CreateProductCardState extends State<CreateProductCard> {
     );
   }
 
-  Widget buildTextEditField(TextEditingController controller,
+  Widget buildTextEditField(TextEditingController textController,
       {String hint = "",
       TextInputType inputType = TextInputType.text,
       bool isDisabled = false}) {
     return TextFormField(
+      onSaved: (String? string) {
+        controller.productCardList[widget.index] = Product(
+          productName: dropdownValue.productName,
+          quantity: textController == quantity
+              ? string ?? ""
+              : controller.productCardList[widget.index].quantity,
+          price: textController == price
+              ? string ?? ""
+              : controller.productCardList[widget.index].price,
+          hsnCode: dropdownValue.hsnCode,
+        );
+      },
       readOnly: isDisabled,
-      controller: controller,
+      controller: textController,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'This field is required';

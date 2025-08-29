@@ -17,26 +17,17 @@ class CreateOrderScreen extends StatefulWidget {
 }
 
 class _CreateOrderScreenState extends State<CreateOrderScreen> {
-  DateTime? tillDate;
-
-  // Detail Form
-  final TextEditingController shopName = TextEditingController();
-
-  final TextEditingController shopOwnerName = TextEditingController();
-
-  final TextEditingController address = TextEditingController();
-
-  final TextEditingController phoneNo = TextEditingController();
-
   final CreateOrderController controller = Get.put(CreateOrderController());
 
   final productFormKey = GlobalKey<FormState>();
+
+  final orderInfoFormKey = GlobalKey<FormState>();
 
   Future<void> _selectTillDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
       // initialDate: fromDate ?? DateTime.now(),
-      initialDate: tillDate ?? DateTime.now(),
+      initialDate: controller.tillDate.value ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2040),
       builder: (BuildContext context, Widget? child) {
@@ -53,9 +44,10 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       },
     );
     if (picked != null) {
-      setState(() {
-        tillDate = picked;
-      });
+      // setState(() {
+      //   tillDate = picked;
+      // });
+      controller.tillDate.value = picked;
     }
   }
 
@@ -100,7 +92,16 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                   Form(
                     key: productFormKey,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 12.0),
+                          child: Text(
+                            "Product Items:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 20),
+                          ),
+                        ),
                         ...controller.productCardList
                             .asMap()
                             .entries
@@ -113,60 +114,104 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                             formKey: productFormKey,
                           );
                         }),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (productFormKey.currentState!.validate()) {
-                                // All fields valid -> add product card
-                                addProductCard();
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(20),
-                              // controls button size
-                              backgroundColor: MyColor.dashbord, // button color
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (productFormKey.currentState!.validate()) {
+                                  // All fields valid -> add product card
+                                  addProductCard();
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(20),
+                                // controls button size
+                                backgroundColor: Colors.green, // button color
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             ),
-                            child: const Icon(Icons.add, color: Colors.white),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  buildLabel("Shop Name:"),
-                  buildTextEditField(shopName),
-                  buildLabel("Shop Owner Name:"),
-                  buildTextEditField(shopOwnerName),
-                  buildLabel("Delivery by:"),
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7),
-                      ),
-                      side: const BorderSide(color: Colors.black54),
-                    ),
-                    onPressed: () => _selectTillDate(context),
-                    icon: const Icon(
-                      Icons.date_range,
-                      color: Colors.black,
-                    ),
-                    label: Text(
-                      tillDate != null
-                          ? DateFormat('dd/MM/yyyy').format(tillDate!)
-                          : "N/A",
-                      style: const TextStyle(color: Colors.black),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  buildLabel("Address:"),
-                  buildTextEditField(address),
-                  buildLabel("Phone No. :"),
-                  buildTextEditField(phoneNo),
+                  Form(
+                      key: orderInfoFormKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Order Info:",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 20),
+                          ),
+                          buildLabel("Shop Name:"),
+                          buildTextEditField(controller.shopName),
+                          buildLabel("Shop Owner Name:"),
+                          buildTextEditField(controller.shopOwnerName),
+                          buildLabel("Delivery by:"),
+                          OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              side: const BorderSide(color: Colors.black54),
+                            ),
+                            onPressed: () => _selectTillDate(context),
+                            icon: const Icon(
+                              Icons.date_range,
+                              color: Colors.black,
+                            ),
+                            label: Text(
+                              controller.tillDate.value != null
+                                  ? DateFormat('dd/MM/yyyy')
+                                      .format(controller.tillDate.value!)
+                                  : "N/A",
+                              style: const TextStyle(color: Colors.black),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          buildLabel("Address:"),
+                          buildTextEditField(controller.address),
+                          buildLabel("Phone No. :"),
+                          buildTextEditField(controller.phoneNo),
+                        ],
+                      )),
                   const SizedBox(height: 8),
-                  const Text(
-                    "Product Items:",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: double.infinity, // 👈 full width
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // handle submit
+                          if (orderInfoFormKey.currentState!.validate() &&
+                              productFormKey.currentState!.validate()) {
+                            productFormKey.currentState!.save();
+                            controller.uploadOrder(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          // taller button
+                          backgroundColor: MyColor.dashbord,
+                        ),
+                        child: const Text(
+                          "Submit",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -194,6 +239,12 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
       bool isDisabled = false}) {
     return TextFormField(
       readOnly: isDisabled,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'This field is required';
+        }
+        return null;
+      },
       controller: controller,
       decoration: InputDecoration(
         hint: Text(hint),

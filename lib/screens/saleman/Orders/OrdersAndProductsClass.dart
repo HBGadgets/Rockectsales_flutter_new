@@ -64,4 +64,14 @@ class Product {
       hsnCode: json['hsnCode'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "productName": productName,
+      "quantity": quantity,
+      "price": price,
+      "hsnCode": hsnCode,
+      if (id != null) "_id": id, // only include id if it’s not null
+    };
+  }
 }

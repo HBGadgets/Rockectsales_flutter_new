@@ -1,9 +1,14 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:rocketsale_rs/screens/saleman/Orders/OrdersController.dart';
+import 'package:rocketsale_rs/screens/saleman/Orders/OrdersHistoryScreen.dart';
 
+import '../../../../resources/my_colors.dart';
 import '../../../../utils/token_manager.dart';
 import '../OrdersAndProductsClass.dart';
 import 'CreateOrderScreen.dart';
@@ -13,11 +18,105 @@ class CreateOrderController extends GetxController {
   final RxList<Product> productsList = <Product>[].obs;
   final RxList<Product> productCardList = <Product>[].obs;
 
+  // Detail Form
+  final TextEditingController shopName = TextEditingController();
+
+  final TextEditingController shopOwnerName = TextEditingController();
+
+  final TextEditingController address = TextEditingController();
+
+  final TextEditingController phoneNo = TextEditingController();
+
+  var tillDate = Rxn<DateTime>();
+
+  final OrdersController controller = Get.find<OrdersController>();
+
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
     getProductsFromDropDown();
+  }
+
+  void showLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: MyColor.dashbord),
+                SizedBox(width: 20),
+                Text("Loading..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> uploadOrder(BuildContext context) async {
+    showLoading(context);
+    try {
+      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/api/order');
+
+      final token = await TokenManager.getToken();
+
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+      final companyId = decodedToken['companyId'];
+      final branchId = decodedToken['branchId'];
+      final supervisorId = decodedToken['supervisorId'];
+
+      final products = productCardList.map((p) => p.toJson()).toList();
+
+      print(products);
+
+      final response = await http.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'companyId': companyId,
+          'branchId': branchId,
+          'supervisorId': supervisorId,
+          'deliveryDate': tillDate.value?.toIso8601String(),
+          'phoneNo': phoneNo.text,
+          'products': products,
+          'shopAddress': address.text,
+          'shopName': shopName.text,
+          'shopOwnerName': shopOwnerName.text,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        Navigator.pop(context);
+
+        Get.off(() => OrdersHistoryScreen(), arguments: 1);
+        controller.getOrders();
+        Get.snackbar("Success", "Order info submitted");
+      } else {
+        Navigator.pop(context);
+        print("❌ Order submission Failed: ${response.body}");
+        Get.snackbar("Error", response.body);
+      }
+    } catch (e) {
+      // isLoading.value = false;
+      Navigator.pop(context);
+      print("⚠️ Exception in posting qr: $e");
+      Get.snackbar("Exception", e.toString());
+    }
   }
 
   void getProductsFromDropDown() async {
