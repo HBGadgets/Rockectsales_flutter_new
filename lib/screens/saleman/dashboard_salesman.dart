@@ -143,7 +143,9 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                       'Live Tracking',
                       onTap: () {
                         Get.to(
-                          () => LiveTrackingscreen(),
+                          () => LiveTrackingscreen(
+                            salesmanName: authController.username.value,
+                          ),
                         );
                       },
                     ),

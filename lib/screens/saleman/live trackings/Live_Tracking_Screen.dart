@@ -11,9 +11,15 @@ import 'package:location/location.dart';
 import 'package:location/location.dart' as loc;
 import 'package:rocketsale_rs/resources/my_assets.dart';
 import '../../../controllers/alertController.dart';
+import '../../../resources/my_colors.dart';
 
 class LiveTrackingscreen extends StatefulWidget {
-  LiveTrackingscreen({Key? key}) : super(key: key);
+  final String salesmanName;
+
+  LiveTrackingscreen({Key? key, required this.salesmanName})
+      : super(
+          key: key,
+        );
 
   @override
   _LiveTrackingscreenState createState() => _LiveTrackingscreenState();
@@ -312,169 +318,217 @@ class _LiveTrackingscreenState extends State<LiveTrackingscreen> {
     size = MediaQuery.of(context).size;
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _startingLocation,
-                zoom: 14.5,
-              ),
-              markers: _markers,
-              polylines: _polylines,
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomControlsEnabled: true,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Live Track",
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: const BackButton(
+          color: Colors.white,
+        ),
+        backgroundColor: MyColor.dashbord,
+      ),
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: _startingLocation,
+              zoom: 14.5,
             ),
-            DraggableScrollableSheet(
-              initialChildSize: 0.25,
-              minChildSize: 0.24,
-              maxChildSize: 0.35,
-              builder: (context, scrollController) {
-                return Container(
-                  decoration: BoxDecoration(
-                    // border: Border.all(
-                    //   color: Colors.grey,
-                    // ),
-                    boxShadow: [],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
+            markers: _markers,
+            polylines: _polylines,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+            zoomControlsEnabled: true,
+          ),
+          DraggableScrollableSheet(
+            initialChildSize: 0.25,
+            minChildSize: 0.24,
+            maxChildSize: 0.35,
+            builder: (context, scrollController) {
+              return Container(
+                decoration: const BoxDecoration(
+                  // border: Border.all(
+                  //   color: Colors.grey,
+                  // ),
+                  boxShadow: [],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
                   ),
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Column(
-                        children: [
-                          Center(
-                            child: Icon(
-                              Icons.keyboard_arrow_up,
-                              color: Colors.grey,
-                              size: 40,
-                            ),
+                ),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(
+                          boxShadow: [],
+                          color: MyColor.dashbord,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
                           ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Row(
                             children: [
-                              // Vehicle Image
-                              SizedBox(
-                                height: size.height * 0.15,
-                                width: 90,
-                                child: Image(
-                                  image: salesman,
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-
-                              // Device Details
                               Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'R04-MH12RN5047',
-                                      style: const TextStyle(fontSize: 18.0),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      'Last updated: 21/02/2025 03:55 PM',
-                                      style: const TextStyle(fontSize: 12.0),
-                                    ),
-                                    const SizedBox(height: 5),
-
-                                    // Address Section
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Icon(
-                                          Icons.location_on,
-                                          size: 15,
-                                          color: Colors.red,
-                                        ),
-                                        SizedBox(width: screenWidth * 0.01),
-                                        Expanded(
-                                          child: Text(
-                                            _currentAddress,
-                                            style: TextStyle(
-                                              fontSize: screenWidth * 0.03,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            textAlign: TextAlign.start,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 15),
-                                  ],
-                                ),
-                              ),
+                                  flex: 1,
+                                  child: Icon(
+                                    Icons.my_location,
+                                    color: Colors.white,
+                                  )),
+                              Expanded(
+                                  flex: 5,
+                                  child: Text(
+                                    _currentAddress,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17),
+                                  ))
                             ],
                           ),
-                          const Divider(),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8,
-                              horizontal: 0,
-                            ),
-                            child: Wrap(
-                              spacing: 10,
-                              runSpacing: 1,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 15.0,
-                                    left: 15.0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Icon(Icons.speed),
-                                      Text(
-                                        "Speed: $speedText",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Icon(Icons.speed),
-                                      Text(
-                                        ("Distance: ${(totalDistance / 1000)}"),
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(),
-                        ],
-                      ),
-                    ),
+                        ),
+                      )
+                    ],
                   ),
-                );
-              },
-            ),
-          ],
-        ),
+                ),
+                // child: SingleChildScrollView(
+                //   controller: scrollController,
+                //   child: Padding(
+                //     padding: EdgeInsets.all(5),
+                //     child: Column(
+                //       children: [
+                //         const Center(
+                //           child: Icon(
+                //             Icons.keyboard_arrow_up,
+                //             color: Colors.grey,
+                //             size: 40,
+                //           ),
+                //         ),
+                //         Row(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             // Vehicle Image
+                //             SizedBox(
+                //               height: size.height * 0.15,
+                //               width: 90,
+                //               child: Image(
+                //                 image: salesman,
+                //               ),
+                //             ),
+                //             const SizedBox(width: 20),
+                //
+                //             // Device Details
+                //             Expanded(
+                //               child: Column(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Text(
+                //                     widget.salesmanName,
+                //                     style: const TextStyle(
+                //                         fontSize: 18.0,
+                //                         fontWeight: FontWeight.bold),
+                //                   ),
+                //                   const SizedBox(height: 2),
+                //                   Text(
+                //                     'Last updated: 21/02/2025 03:55 PM',
+                //                     style: const TextStyle(fontSize: 12.0),
+                //                   ),
+                //                   const SizedBox(height: 5),
+                //
+                //                   // Address Section
+                //                   Row(
+                //                     crossAxisAlignment:
+                //                         CrossAxisAlignment.start,
+                //                     mainAxisAlignment: MainAxisAlignment.start,
+                //                     children: [
+                //                       const Icon(
+                //                         Icons.location_on,
+                //                         size: 15,
+                //                         color: Colors.red,
+                //                       ),
+                //                       SizedBox(width: screenWidth * 0.01),
+                //                       Expanded(
+                //                         child: Text(
+                //                           _currentAddress,
+                //                           style: TextStyle(
+                //                             fontSize: screenWidth * 0.03,
+                //                             fontWeight: FontWeight.w500,
+                //                           ),
+                //                           textAlign: TextAlign.start,
+                //                           maxLines: 2,
+                //                           overflow: TextOverflow.ellipsis,
+                //                         ),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                   SizedBox(height: 15),
+                //                 ],
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //         const Divider(),
+                //         Padding(
+                //           padding: const EdgeInsets.symmetric(
+                //             vertical: 8,
+                //             horizontal: 0,
+                //           ),
+                //           child: Wrap(
+                //             spacing: 10,
+                //             runSpacing: 1,
+                //             children: [
+                //               Padding(
+                //                 padding: const EdgeInsets.only(
+                //                   right: 15.0,
+                //                   left: 15.0,
+                //                 ),
+                //                 child: Row(
+                //                   mainAxisAlignment:
+                //                       MainAxisAlignment.spaceAround,
+                //                   children: [
+                //                     Icon(Icons.speed),
+                //                     Text(
+                //                       "Speed: $speedText",
+                //                       style: TextStyle(
+                //                         fontSize: 10,
+                //                         fontWeight: FontWeight.bold,
+                //                         color: Colors.black,
+                //                       ),
+                //                     ),
+                //                     Icon(Icons.speed),
+                //                     Text(
+                //                       ("Distance: ${(totalDistance / 1000)}"),
+                //                       style: TextStyle(
+                //                         fontSize: 10,
+                //                         fontWeight: FontWeight.bold,
+                //                         color: Colors.black,
+                //                       ),
+                //                     ),
+                //                   ],
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //         const Divider(),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
