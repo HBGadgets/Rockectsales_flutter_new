@@ -449,24 +449,7 @@ class _LiveTrackingscreenState extends State<LiveTrackingscreen> {
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black,
                                         ),
-                                        // ),Icon(Icons.power_settings_new,),
-                                        //   Text(
-                                        //   'Hello, Flutter!',
-                                        //   style: TextStyle(
-                                        //     fontSize: 7,
-                                        //     fontWeight: FontWeight.bold,
-                                        //     color: Colors.blue,
-                                        //   ),
                                       ),
-                                      // ,Icon(Icons.network_cell,),
-                                      // Text(
-                                      //   'Hello, Flutter!',
-                                      //   style: TextStyle(
-                                      //     fontSize: 7,
-                                      //     fontWeight: FontWeight.bold,
-                                      //     color: Colors.blue,
-                                      //   ),
-                                      // ),
                                       Icon(Icons.speed),
                                       Text(
                                         ("Distance: ${(totalDistance / 1000)}"),

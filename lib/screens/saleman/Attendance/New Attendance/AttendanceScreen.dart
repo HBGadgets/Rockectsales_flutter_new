@@ -17,6 +17,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:http_parser/http_parser.dart';
 
 import '../../../../resources/my_assets.dart';
+import '../../../../resources/my_colors.dart';
 import '../../../../utils/token_manager.dart';
 import 'NewAttendanceController.dart';
 
@@ -207,6 +208,107 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     ).showSnackBar(SnackBar(content: Text("Attendance for today reset.")));
   }
 
+  Future<void> sendAttendanceData(
+    XFile? image,
+    double latitude,
+    double longitude,
+  ) async {
+    try {
+      print("🔹 Processing Attendance Submission...");
+
+      // 🔹 Get Token
+      String? token = await TokenManager.getToken();
+      if (token == null || token.isEmpty) {
+        print('🚨 No token found!');
+        Get.snackbar('Error', 'No token found. Please login again.');
+        return;
+      }
+      // print("✅ Token Retrieved: $token");
+
+      // 🔹 Decode Token
+      Map<String, dynamic> tokenData = JwtDecoder.decode(token);
+      // print("✅ Token Data Extracted: $tokenData");
+
+      // 🔹 Extract Token Fields
+      String salesmanId = tokenData['id'] ?? '';
+      String companyId = tokenData['companyId'] ?? '';
+      String branchId = tokenData['branchId'] ?? '';
+      String supervisorId = tokenData['supervisorId'] ?? '';
+
+      if (salesmanId.isEmpty ||
+          companyId.isEmpty ||
+          branchId.isEmpty ||
+          supervisorId.isEmpty) {
+        // print("Missing required fields in token");
+        Get.snackbar(
+          'Error',
+          'Token is missing required fields. Please login again.',
+        );
+        return;
+      }
+
+      // print("✅ Current Location: Lat: $latitude, Long: $longitude");
+
+      // 🔹 Set Attendance Status
+      String attendanceStatus = "Present";
+
+      // 🔹 Prepare Multipart Request
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence'),
+      );
+
+      // 🔹 Add Headers
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['salesmanId'] = salesmanId;
+      request.fields['companyId'] = companyId;
+      request.fields['branchId'] = branchId;
+      request.fields['supervisorId'] = supervisorId;
+      request.fields['attendenceStatus'] = attendanceStatus;
+      request.fields['startLat'] = latitude.toString();
+      request.fields['startLong'] = longitude.toString();
+
+      // 🔹 Attach Image (if provided)
+      if (image != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'profileImgUrl',
+            image.path,
+            contentType: MediaType(
+              'image',
+              'jpeg',
+            ), // or 'png' based on your image type
+          ),
+        );
+      }
+
+      // print("📤 Sending Attendance Data: ${request.fields}");
+
+      // 🔹 Send Request
+      var response = await request.send();
+      var responseData = await response.stream.bytesToString();
+
+      // 🔹 Check Response
+      if (response.statusCode == 201) {
+        setState(() => _isProcessingAttendance = false);
+        print("Attendance Submitted Successfully: $responseData");
+        Get.snackbar('Success', 'Attendance submitted successfully.');
+      } else {
+        setState(() => _isProcessingAttendance = false);
+        print("Attendance Already Marked:");
+        // print("Attendance Already Marked: $responseData");
+        Get.snackbar('Today', 'Attendance Already Marked:');
+      }
+    } catch (e) {
+      setState(() => _isProcessingAttendance = false);
+      print('🔥 Error submitting attendance: $e');
+      Get.snackbar(
+        '❌ Error',
+        'Something went wrong while submitting attendance.',
+      );
+    }
+  }
+
   Future<void> _markAttendance() async {
     // Check location permission
     if (_permissionStatus != LocationPermission.whileInUse &&
@@ -239,8 +341,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         final latLng = '$lat,$lng';
 
         // Save and post to API
-        await _saveAttendance(formattedDateTime, latLng);
-        await _postImageToAPI(pickedImage, lat, lng, formattedDateTime);
+        // await _saveAttendance(formattedDateTime, latLng);
+        // await _postImageToAPI(pickedImage, lat, lng, formattedDateTime);
+        await sendAttendanceData(pickedImage, lat, lng);
       } catch (e) {
         print("Error getting location: $e");
         ScaffoldMessenger.of(
@@ -617,6 +720,16 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         attendanceController.getMonthAttendance(_focusedDay);
     if (_isInitialLoading) {
       return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Attendance Calendar",
+            style: TextStyle(color: Colors.white),
+          ),
+          leading: const BackButton(
+            color: Colors.white,
+          ),
+          backgroundColor: MyColor.dashbord,
+        ),
         backgroundColor: Colors.white,
         body: Shimmer.fromColors(
           baseColor: Colors.grey[300]!,
@@ -667,7 +780,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       appBar: AppBar(
         title: const Text(
           "Attendance Calendar",
+          style: TextStyle(color: Colors.white),
         ),
+        leading: const BackButton(
+          color: Colors.white,
+        ),
+        backgroundColor: MyColor.dashbord,
       ),
       body: SingleChildScrollView(
         child: Column(
