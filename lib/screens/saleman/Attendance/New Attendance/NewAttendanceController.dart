@@ -90,11 +90,12 @@ class AttendanceService extends ApiService {
   }) async {
     final monthKey =
         "${forMonth.year}-${forMonth.month.toString().padLeft(2, '0')}";
-    final endpoint = "api/attendence-by-id?month=$monthKey";
+    final endpoint = "/api/api/attendence-by-id?month=$monthKey";
+    print(endpoint);
     try {
       final response = await getRequest(endpoint: endpoint);
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
         return Attendance.fromJson(jsonData);
       } else {

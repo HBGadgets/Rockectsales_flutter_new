@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -8,12 +9,15 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:rocketsale_rs/controllers/saleman_attendance_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http_parser/http_parser.dart';
 
+import '../../../../resources/my_assets.dart';
+import '../../../../utils/token_manager.dart';
 import 'NewAttendanceController.dart';
 
 class AttendanceScreen extends StatefulWidget {
@@ -101,11 +105,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     String dateTime,
   ) async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token') ?? '';
+    final token = await TokenManager.getToken();
     print("Latitude: $lat, Longitude: $lng");
 
-    const url =
-        'https://maintenance.credencetracker.com/api/api/attendance/by-driver';
+    final url = '${dotenv.env['BASE_URL']}/api/api/attendence';
 
     try {
       // ✅ Troubleshooting image
@@ -169,6 +172,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           );
         } catch (e) {
           // Fallback if JSON parsing fails
+          print('Upload failed: ${response.reasonPhrase}');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Upload failed: ${response.reasonPhrase}')),
           );
@@ -275,9 +279,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   Future<void> _fetchAttendanceData(DateTime month) async {
-    final prefs = await SharedPreferences.getInstance();
-    final id = prefs.getString('profileId') ?? '';
-    final token = prefs.getString('token') ?? '';
+    // final prefs = await SharedPreferences.getInstance();
+    // final id = prefs.getString('profileId') ?? '';
+    final token = await TokenManager.getToken();
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+    final id = decodedToken['id'];
     // await Provider.of<AttendanceProvider>(
     //   context,
     //   listen: false,
@@ -607,6 +613,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final monthAttendance =
+        attendanceController.getMonthAttendance(_focusedDay);
     if (_isInitialLoading) {
       return Scaffold(
         backgroundColor: Colors.white,
@@ -669,76 +677,68 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               child: _buildAttendanceContainer(),
             ),
             const SizedBox(height: 5),
-            attendanceController.isLoading.value
-                ? Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
-                    child: TableCalendar(
-                      focusedDay: _focusedDay,
-                      firstDay: DateTime.utc(2020),
-                      lastDay: DateTime.utc(2030),
-                      calendarBuilders: CalendarBuilders(
-                        defaultBuilder: (context, day, _) => _buildShimmerDay(),
+            // monthAttendance == null || monthAttendance.attendanceDetails.isEmpty
+            //     ? const Text("No attendance data available")
+            TableCalendar(
+              focusedDay: _focusedDay,
+              firstDay: DateTime.utc(2020),
+              lastDay: DateTime.utc(2030),
+              calendarFormat: CalendarFormat.month,
+              onDaySelected: (selectedDay, focusedDay) {
+                attendanceController.updateSelectedDate(selectedDay);
+              },
+              onPageChanged: (focusedMonth) async {
+                final token = await TokenManager.getToken();
+                Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+                final id = decodedToken["id"];
+                setState(() => _focusedDay = focusedMonth);
+                await attendanceController.fetchAttendance(
+                  id: id,
+                  forMonth: focusedMonth,
+                );
+              },
+              selectedDayPredicate: (day) =>
+                  isSameDay(day, attendanceController.selectedDate.value),
+              calendarBuilders: CalendarBuilders(
+                defaultBuilder: (context, day, _) {
+                  final status = attendanceController.getStatusForDate(day);
+
+                  if (day.isAfter(DateTime.now())) {
+                    return Center(
+                      child: Text(
+                        "${day.day}",
+                        style: const TextStyle(color: Colors.grey),
                       ),
+                    );
+                  }
+
+                  Color? bgColor;
+                  if (status == "Present") {
+                    bgColor = const Color(0xFF5DFF76);
+                  } else if (status == "Absent") {
+                    bgColor = Colors.red;
+                  } else if (status == "On Leave") {
+                    bgColor = Colors.orange;
+                  }
+
+                  return Container(
+                    height: 35,
+                    width: 35,
+                    margin: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: TableCalendar(
-                      focusedDay: _focusedDay,
-                      firstDay: DateTime.utc(2020),
-                      lastDay: DateTime.utc(2030),
-                      calendarFormat: CalendarFormat.month,
-                      onDaySelected: (selectedDay, focusedDay) {
-                        attendanceController.updateSelectedDate(selectedDay);
-                      },
-                      onPageChanged: (focusedMonth) async {
-                        setState(() => _focusedDay = focusedMonth);
-                        await _fetchAttendanceData(focusedMonth);
-                      },
-                      selectedDayPredicate: (day) => isSameDay(
-                          day, attendanceController.selectedDate.value),
-                      calendarBuilders: CalendarBuilders(
-                        defaultBuilder: (context, day, _) {
-                          final status =
-                              attendanceController.getStatusForDate(day);
-
-                          if (day.isAfter(DateTime.now())) {
-                            return Center(
-                              child: Text(
-                                "${day.day}",
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            );
-                          }
-
-                          Color? bgColor;
-                          if (status == "Present") {
-                            bgColor = const Color(0xFF5DFF76);
-                          } else if (status == "Absent") {
-                            bgColor = Colors.red;
-                          } else if (status == "On Leave") {
-                            bgColor = Colors.orange;
-                          }
-
-                          return Container(
-                            height: 35,
-                            width: 35,
-                            margin: const EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              color: bgColor,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              "${day.day}",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          );
-                        },
-                      ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "${day.day}",
+                      style: const TextStyle(color: Colors.white),
                     ),
-                  ),
+                  );
+                },
+              ),
+            ),
+
             const SizedBox(height: 15),
             const Divider(),
             Padding(
