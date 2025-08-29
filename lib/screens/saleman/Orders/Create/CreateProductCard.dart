@@ -9,8 +9,10 @@ import '../OrdersAndProductsClass.dart';
 class CreateProductCard extends StatefulWidget {
   final int index;
   final Key? formKey;
+  final Product? product;
 
-  CreateProductCard({super.key, required this.index, required this.formKey});
+  CreateProductCard(
+      {super.key, required this.index, required this.formKey, this.product});
 
   @override
   State<CreateProductCard> createState() => _CreateProductCardState();
@@ -31,6 +33,11 @@ class _CreateProductCardState extends State<CreateProductCard> {
     super.initState();
 
     dropdownValue = controller.productsList.first;
+    final product = widget.product;
+    if (product != null) {
+      price.text = product.price;
+      quantity.text = product.quantity;
+    }
   }
 
   @override

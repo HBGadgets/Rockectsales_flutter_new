@@ -23,6 +23,8 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
 
   final orderInfoFormKey = GlobalKey<FormState>();
 
+  late Map args;
+
   Future<void> _selectTillDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
@@ -52,20 +54,28 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
   }
 
   void addProductCard() {
-    if (controller.productsList.last.price != "" ||
-        controller.productsList.last.quantity != "") {
-      controller.productCardList
-          .add(Product(productName: "", quantity: "", price: "", hsnCode: ""));
+    controller.productCardList
+        .add(Product(productName: "", quantity: "", price: "", hsnCode: ""));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    args = Get.arguments;
+    if (args['screenType'] == "edit" && args['order'] != null) {
+      controller.orderToEdit.value = args['order'];
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    controller.renderScreen();
     return Scaffold(
         appBar: AppBar(
-          title: const Text(
-            "Create Order",
-            style: TextStyle(color: Colors.white),
+          title: Text(
+            controller.appBarTitle.value,
+            style: const TextStyle(color: Colors.white),
           ),
           leading: const BackButton(
             color: Colors.white,
@@ -108,11 +118,20 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                             .map((entry) {
                           final index = entry.key;
                           final product = entry.value;
-                          return CreateProductCard(
-                            key: ValueKey(product),
-                            index: index,
-                            formKey: productFormKey,
-                          );
+                          if (controller.orderToEdit.value != null) {
+                            return CreateProductCard(
+                              key: ValueKey(product),
+                              index: index,
+                              formKey: productFormKey,
+                              product: product,
+                            );
+                          } else {
+                            return CreateProductCard(
+                              key: ValueKey(product),
+                              index: index,
+                              formKey: productFormKey,
+                            );
+                          }
                         }),
                         Center(
                           child: Padding(

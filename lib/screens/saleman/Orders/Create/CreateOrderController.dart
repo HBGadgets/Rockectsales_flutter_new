@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:rocketsale_rs/resources/my_assets.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/OrdersController.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/OrdersHistoryScreen.dart';
 
@@ -16,7 +17,7 @@ import 'CreateOrderScreen.dart';
 class CreateOrderController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxList<Product> productsList = <Product>[].obs;
-  final RxList<Product> productCardList = <Product>[].obs;
+  late RxList<Product> productCardList = <Product>[].obs;
 
   // Detail Form
   final TextEditingController shopName = TextEditingController();
@@ -31,11 +32,44 @@ class CreateOrderController extends GetxController {
 
   final OrdersController controller = Get.find<OrdersController>();
 
+  //Conditional rendering of the screen
+  var orderToEdit = Rxn<Order>();
+  final RxString appBarTitle = "".obs;
+
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+
     getProductsFromDropDown();
+  }
+
+  void renderScreen() {
+    if (orderToEdit.value != null) {
+      appBarTitle.value = "Edit Order Detail";
+      shopOwnerName.text = orderToEdit.value!.shopOwnerName;
+      shopName.text = orderToEdit.value!.shopName;
+      address.text = orderToEdit.value!.shopAddress;
+      phoneNo.text = orderToEdit.value!.phoneNo;
+      tillDate.value = orderToEdit.value!.deliveryDate;
+      productCardList.clear();
+      productCardList.addAll(orderToEdit.value!.product);
+      // productCardList.clear();
+      // for (var product in orderToEdit.value!.product) {
+      //   productCardList.add(Product(
+      //     productName: product.productName,
+      //     quantity: product.quantity,
+      //     price: product.price,
+      //     hsnCode: product.hsnCode,
+      //     id: product.id,
+      //   ));
+      // }
+      //
+      final products = productCardList.map((p) => p.toJson()).toList();
+      print(products);
+    } else {
+      appBarTitle.value = "Create Order";
+    }
   }
 
   void showLoading(BuildContext context) {

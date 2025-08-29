@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/OrderDetailScreen.dart';
 
+import 'Create/CreateOrderController.dart';
 import 'OrdersAndProductsClass.dart';
 
 class OrderCard extends StatelessWidget {
@@ -115,7 +116,7 @@ class OrderCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Total Amount",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
@@ -131,7 +132,7 @@ class OrderCard extends StatelessWidget {
                     ),
                     Text(
                       '₹ ${totalAmount.toString()}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.green,
@@ -147,8 +148,7 @@ class OrderCard extends StatelessWidget {
               buildInfoRow("Date:", formatDate(order.createdAt)),
               buildInfoRow("Phone:", order.phoneNo),
               buildInfoRow("Delivery by:", formatDate(order.deliveryDate)),
-              buildInfoRow("Address:",
-                  "Krida Square Reshimbagh Nagpur, Krida Chowk, Hanuman Nagar, Nagpur, Maharashtra 440232"),
+              buildInfoRow("Address:", order.shopAddress),
             ],
           ),
         ),

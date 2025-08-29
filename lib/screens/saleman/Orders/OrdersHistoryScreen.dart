@@ -45,7 +45,9 @@ class _OrdersHistoryScreenState extends State<OrdersHistoryScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Get.to(CreateOrderScreen());
+          Get.to(CreateOrderScreen(), arguments: {
+            "screenType": "edit",
+          });
         },
         icon: const Icon(Icons.add),
         // Optional icon

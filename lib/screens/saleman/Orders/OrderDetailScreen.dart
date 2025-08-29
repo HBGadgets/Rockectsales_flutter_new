@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/screens/saleman/Orders/Create/CreateOrderScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/Edit/EditOrderScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/OrdersController.dart';
 
 import '../../../resources/my_colors.dart';
+import 'Create/CreateOrderController.dart';
 import 'OrdersAndProductsClass.dart';
 
 class OrderDetailScreen extends StatelessWidget {
@@ -173,7 +175,10 @@ class OrderDetailScreen extends StatelessWidget {
                           flex: 1,
                           child: GestureDetector(
                             onTap: () {
-                              Get.to(EditOrderScreen());
+                              Get.to(CreateOrderScreen(), arguments: {
+                                "screenType": "edit",
+                                "order": order,
+                              });
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(
