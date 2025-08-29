@@ -60,7 +60,7 @@ class OrdersController extends GetxController {
   Future<void> cancelOrder(String orderId, BuildContext buildContext) async {
     isLoadingInDetails.value = true;
     showLoading(buildContext);
-    final url = '${dotenv.env['BASE_URL']}/api/api/getorder/status/$orderId';
+    final url = '${dotenv.env['BASE_URL']}/api/api/order/status/$orderId';
 
     final id = await TokenManager.getSupervisorId(); // Get user ID from token
     if (id == null) {
@@ -131,7 +131,7 @@ class OrdersController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/getorder?&limit=20$dateTimeFilter&search=$searchString&status=$selectedTag');
+          '${dotenv.env['BASE_URL']}/api/api/getorder?&limit=10$dateTimeFilter&search=$searchString&status=$selectedTag');
       final response = await http.get(
         url,
         headers: {

@@ -76,6 +76,7 @@ class CreateOrderController extends GetxController {
       final companyId = decodedToken['companyId'];
       final branchId = decodedToken['branchId'];
       final supervisorId = decodedToken['supervisorId'];
+      final salesmanId = decodedToken['id'];
 
       final products = productCardList.map((p) => p.toJson()).toList();
 
@@ -88,6 +89,7 @@ class CreateOrderController extends GetxController {
           'Authorization': 'Bearer $token'
         },
         body: jsonEncode(<String, dynamic>{
+          'salesmanId': salesmanId,
           'companyId': companyId,
           'branchId': branchId,
           'supervisorId': supervisorId,
@@ -96,24 +98,23 @@ class CreateOrderController extends GetxController {
           'products': products,
           'shopAddress': address.text,
           'shopName': shopName.text,
-          'shopOwnerName': shopOwnerName.text,
+          'shopOwnerName': shopOwnerName.text
         }),
       );
 
       if (response.statusCode == 201) {
-        Navigator.pop(context);
-
-        Get.off(() => OrdersHistoryScreen(), arguments: 1);
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
         controller.getOrders();
         Get.snackbar("Success", "Order info submitted");
       } else {
-        Navigator.pop(context);
+        Navigator.of(context).pop();
         print("❌ Order submission Failed: ${response.body}");
         Get.snackbar("Error", response.body);
       }
     } catch (e) {
       // isLoading.value = false;
-      Navigator.pop(context);
+      Navigator.of(context).pop();
       print("⚠️ Exception in posting qr: $e");
       Get.snackbar("Exception", e.toString());
     }
