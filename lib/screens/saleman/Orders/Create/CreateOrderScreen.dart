@@ -214,7 +214,11 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
                           if (orderInfoFormKey.currentState!.validate() &&
                               productFormKey.currentState!.validate()) {
                             productFormKey.currentState!.save();
-                            controller.uploadOrder(context);
+                            if (controller.orderToEdit.value != null) {
+                              controller.updateOrder(context);
+                            } else {
+                              controller.uploadOrder(context);
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(

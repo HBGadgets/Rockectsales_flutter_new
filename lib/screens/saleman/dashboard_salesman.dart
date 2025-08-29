@@ -15,6 +15,7 @@ import '../../utils/widgets/admin_app_bar.dart';
 import '../../utils/widgets/salesman_custom_drawer.dart';
 import '../notification_list_Screen.dart';
 import 'Attendance/Attendance_Page.dart';
+import 'Attendance/New Attendance/AttendanceScreen.dart';
 import 'Expense/ExpensesScreen.dart';
 import 'Orders/OrdersHistoryScreen.dart';
 import 'chat/chat_screen_sales_man.dart';
@@ -150,7 +151,9 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                       Image(image: attendance, width: 50, height: 50),
                       "Attendance",
                       onTap: () {
-                        Get.to(() => Attendancescreen());
+                        Get.to(() => AttendanceScreen(
+                              name: authController.username.value,
+                            ));
                       },
                     ),
                     _buildMenuItem(

@@ -54,17 +54,6 @@ class CreateOrderController extends GetxController {
       tillDate.value = orderToEdit.value!.deliveryDate;
       productCardList.clear();
       productCardList.addAll(orderToEdit.value!.product);
-      // productCardList.clear();
-      // for (var product in orderToEdit.value!.product) {
-      //   productCardList.add(Product(
-      //     productName: product.productName,
-      //     quantity: product.quantity,
-      //     price: product.price,
-      //     hsnCode: product.hsnCode,
-      //     id: product.id,
-      //   ));
-      // }
-      //
       final products = productCardList.map((p) => p.toJson()).toList();
       print(products);
     } else {
@@ -97,6 +86,63 @@ class CreateOrderController extends GetxController {
         );
       },
     );
+  }
+
+  Future<void> updateOrder(BuildContext context) async {
+    showLoading(context);
+    try {
+      final uri = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/order/${orderToEdit.value!.id}');
+
+      final token = await TokenManager.getToken();
+
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+      final companyId = decodedToken['companyId'];
+      final branchId = decodedToken['branchId'];
+      final supervisorId = decodedToken['supervisorId'];
+      final salesmanId = decodedToken['id'];
+
+      final products = productCardList.map((p) => p.toJson()).toList();
+
+      print(products);
+
+      final response = await http.put(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'salesmanId': salesmanId,
+          'companyId': companyId,
+          'branchId': branchId,
+          'supervisorId': supervisorId,
+          'deliveryDate': tillDate.value?.toIso8601String(),
+          'phoneNo': phoneNo.text,
+          'products': products,
+          'shopAddress': address.text,
+          'shopName': shopName.text,
+          'shopOwnerName': shopOwnerName.text
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        controller.getOrders();
+        Get.snackbar("Success", "Order info submitted");
+      } else {
+        Navigator.of(context).pop();
+        print("❌ Order submission Failed: ${response.body}");
+        Get.snackbar("Error", response.body);
+      }
+    } catch (e) {
+      // isLoading.value = false;
+      Navigator.of(context).pop();
+      print("⚠️ Exception in posting qr: $e");
+      Get.snackbar("Exception", e.toString());
+    }
   }
 
   Future<void> uploadOrder(BuildContext context) async {
