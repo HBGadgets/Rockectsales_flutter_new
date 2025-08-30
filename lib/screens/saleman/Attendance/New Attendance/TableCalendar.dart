@@ -91,19 +91,6 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
                   style: const TextStyle(color: Colors.white),
                 ),
               );
-            } else {
-              return Container(
-                margin: const EdgeInsets.all(6.0),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  "${day.day}",
-                  style: const TextStyle(color: Colors.white),
-                ),
-              );
             }
           }
         }),
