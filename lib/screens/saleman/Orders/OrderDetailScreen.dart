@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/screens/admin/manage%20order/invoice/Invoice_Form.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/Create/CreateOrderScreen.dart';
-import 'package:rocketsale_rs/screens/saleman/Orders/Edit/EditOrderScreen.dart';
+import 'package:rocketsale_rs/screens/saleman/Orders/InvoiceFormScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/OrdersController.dart';
 
 import '../../../resources/my_colors.dart';
@@ -135,106 +136,113 @@ class OrderDetailScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: GestureDetector(
-                            onTap: () {
-                              controller.cancelOrder(order.id, context);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 8, right: 8, top: 2),
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.redAccent,
-                                    borderRadius: BorderRadius.circular(
-                                        10), // optional: rounded corners
+                order.status != "Cancelled"
+                    ? Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    controller.cancelOrder(order.id, context);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8, right: 8, top: 2),
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.redAccent,
+                                          borderRadius: BorderRadius.circular(
+                                              10), // optional: rounded corners
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 10,
+                                              bottom: 10,
+                                              left: 10,
+                                              right: 10),
+                                          child: Text(
+                                            "Cancel Order",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        )),
                                   ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left: 10,
-                                        right: 10),
-                                    child: Text(
-                                      "Cancel Order",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                  )),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: GestureDetector(
-                            onTap: () {
-                              Get.to(CreateOrderScreen(), arguments: {
-                                "screenType": "edit",
-                                "order": order,
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 8, right: 8, top: 2),
-                              child: Container(
-                                  decoration: BoxDecoration(
-                                    color: MyColor.dashbord,
-                                    borderRadius: BorderRadius.circular(
-                                        10), // optional: rounded corners
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left: 10,
-                                        right: 10),
-                                    child: Text(
-                                      "Edit Details",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white),
-                                    ),
-                                  )),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 8, right: 8, top: 8),
-                        child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(
-                                  10), // optional: rounded corners
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.only(
-                                  top: 10, bottom: 10, left: 20, right: 20),
-                              child: Text(
-                                "Generate Invoice",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
+                                ),
                               ),
-                            )),
-                      ),
-                    ),
-                  ],
-                ),
+                              Expanded(
+                                flex: 1,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.to(CreateOrderScreen(), arguments: {
+                                      "screenType": "edit",
+                                      "order": order,
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8, right: 8, top: 2),
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                          color: MyColor.dashbord,
+                                          borderRadius: BorderRadius.circular(
+                                              10), // optional: rounded corners
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 10,
+                                              bottom: 10,
+                                              left: 10,
+                                              right: 10),
+                                          child: Text(
+                                            "Edit Details",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        )),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              controller.showInvoiceDialog(context);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8, top: 8),
+                              child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(
+                                        10), // optional: rounded corners
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 20,
+                                        right: 20),
+                                    child: Text(
+                                      "Generate Invoice",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  )),
+                            ),
+                          ),
+                        ],
+                      )
+                    : SizedBox(),
               ],
             ),
           ),

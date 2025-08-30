@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:rocketsale_rs/screens/saleman/Attendance/Attendance_Page.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/Create/CreateProductCard.dart';
-import 'package:rocketsale_rs/screens/saleman/Orders/Edit/EditOrderController.dart';
 import 'package:rocketsale_rs/screens/saleman/Orders/OrdersAndProductsClass.dart';
 
 import '../../../../resources/my_colors.dart';

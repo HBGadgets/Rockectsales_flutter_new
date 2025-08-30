@@ -31,36 +31,11 @@ class Attendance {
       totalAbsentPercentage: json['totalAbsentPercentage'] ?? '',
       unplannedLeavePercentage: json['unplannedLeavePercentage'] ?? '',
       plannedLeavePercentage: json['plannedLeavePercentage'] ?? '',
-      attendanceDetails: (json['attendanceDetails'] as List<dynamic>? ?? [])
-          .map((e) => AttendanceDetail.fromJson(e))
-          .toList(),
-    );
-  }
-
-  Attendance copyWith({
-    int? presentCount,
-    int? absentCount,
-    int? onLeaveCount,
-    int? totalDaysInMonth,
-    String? presentPercentage,
-    String? totalAbsentPercentage,
-    String? unplannedLeavePercentage,
-    String? plannedLeavePercentage,
-    List<AttendanceDetail>? attendanceDetails,
-  }) {
-    return Attendance(
-      presentCount: presentCount ?? this.presentCount,
-      absentCount: absentCount ?? this.absentCount,
-      onLeaveCount: onLeaveCount ?? this.onLeaveCount,
-      totalDaysInMonth: totalDaysInMonth ?? this.totalDaysInMonth,
-      presentPercentage: presentPercentage ?? this.presentPercentage,
-      totalAbsentPercentage:
-          totalAbsentPercentage ?? this.totalAbsentPercentage,
-      unplannedLeavePercentage:
-          unplannedLeavePercentage ?? this.unplannedLeavePercentage,
-      plannedLeavePercentage:
-          plannedLeavePercentage ?? this.plannedLeavePercentage,
-      attendanceDetails: attendanceDetails ?? this.attendanceDetails,
+      attendanceDetails: (json['attendanceDetails'] as List?)
+              ?.map((item) =>
+                  AttendanceDetail.fromJson(item as Map<String, dynamic>))
+              .toList() ??
+          [],
     );
   }
 }
@@ -68,26 +43,34 @@ class Attendance {
 class AttendanceDetail {
   final String status;
   final String createdAt;
+  final double startLat;
+  final double startLong;
+  final String salesmanName;
 
-  AttendanceDetail({
-    required this.status,
-    required this.createdAt,
-  });
+  AttendanceDetail(
+      {required this.status,
+      required this.createdAt,
+      required this.startLat,
+      required this.startLong,
+      required this.salesmanName});
 
   factory AttendanceDetail.fromJson(Map<String, dynamic> json) {
     return AttendanceDetail(
-      status: json['status'] ?? '',
-      createdAt: json['createdAt'] ?? '',
+      status: json['status']?.toString() ?? '',
+      createdAt: json['createdAt']?.toString() ?? '',
+      startLat: json['startLat'] ?? '',
+      startLong: json['startLong'] ?? '',
+      salesmanName: json['salesmanName'] ?? '',
     );
   }
 
-  AttendanceDetail copyWith({
-    String? status,
-    String? createdAt,
-  }) {
-    return AttendanceDetail(
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      "status": status,
+      "createdAt": createdAt,
+      "startLat": startLat,
+      "startLong": startLong,
+      "salesmanName": salesmanName // only include id if it’s not null
+    };
   }
 }

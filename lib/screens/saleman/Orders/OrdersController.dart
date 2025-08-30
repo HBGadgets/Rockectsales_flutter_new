@@ -30,6 +30,86 @@ class OrdersController extends GetxController {
     super.onInit();
   }
 
+  void showInvoiceDialog(BuildContext context) {
+    final TextEditingController sgstController = TextEditingController();
+    final TextEditingController cgstController = TextEditingController();
+    final TextEditingController discountController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text(
+            "Enter Details",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: sgstController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "SGST",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: cgstController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "CGST",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: discountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "Discount",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(color: MyColor.dashbord),
+              ),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                  backgroundColor: MyColor.dashbord,
+                  foregroundColor: Colors.white),
+              onPressed: () {
+                String sgst = sgstController.text;
+                String cgst = cgstController.text;
+                String discount = discountController.text;
+
+                // 👉 Do something with values
+                print("SGST: $sgst, CGST: $cgst, Discount: $discount");
+
+                Navigator.pop(context);
+              },
+              child: const Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void showLoading(BuildContext context) {
     showDialog(
       context: context,
@@ -79,6 +159,55 @@ class OrdersController extends GetxController {
         url,
         {
           'status': "Cancelled",
+          '_id': id,
+        },
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      // Debug: Print response status and body
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        getOrders();
+        Navigator.of(buildContext).pop();
+        Navigator.of(buildContext).pop();
+      } else {
+        Navigator.of(buildContext).pop();
+        Get.snackbar(
+            "Error", "Failed to update status: ${response.statusText}");
+      }
+    } catch (e) {
+      Navigator.of(buildContext).pop();
+      Get.snackbar("Error", "Failed to update status: $e");
+    }
+  }
+
+  Future<void> completeOrder(String orderId, BuildContext buildContext) async {
+    isLoadingInDetails.value = true;
+    showLoading(buildContext);
+    final url = '${dotenv.env['BASE_URL']}/api/api/order/status/$orderId';
+
+    final id = await TokenManager.getSupervisorId(); // Get user ID from token
+    if (id == null) {
+      // showSnackbar("User ID not found from token");
+      Get.snackbar("Error", "User Id not found");
+      return;
+    }
+    final token = await TokenManager.getToken(); // Get the full token
+
+    if (token == null) {
+      Get.snackbar("Error", "User token not found");
+      return;
+    }
+    try {
+      final response = await GetConnect().put(
+        url,
+        {
+          'status': "Completed",
           '_id': id,
         },
         headers: {

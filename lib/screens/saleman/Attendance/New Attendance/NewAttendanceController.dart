@@ -1,266 +1,203 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../../../../utils/token_manager.dart';
+import '../../SalesManLocationController.dart';
 import 'AttendanceModel.dart';
 
 class NewAttendanceController extends GetxController {
-  final AttendanceService attendanceService;
+  SalesManLocationController controller = SalesManLocationController();
 
-  NewAttendanceController({required this.attendanceService});
+  final addressString = ''.obs;
+  RxBool gettingLocation = false.obs;
+  RxBool isLoading = false.obs;
+  RxDouble latitude = 0.0.obs;
+  RxDouble longitude = 0.0.obs;
 
-  final RxMap<String, Attendance> _monthlyData = <String, Attendance>{}.obs;
-  final RxBool isLoading = false.obs;
-  final Rx<DateTime> selectedDate = DateTime.now().obs;
-
-  Attendance? getMonthAttendance(DateTime month) {
-    final key = _formatMonthKey(month);
-    return _monthlyData[key];
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    getAddress();
   }
 
-  Future<void> fetchAttendance({
-    required String id,
-    required DateTime forMonth,
-  }) async {
-    final key = _formatMonthKey(forMonth);
-    if (_monthlyData.containsKey(key)) return; // Already fetched
-
+  void getAttendanceOfMonth(String month) async {
     isLoading.value = true;
-
+    isMoreCardsAvailable.value = false;
+    page.value = 2;
     try {
-      final attendance = await attendanceService.fetchAttendance(
-        id: id,
-        forMonth: forMonth,
+      final token = await TokenManager.getToken();
+
+      if (token == null || token.isEmpty) {
+        Get.snackbar("Auth Error", "Token not found");
+        return;
+      }
+
+      final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/attendence-by-id?month=$month');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
       );
 
-      _monthlyData[key] = attendance ??
-          Attendance(
-            presentCount: 0,
-            absentCount: 0,
-            onLeaveCount: 0,
-            totalDaysInMonth:
-                DateTime(forMonth.year, forMonth.month + 1, 0).day,
-            presentPercentage: "0.00%",
-            totalAbsentPercentage: "0.00%",
-            unplannedLeavePercentage: "0.00%",
-            plannedLeavePercentage: "0.00%",
-            attendanceDetails: [],
-          );
+      print(url);
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        print(jsonData);
+        final List<dynamic> dataList = jsonData['data'];
+        print("ordersList ========>>>>>> $dataList");
+        final orderList = dataList.map((item) => Order.fromJson(item)).toList();
+        orders.assignAll(orderList);
+      } else {
+        orders.clear();
+        Get.snackbar("Error connect",
+            "Failed to Connect to DB (Code: ${response.statusCode})");
+      }
     } catch (e) {
-      print('Error fetching attendance: $e');
+      orders.clear();
+      // Get.snackbar("Exception", e.toString());
+      Get.snackbar("Exception", "Couldn't get Orders");
     } finally {
       isLoading.value = false;
     }
   }
 
-  void updateSelectedDate(DateTime date) {
-    selectedDate.value = date;
-  }
-
-  String? getStatusForDate(DateTime date) {
-    final attendance = _monthlyData[_formatMonthKey(date)];
-    final formattedDate =
-        "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
-
-    final match = attendance?.attendanceDetails.firstWhere(
-      (d) => d.createdAt == formattedDate,
-      orElse: () => AttendanceDetail(status: '', createdAt: ''),
-    );
-
-    return match?.status.isNotEmpty == true ? match!.status : null;
-  }
-
-  String _formatMonthKey(DateTime date) {
-    return "${date.year}-${date.month.toString().padLeft(2, '0')}";
-  }
-}
-
-class AttendanceService extends ApiService {
-  Future<Attendance?> fetchAttendance({
-    required String id,
-    required DateTime forMonth,
-  }) async {
-    final monthKey =
-        "${forMonth.year}-${forMonth.month.toString().padLeft(2, '0')}";
-    final endpoint = "/api/api/attendence-by-id?month=$monthKey";
-    print(endpoint);
+  void getAddress() async {
+    gettingLocation.value = true;
+    print("getting address.............");
     try {
-      final response = await getRequest(endpoint: endpoint);
+      final salesManLocation = await controller.determinePosition();
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+          salesManLocation.latitude, salesManLocation.longitude);
+      Placemark place = placemarks[0];
+      latitude.value = salesManLocation.latitude;
+      longitude.value = salesManLocation.longitude;
+      addressString.value =
+          "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}";
+      // print(placemarks);
+    } catch (e) {
+      gettingLocation.value = false;
+      Get.snackbar("Location Error", e.toString());
+    } finally {
+      // ✅ Always reset to false, even if error
+      gettingLocation.value = false;
+    }
+  }
 
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        return Attendance.fromJson(jsonData);
+  Future<void> sendAttendanceData(
+    XFile? image,
+    double latitude,
+    double longitude,
+  ) async {
+    try {
+      print("🔹 Processing Attendance Submission...");
+
+      // 🔹 Get Token
+      String? token = await TokenManager.getToken();
+      if (token == null || token.isEmpty) {
+        print('🚨 No token found!');
+        Get.snackbar('Error', 'No token found. Please login again.');
+        return;
+      }
+      // print("✅ Token Retrieved: $token");
+
+      // 🔹 Decode Token
+      Map<String, dynamic> tokenData = JwtDecoder.decode(token);
+      // print("✅ Token Data Extracted: $tokenData");
+
+      // 🔹 Extract Token Fields
+      String salesmanId = tokenData['id'] ?? '';
+      String companyId = tokenData['companyId'] ?? '';
+      String branchId = tokenData['branchId'] ?? '';
+      String supervisorId = tokenData['supervisorId'] ?? '';
+
+      if (salesmanId.isEmpty ||
+          companyId.isEmpty ||
+          branchId.isEmpty ||
+          supervisorId.isEmpty) {
+        // print("Missing required fields in token");
+        Get.snackbar(
+          'Error',
+          'Token is missing required fields. Please login again.',
+        );
+        return;
+      }
+
+      // print("✅ Current Location: Lat: $latitude, Long: $longitude");
+
+      // 🔹 Set Attendance Status
+      String attendanceStatus = "Present";
+
+      // 🔹 Prepare Multipart Request
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence'),
+      );
+
+      // 🔹 Add Headers
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['salesmanId'] = salesmanId;
+      request.fields['companyId'] = companyId;
+      request.fields['branchId'] = branchId;
+      request.fields['supervisorId'] = supervisorId;
+      request.fields['attendenceStatus'] = attendanceStatus;
+      request.fields['startLat'] = latitude.toString();
+      request.fields['startLong'] = longitude.toString();
+
+      // 🔹 Attach Image (if provided)
+      if (image != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'profileImgUrl',
+            image.path,
+            contentType: MediaType(
+              'image',
+              'jpeg',
+            ), // or 'png' based on your image type
+          ),
+        );
+      }
+
+      // print("📤 Sending Attendance Data: ${request.fields}");
+
+      // 🔹 Send Request
+      var response = await request.send();
+      var responseData = await response.stream.bytesToString();
+
+      // 🔹 Check Response
+      if (response.statusCode == 201) {
+        // setState(() => _isProcessingAttendance = false);
+        print("Attendance Submitted Successfully: $responseData");
+        Get.snackbar('Success', 'Attendance submitted successfully.');
       } else {
-        print('Failed to fetch attendance: ${response.body}');
-        return null;
+        // setState(() => _isProcessingAttendance = false);
+        print("Attendance Already Marked:");
+        // print("Attendance Already Marked: $responseData");
+        Get.snackbar('Today', 'Attendance Already Marked:');
       }
     } catch (e) {
-      print('Attendance fetch error: $e');
-      return null;
-    }
-  }
-}
-
-class ApiService {
-  static final String _baseUrl = '${dotenv.env['BASE_URL']}';
-
-  Future<http.Response> getRequest({
-    required String endpoint,
-    Map<String, String>? headers,
-  }) async {
-    final token = await TokenManager.getToken();
-    final url = Uri.parse('$_baseUrl/$endpoint');
-
-    return await http.get(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        ...?headers,
-      },
-    );
-  }
-
-  Future<http.Response> postRequest({
-    required String endpoint,
-    required Map<String, dynamic> body,
-    Map<String, String>? headers,
-  }) async {
-    final token = await TokenManager.getToken();
-    final uri = Uri.parse("$_baseUrl/$endpoint");
-
-    final response = await http.post(
-      uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        if (headers != null) ...headers,
-      },
-      body: jsonEncode(body),
-    );
-    return response;
-  }
-
-  Future<http.Response> putRequest({
-    required String endpoint,
-    required Map<String, dynamic> body,
-    Map<String, String>? headers,
-  }) async {
-    final token = await TokenManager.getToken();
-    final uri = Uri.parse('$_baseUrl/$endpoint');
-
-    final response = await http.put(
-      uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        if (headers != null) ...headers,
-      },
-      body: jsonEncode(body),
-    );
-    return response;
-  }
-
-  Future<http.Response> patchRequest({
-    required String endpoint,
-    required Map<String, dynamic> body,
-    Map<String, String>? headers,
-  }) async {
-    final token = await TokenManager.getToken();
-    final uri = Uri.parse('$_baseUrl/$endpoint');
-
-    final response = await http.patch(
-      uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        if (headers != null) ...headers,
-      },
-      body: jsonEncode(body),
-    );
-    return response;
-  }
-
-  Future<http.Response> deleteRequest({
-    required String endpoint,
-    Map<String, String>? headers,
-  }) async {
-    final token = await TokenManager.getToken();
-    final uri = Uri.parse('$_baseUrl/$endpoint');
-
-    final response = await http.delete(
-      uri,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        if (headers != null) ...headers,
-      },
-    );
-    return response;
-  }
-
-  Future<http.Response> multipartRequest({
-    required String endpoint,
-    required Map<String, String> fields,
-    required Map<String, File> files,
-  }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = await TokenManager.getToken();
-    final url = Uri.parse('$_baseUrl/$endpoint');
-
-    var request = http.MultipartRequest('POST', url);
-    request.headers['Authorization'] = 'Bearer $token';
-
-    // Add fields
-    fields.forEach((key, value) {
-      request.fields[key] = value;
-    });
-
-    // Add files
-    files.forEach((key, value) async {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          key,
-          value.path,
-          filename: value.path.split('/').last,
-        ),
+      // setState(() => _isProcessingAttendance = false);
+      print('🔥 Error submitting attendance: $e');
+      Get.snackbar(
+        '❌ Error',
+        'Something went wrong while submitting attendance.',
       );
-    });
-
-    var response = await request.send();
-    return http.Response.fromStream(response);
-  }
-
-  Future<http.Response> multipartPatchRequest({
-    required String endpoint,
-    required Map<String, String> fields,
-    required Map<String, File> files,
-  }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = await TokenManager.getToken();
-    final url = Uri.parse('$_baseUrl/$endpoint');
-
-    var request = http.MultipartRequest('PATCH', url);
-    request.headers['Authorization'] = 'Bearer $token';
-
-    fields.forEach((key, value) {
-      request.fields[key] = value;
-    });
-
-    for (var entry in files.entries) {
-      request.files
-          .add(await http.MultipartFile.fromPath(entry.key, entry.value.path));
     }
-
-    final streamedResponse = await request.send();
-    return await http.Response.fromStream(streamedResponse);
   }
 }
