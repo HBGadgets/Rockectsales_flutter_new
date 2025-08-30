@@ -44,7 +44,7 @@ class AttendanceScreen extends StatelessWidget {
                   if (controller.isLoading.value)
                     Positioned.fill(
                       child: Container(
-                        color: Colors.black54,
+                        color: Colors.white,
                         child: const Center(
                           child: CircularProgressIndicator(
                               color: MyColor.dashbord),

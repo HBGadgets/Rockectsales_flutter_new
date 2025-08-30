@@ -100,26 +100,25 @@ class AttendanceCard extends StatelessWidget {
                   );
                 } else {
                   return Center(
-                    child: controller.isPresentToday.value
-                        ? ElevatedButton(
-                            onPressed: onMarkAttendance,
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.indigo.shade900,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
+                      child: controller.isPresentToday.value
+                          ? const Text("Attendance marked for today")
+                          : ElevatedButton(
+                              onPressed: onMarkAttendance,
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.indigo.shade900,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 28, vertical: 12),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 28, vertical: 12),
-                            ),
-                            child: const Text(
-                              "Mark Attendance",
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
-                          )
-                        : const Text("Attendance marked for today"),
-                  );
+                              child: const Text(
+                                "Mark Attendance",
+                                style: TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.bold),
+                              ),
+                            ));
                 }
               })
             ],

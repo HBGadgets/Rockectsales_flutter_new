@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Attendance {
   final int presentCount;
   final int absentCount;
@@ -55,11 +57,17 @@ class AttendanceDetail {
       required this.salesmanName});
 
   factory AttendanceDetail.fromJson(Map<String, dynamic> json) {
+    DateTime? parsedDate;
+    if (json['createdAt'] != null && json['createdAt'] != '') {
+      try {
+        parsedDate = DateFormat("dd-MM-yyyy").parse(json['createdAt']);
+      } catch (e) {
+        parsedDate = null;
+      }
+    }
     return AttendanceDetail(
       status: json['status']?.toString() ?? '',
-      createdAt: json['createdAt'] != null && json['createdAt'] != ''
-          ? DateTime.tryParse(json['createdAt'])
-          : null,
+      createdAt: parsedDate,
       startLat: json['startLat'] ?? '',
       startLong: json['startLong'] ?? '',
       salesmanName: json['salesmanName'] ?? '',

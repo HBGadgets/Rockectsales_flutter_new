@@ -68,8 +68,9 @@ class NewAttendanceController extends GetxController {
         final jsonData = json.decode(response.body);
         print("json data of attendance ========>>> $jsonData");
         attendanceForTheMonth.value = Attendance.fromJson(jsonData);
-        isPresentToday.value =
-            hasTodayAttendance(attendanceForTheMonth.value!.attendanceDetails);
+        isPresentToday.value = hasAttendance(
+            attendanceForTheMonth.value!.attendanceDetails, DateTime.now());
+        print("is present today =====>>>> ${isPresentToday.value}");
         print(
             "attendance data from model after modeling =======>>>> ${attendanceForTheMonth.value!.presentCount}");
         // final List<dynamic> dataList = jsonData['data'];
@@ -92,15 +93,13 @@ class NewAttendanceController extends GetxController {
     }
   }
 
-  bool hasTodayAttendance(List<AttendanceDetail> attendanceDetails) {
-    final today = DateTime.now();
-
+  bool hasAttendance(List<AttendanceDetail> attendanceDetails, DateTime day) {
     return attendanceDetails.any((detail) {
       if (detail.createdAt == null) return false;
 
-      return detail.createdAt!.year == today.year &&
-          detail.createdAt!.month == today.month &&
-          detail.createdAt!.day == today.day;
+      return detail.createdAt!.year == day.year &&
+          detail.createdAt!.month == day.month &&
+          detail.createdAt!.day == day.day;
     });
   }
 
