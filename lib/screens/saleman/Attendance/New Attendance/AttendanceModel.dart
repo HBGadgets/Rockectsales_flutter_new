@@ -42,7 +42,7 @@ class Attendance {
 
 class AttendanceDetail {
   final String status;
-  final String createdAt;
+  final DateTime? createdAt;
   final double startLat;
   final double startLong;
   final String salesmanName;
@@ -57,7 +57,9 @@ class AttendanceDetail {
   factory AttendanceDetail.fromJson(Map<String, dynamic> json) {
     return AttendanceDetail(
       status: json['status']?.toString() ?? '',
-      createdAt: json['createdAt']?.toString() ?? '',
+      createdAt: json['createdAt'] != null && json['createdAt'] != ''
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
       startLat: json['startLat'] ?? '',
       startLong: json['startLong'] ?? '',
       salesmanName: json['salesmanName'] ?? '',
@@ -70,7 +72,7 @@ class AttendanceDetail {
       "createdAt": createdAt,
       "startLat": startLat,
       "startLong": startLong,
-      "salesmanName": salesmanName // only include id if it’s not null
+      "salesmanName": salesmanName
     };
   }
 }

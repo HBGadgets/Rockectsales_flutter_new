@@ -9,6 +9,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http_parser/http_parser.dart';
@@ -20,23 +21,29 @@ import 'AttendanceModel.dart';
 class NewAttendanceController extends GetxController {
   SalesManLocationController controller = SalesManLocationController();
 
-  final addressString = ''.obs;
-  RxBool gettingLocation = false.obs;
+  final addressString = 'Loading...'.obs;
+  RxBool isGettingLocation = false.obs;
   RxBool isLoading = false.obs;
   RxDouble latitude = 0.0.obs;
   RxDouble longitude = 0.0.obs;
+  var attendanceForTheMonth = Rxn<Attendance>();
+  RxBool isPresentToday = false.obs;
+
+  var focusedDay = Rxn<DateTime>();
+
+  // final RxList<Attendance> orders = <A>[].obs;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+    getAttendanceOfMonth("2025-08");
     getAddress();
+    focusedDay.value = DateTime.now();
   }
 
   void getAttendanceOfMonth(String month) async {
     isLoading.value = true;
-    isMoreCardsAvailable.value = false;
-    page.value = 2;
     try {
       final token = await TokenManager.getToken();
 
@@ -59,18 +66,25 @@ class NewAttendanceController extends GetxController {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        print(jsonData);
-        final List<dynamic> dataList = jsonData['data'];
-        print("ordersList ========>>>>>> $dataList");
-        final orderList = dataList.map((item) => Order.fromJson(item)).toList();
-        orders.assignAll(orderList);
+        print("json data of attendance ========>>> $jsonData");
+        attendanceForTheMonth.value = Attendance.fromJson(jsonData);
+        isPresentToday.value =
+            hasTodayAttendance(attendanceForTheMonth.value!.attendanceDetails);
+        print(
+            "attendance data from model after modeling =======>>>> ${attendanceForTheMonth.value!.presentCount}");
+        // final List<dynamic> dataList = jsonData['data'];
+        // print("attendanceData ========>>>>>> $dataList");
+        // final orderList =
+        //     dataList.map((item) => Attendance.fromJson(item)).toList();
+        // orders.assignAll(orderList);
+        isLoading.value = false;
       } else {
-        orders.clear();
+        isLoading.value = false;
         Get.snackbar("Error connect",
             "Failed to Connect to DB (Code: ${response.statusCode})");
       }
     } catch (e) {
-      orders.clear();
+      isLoading.value = false;
       // Get.snackbar("Exception", e.toString());
       Get.snackbar("Exception", "Couldn't get Orders");
     } finally {
@@ -78,8 +92,20 @@ class NewAttendanceController extends GetxController {
     }
   }
 
+  bool hasTodayAttendance(List<AttendanceDetail> attendanceDetails) {
+    final today = DateTime.now();
+
+    return attendanceDetails.any((detail) {
+      if (detail.createdAt == null) return false;
+
+      return detail.createdAt!.year == today.year &&
+          detail.createdAt!.month == today.month &&
+          detail.createdAt!.day == today.day;
+    });
+  }
+
   void getAddress() async {
-    gettingLocation.value = true;
+    isGettingLocation.value = true;
     print("getting address.............");
     try {
       final salesManLocation = await controller.determinePosition();
@@ -92,18 +118,22 @@ class NewAttendanceController extends GetxController {
           "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}";
       // print(placemarks);
     } catch (e) {
-      gettingLocation.value = false;
+      isGettingLocation.value = false;
       Get.snackbar("Location Error", e.toString());
     } finally {
       // ✅ Always reset to false, even if error
-      gettingLocation.value = false;
+      isGettingLocation.value = false;
     }
+  }
+
+  Future<void> startAttendanceProcess() async {
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+    sendAttendanceData(pickedImage);
   }
 
   Future<void> sendAttendanceData(
     XFile? image,
-    double latitude,
-    double longitude,
   ) async {
     try {
       print("🔹 Processing Attendance Submission...");
@@ -157,8 +187,8 @@ class NewAttendanceController extends GetxController {
       request.fields['branchId'] = branchId;
       request.fields['supervisorId'] = supervisorId;
       request.fields['attendenceStatus'] = attendanceStatus;
-      request.fields['startLat'] = latitude.toString();
-      request.fields['startLong'] = longitude.toString();
+      request.fields['startLat'] = latitude.value.toString();
+      request.fields['startLong'] = longitude.value.toString();
 
       // 🔹 Attach Image (if provided)
       if (image != null) {
