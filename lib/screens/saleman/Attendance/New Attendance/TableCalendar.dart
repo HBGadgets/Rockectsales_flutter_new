@@ -23,7 +23,6 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final attendance = controller.attendanceForTheMonth.value;
       return TableCalendar(
         firstDay: DateTime.utc(2020, 1, 1),
         lastDay: DateTime.now(),
@@ -36,69 +35,76 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
           });
         },
         onPageChanged: (focusedDay) {
-          controller.focusedDay.value = focusedDay;
-          controller
-              .getAttendanceOfMonth(DateFormat("yyyy-MM").format(focusedDay));
+          setState(() {
+            controller.focusedDay.value = focusedDay;
+            controller
+                .getAttendanceOfMonth(DateFormat("yyyy-MM").format(focusedDay));
+          });
         },
         calendarBuilders:
             CalendarBuilders(defaultBuilder: (context, day, focusedDay) {
-          if (controller.hasAttendance(
-              controller.attendanceForTheMonth.value!.attendanceDetails, day)) {
-            return Container(
-              margin: const EdgeInsets.all(6.0),
-              decoration: const BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                "${day.day}",
-                style: const TextStyle(color: Colors.white),
-              ),
-            );
-          } else {
-            return Container(
-              margin: const EdgeInsets.all(6.0),
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                "${day.day}",
-                style: const TextStyle(color: Colors.white),
-              ),
-            );
+          if (controller.attendanceForTheMonth.value != null) {
+            if (controller.hasAttendance(
+                controller.attendanceForTheMonth.value!.attendanceDetails,
+                day)) {
+              return Container(
+                margin: const EdgeInsets.all(6.0),
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "${day.day}",
+                  style: const TextStyle(color: Colors.white),
+                ),
+              );
+            } else {
+              return Container(
+                margin: const EdgeInsets.all(6.0),
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "${day.day}",
+                  style: const TextStyle(color: Colors.white),
+                ),
+              );
+            }
           }
         }, todayBuilder: (context, day, focusedDay) {
-          if (controller.hasAttendance(
-              controller.attendanceForTheMonth.value!.attendanceDetails,
-              DateTime.now())) {
-            return Container(
-              margin: const EdgeInsets.all(6.0),
-              decoration: const BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                "${day.day}",
-                style: const TextStyle(color: Colors.white),
-              ),
-            );
-          } else {
-            return Container(
-              margin: const EdgeInsets.all(6.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                "${day.day}",
-                style: const TextStyle(color: Colors.white),
-              ),
-            );
+          if (controller.attendanceForTheMonth.value != null) {
+            if (controller.hasAttendance(
+                controller.attendanceForTheMonth.value!.attendanceDetails,
+                DateTime.now())) {
+              return Container(
+                margin: const EdgeInsets.all(6.0),
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "${day.day}",
+                  style: const TextStyle(color: Colors.white),
+                ),
+              );
+            } else {
+              return Container(
+                margin: const EdgeInsets.all(6.0),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "${day.day}",
+                  style: const TextStyle(color: Colors.white),
+                ),
+              );
+            }
           }
         }),
       );

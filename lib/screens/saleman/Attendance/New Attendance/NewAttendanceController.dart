@@ -10,6 +10,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http_parser/http_parser.dart';
@@ -27,7 +28,7 @@ class NewAttendanceController extends GetxController {
   RxDouble latitude = 0.0.obs;
   RxDouble longitude = 0.0.obs;
   var attendanceForTheMonth = Rxn<Attendance>();
-  RxBool isPresentToday = false.obs;
+  RxnBool isPresentToday = RxnBool();
 
   var focusedDay = Rxn<DateTime>();
 
@@ -37,12 +38,17 @@ class NewAttendanceController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getAttendanceOfMonth("2025-08");
+    getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
+        .then((_) {
+      isPresentToday.value = hasAttendance(
+          attendanceForTheMonth.value!.attendanceDetails, DateTime.now());
+    });
     getAddress();
+
     focusedDay.value = DateTime.now();
   }
 
-  void getAttendanceOfMonth(String month) async {
+  Future<void> getAttendanceOfMonth(String month) async {
     isLoading.value = true;
     try {
       final token = await TokenManager.getToken();
@@ -68,8 +74,6 @@ class NewAttendanceController extends GetxController {
         final jsonData = json.decode(response.body);
         print("json data of attendance ========>>> $jsonData");
         attendanceForTheMonth.value = Attendance.fromJson(jsonData);
-        isPresentToday.value = hasAttendance(
-            attendanceForTheMonth.value!.attendanceDetails, DateTime.now());
         print("is present today =====>>>> ${isPresentToday.value}");
         print(
             "attendance data from model after modeling =======>>>> ${attendanceForTheMonth.value!.presentCount}");
@@ -87,7 +91,7 @@ class NewAttendanceController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       // Get.snackbar("Exception", e.toString());
-      Get.snackbar("Exception", "Couldn't get Orders");
+      Get.snackbar("Exception", "Couldn't get attendance");
     } finally {
       isLoading.value = false;
     }

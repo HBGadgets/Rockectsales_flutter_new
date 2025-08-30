@@ -18,17 +18,16 @@ class AttendanceReport extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "Attendance Report",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Icon(Icons.more_vert, color: Colors.black87),
             ],
           ),
           const SizedBox(height: 20),

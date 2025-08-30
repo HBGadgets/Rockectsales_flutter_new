@@ -46,28 +46,33 @@ class AttendanceCard extends StatelessWidget {
                     child: const Icon(Icons.person, color: Colors.grey),
                   ),
                   const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          // "jshdbfkgjsbdfgldjsfglsjdfgsdfgsdhsgfh",
+                          maxLines: 3,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: MyColor.dashbord),
                         ),
-                      ),
-                      Row(
-                        children: [
-                          const Icon(Icons.calendar_today,
-                              size: 16, color: Colors.black54),
-                          const SizedBox(width: 4),
-                          Text(
-                            DateFormat("dd/MM/yyyy").format(date!),
-                            style: const TextStyle(color: Colors.black54),
-                          ),
-                        ],
-                      ),
-                    ],
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_today,
+                                size: 16, color: Colors.black54),
+                            const SizedBox(width: 4),
+                            Text(
+                              DateFormat("dd/MM/yyyy").format(date!),
+                              style: const TextStyle(color: Colors.black54),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -92,15 +97,14 @@ class AttendanceCard extends StatelessWidget {
 
               // Button
               Obx(() {
-                if (controller.isLoading.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: MyColor.dashbord,
-                    ),
+                if (controller.isPresentToday.value == null) {
+                  return const Text(
+                    "Loading...",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   );
                 } else {
                   return Center(
-                      child: controller.isPresentToday.value
+                      child: controller.isPresentToday.value!
                           ? const Text("Attendance marked for today")
                           : ElevatedButton(
                               onPressed: onMarkAttendance,
