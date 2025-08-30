@@ -16,6 +16,8 @@ class TaskController extends GetxController {
   final searchString = ''.obs;
   final RxString selectedTag = "".obs;
 
+  final RxList<Task> tasksForLiveTrack = <Task>[].obs;
+
   RxInt page = 2.obs;
   RxBool isMoreCardsAvailable = false.obs;
 
@@ -35,6 +37,49 @@ class TaskController extends GetxController {
 
     // Format to hh:mm a (12-hour format with AM/PM)
     return DateFormat('hh:mm a').format(dateTime);
+  }
+
+  void getTasksForLiveTrack() async {
+    isLoading.value = true;
+    isMoreCardsAvailable.value = false;
+    page.value = 2;
+    try {
+      final token = await TokenManager.getToken();
+
+      if (token == null || token.isEmpty) {
+        Get.snackbar("Auth Error", "Token not found");
+        return;
+      }
+
+      final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/get-task?&limit=1000$dateTimeFilter&search=$searchString&status=$selectedTag');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        print(jsonData);
+        final List<dynamic> dataList = jsonData['tasks'];
+        print("dataList ========>>>>>> $dataList");
+        final taskList = dataList.map((item) => Task.fromJson(item)).toList();
+        tasksForLiveTrack.assignAll(taskList);
+      } else {
+        tasksForLiveTrack.clear();
+        Get.snackbar("Error connect",
+            "Failed to Connect to DB (Code: ${response.statusCode})");
+      }
+    } catch (e) {
+      tasksForLiveTrack.clear();
+      // Get.snackbar("Exception", e.toString());
+      Get.snackbar("Exception", "Couldn't get Tasks");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void getTasks() async {

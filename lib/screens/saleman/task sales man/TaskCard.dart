@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/resources/my_assets.dart';
 import 'package:rocketsale_rs/resources/my_font_weight.dart';
 import 'package:rocketsale_rs/screens/saleman/Attendance/Attendance_Page.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/token_manager.dart';
 import 'saleTask_controller.dart';
 import '../../../models/task_model/salesTask_model.dart';
@@ -32,6 +36,28 @@ class _TaskcardState extends State<Taskcard> {
   late String taskStatus;
 
   bool _isLoading = false;
+
+  Future<void> openMap(double lat, double lng) async {
+    Uri uri;
+
+    if (Platform.isAndroid) {
+      // Android → use geo: scheme
+      uri = Uri.parse("geo:$lat,$lng?q=$lat,$lng");
+    } else if (Platform.isIOS) {
+      // iOS → use Apple Maps if available
+      uri = Uri.parse("http://maps.apple.com/?ll=$lat,$lng");
+    } else {
+      // Fallback → open Google Maps web
+      uri = Uri.parse(
+          "https://www.google.com/maps/search/?api=1&query=$lat,$lng");
+    }
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw "Could not open map.";
+    }
+  }
 
   void changeTaskStatus(
       String status, String taskId, BuildContext buildContext) {
@@ -216,7 +242,7 @@ class _TaskcardState extends State<Taskcard> {
               ? Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
+                    crossAxisAlignment: CrossAxisAlignment.start, // 👈 add this
                     // mainAxisSize: MainAxisSize.min,
                     children: [
                       const Padding(
@@ -411,7 +437,10 @@ class _TaskcardState extends State<Taskcard> {
                                 10), // Adjust radius as needed
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          openMap(widget.task.shopGeofence!.latitude,
+                              widget.task.shopGeofence!.longitude);
+                        },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
