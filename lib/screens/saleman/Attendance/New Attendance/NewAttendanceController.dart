@@ -139,6 +139,7 @@ class NewAttendanceController extends GetxController {
     XFile? image,
   ) async {
     try {
+      isPresentToday.value = null;
       print("🔹 Processing Attendance Submission...");
 
       // 🔹 Get Token
@@ -217,11 +218,25 @@ class NewAttendanceController extends GetxController {
       if (response.statusCode == 201) {
         // setState(() => _isProcessingAttendance = false);
         print("Attendance Submitted Successfully: $responseData");
+        getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
+            .then((_) {
+          isPresentToday.value = hasAttendance(
+              attendanceForTheMonth.value!.attendanceDetails, DateTime.now());
+        });
+        getAddress();
+
+        focusedDay.value = DateTime.now();
         Get.snackbar('Success', 'Attendance submitted successfully.');
       } else {
         // setState(() => _isProcessingAttendance = false);
         print("Attendance Already Marked:");
         // print("Attendance Already Marked: $responseData");
+        getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
+            .then((_) {
+          isPresentToday.value = hasAttendance(
+              attendanceForTheMonth.value!.attendanceDetails, DateTime.now());
+        });
+        getAddress();
         Get.snackbar('Today', 'Attendance Already Marked:');
       }
     } catch (e) {
