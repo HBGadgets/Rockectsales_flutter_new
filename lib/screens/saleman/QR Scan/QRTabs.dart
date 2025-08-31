@@ -4,7 +4,7 @@ import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScan.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRScanHistory.dart';
 
 import '../../../resources/my_colors.dart';
-import 'QRCardsController.dart';
+import 'QRController.dart';
 
 class Qrtabs extends StatefulWidget {
   const Qrtabs({super.key});

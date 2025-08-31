@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 import '../../../utils/token_manager.dart';
-import 'QRCardsController.dart';
+import 'QRController.dart';
 
 class Qrinformationscreencontroller extends GetxController {
   final QRCardsController controller = Get.find<QRCardsController>();

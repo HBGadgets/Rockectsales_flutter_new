@@ -7,7 +7,7 @@ import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/saleman/Attendance/Attendance_Page.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRInformationScreen.dart';
 
-import 'QRCardsController.dart';
+import 'QRController.dart';
 
 class Qrcard extends StatelessWidget {
   final String cardObjectId;

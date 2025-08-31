@@ -8,7 +8,7 @@ import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCard.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/SelfieTakingScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
 
-import 'QRCardsController.dart';
+import 'QRController.dart';
 
 class Submitqrdatascreen extends StatefulWidget {
   final cardNameString;

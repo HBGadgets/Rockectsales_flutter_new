@@ -1,37 +1,56 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-import '../../../resources/my_colors.dart';
-import 'QRController.dart';
+import '../../../../resources/my_colors.dart';
+import 'NewAttendanceController.dart';
 
-class Selfietakingscreen extends StatefulWidget {
-  const Selfietakingscreen({super.key});
+class SelfietakingscreenAttendance extends StatefulWidget {
+  const SelfietakingscreenAttendance({super.key});
 
   @override
-  State<Selfietakingscreen> createState() => _SelfietakingscreenState();
+  State<SelfietakingscreenAttendance> createState() =>
+      _SelfietakingscreenAttendanceState();
 }
 
-class _SelfietakingscreenState extends State<Selfietakingscreen> {
+class _SelfietakingscreenAttendanceState
+    extends State<SelfietakingscreenAttendance> {
   late FaceCameraController selfieController;
-  final QRCardsController controller =
-      Get.put(QRCardsController(), permanent: false);
+  final NewAttendanceController controller =
+      Get.find<NewAttendanceController>();
 
   @override
   void initState() {
     selfieController = FaceCameraController(
       imageResolution: ImageResolution.low,
-      autoCapture: true,
+      autoCapture: false,
       defaultCameraLens: CameraLens.front,
-      onCapture: (File? image) {
-        controller.salesManSelfie.value = image;
-        Navigator.pop(context);
+      onCapture: (File? image) async {
+        if (image != null) {
+          controller.salesManSelfie.value = image;
+          controller.sendAttendanceData(XFile(image.path));
+        }
+
+        // Stop camera safely before leaving
+        await selfieController.dispose();
+
+        if (mounted) {
+          Navigator.pop(context);
+        }
       },
     );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    selfieController.dispose();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -52,7 +71,6 @@ class _SelfietakingscreenState extends State<Selfietakingscreen> {
           showCameraLensControl: false,
           showCaptureControl: true,
           controller: selfieController,
-          message: 'Center your face in the square',
           showControls: true,
         ));
   }

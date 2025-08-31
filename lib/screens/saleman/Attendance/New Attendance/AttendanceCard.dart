@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:rocketsale_rs/screens/saleman/Attendance/New%20Attendance/SelfieTakingScreenAttendance.dart';
 
 import '../../../../resources/my_colors.dart';
 import 'NewAttendanceController.dart';
@@ -9,14 +10,12 @@ class AttendanceCard extends StatelessWidget {
   final String name;
   final DateTime? date;
   final String location;
-  final VoidCallback onMarkAttendance;
 
   AttendanceCard({
     super.key,
     required this.name,
     required this.date,
     required this.location,
-    required this.onMarkAttendance,
   });
 
   final NewAttendanceController controller =
@@ -107,7 +106,10 @@ class AttendanceCard extends StatelessWidget {
                       child: controller.isAttendanceMarkedToday.value!
                           ? const Text("Attendance marked for today")
                           : ElevatedButton(
-                              onPressed: onMarkAttendance,
+                              onPressed: () {
+                                controller.salesManSelfie.value = null;
+                                Get.to(SelfietakingscreenAttendance());
+                              },
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor: Colors.indigo.shade900,

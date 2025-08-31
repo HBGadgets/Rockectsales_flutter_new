@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRController.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/SubmitQRDataScreen.dart';
 
 import '../../../resources/my_colors.dart';

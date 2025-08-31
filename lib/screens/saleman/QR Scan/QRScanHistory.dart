@@ -5,7 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/FiltrationSystemQR.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCard.dart';
-import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRController.dart';
 
 import '../../admin/attendance/attendance screen/FilterOnSpecificDate.dart';
 import 'QRInformationScreen.dart';

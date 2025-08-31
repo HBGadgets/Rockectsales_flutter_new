@@ -29,6 +29,7 @@ class NewAttendanceController extends GetxController {
   RxDouble longitude = 0.0.obs;
   var attendanceForTheMonth = Rxn<Attendance>();
   RxnBool isAttendanceMarkedToday = RxnBool();
+  var salesManSelfie = Rxn<File?>();
 
   var focusedDay = Rxn<DateTime>();
 
@@ -157,20 +158,20 @@ class NewAttendanceController extends GetxController {
     }
   }
 
-  Future<void> startAttendanceProcess() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(
-      source: ImageSource.camera,
-      preferredCameraDevice: CameraDevice.front,
-    );
-
-    if (pickedImage == null) {
-      Get.snackbar('Error', 'Please click a photo before marking attendance.');
-      return;
-    }
-
-    sendAttendanceData(pickedImage);
-  }
+  // Future<void> startAttendanceProcess() async {
+  //   final picker = ImagePicker();
+  //   final pickedImage = await picker.pickImage(
+  //     source: ImageSource.camera,
+  //     preferredCameraDevice: CameraDevice.front,
+  //   );
+  //
+  //   if (pickedImage == null) {
+  //     Get.snackbar('Error', 'Please click a photo before marking attendance.');
+  //     return;
+  //   }
+  //
+  //   sendAttendanceData(pickedImage);
+  // }
 
   Future<void> sendAttendanceData(
     XFile? image,

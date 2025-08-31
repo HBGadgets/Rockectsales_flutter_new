@@ -7,7 +7,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_debouncer/flutter_debouncer.dart';
-import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRController.dart';
 
 import '../../../resources/my_colors.dart';
 

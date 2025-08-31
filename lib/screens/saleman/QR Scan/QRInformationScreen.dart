@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCard.dart';
-import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCardsController.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRController.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 

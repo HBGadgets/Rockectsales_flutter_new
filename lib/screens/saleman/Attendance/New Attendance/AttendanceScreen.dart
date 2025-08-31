@@ -33,10 +33,10 @@ class AttendanceScreen extends StatelessWidget {
         child: Column(
           children: [
             AttendanceCard(
-                name: name,
-                date: controller.focusedDay.value,
-                location: controller.addressString.value,
-                onMarkAttendance: controller.startAttendanceProcess),
+              name: name,
+              date: controller.focusedDay.value,
+              location: controller.addressString.value,
+            ),
             Obx(() {
               return Stack(
                 children: [
