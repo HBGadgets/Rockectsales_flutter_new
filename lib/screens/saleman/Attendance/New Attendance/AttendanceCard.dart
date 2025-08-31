@@ -97,14 +97,14 @@ class AttendanceCard extends StatelessWidget {
 
               // Button
               Obx(() {
-                if (controller.isPresentToday.value == null) {
+                if (controller.isAttendanceMarkedToday.value == null) {
                   return const Text(
                     "Loading...",
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   );
                 } else {
                   return Center(
-                      child: controller.isPresentToday.value!
+                      child: controller.isAttendanceMarkedToday.value!
                           ? const Text("Attendance marked for today")
                           : ElevatedButton(
                               onPressed: onMarkAttendance,

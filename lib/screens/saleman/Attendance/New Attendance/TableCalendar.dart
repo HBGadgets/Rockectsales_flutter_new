@@ -45,8 +45,9 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
             CalendarBuilders(defaultBuilder: (context, day, focusedDay) {
           if (controller.attendanceForTheMonth.value != null) {
             if (controller.hasAttendance(
-                controller.attendanceForTheMonth.value!.attendanceDetails,
-                day)) {
+                    controller.attendanceForTheMonth.value!.attendanceDetails,
+                    day) ==
+                "Present") {
               return Container(
                 margin: const EdgeInsets.all(6.0),
                 decoration: const BoxDecoration(
@@ -59,7 +60,10 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
                   style: const TextStyle(color: Colors.white),
                 ),
               );
-            } else {
+            } else if (controller.hasAttendance(
+                    controller.attendanceForTheMonth.value!.attendanceDetails,
+                    day) ==
+                "Absent") {
               return Container(
                 margin: const EdgeInsets.all(6.0),
                 decoration: const BoxDecoration(
@@ -77,12 +81,29 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
         }, todayBuilder: (context, day, focusedDay) {
           if (controller.attendanceForTheMonth.value != null) {
             if (controller.hasAttendance(
-                controller.attendanceForTheMonth.value!.attendanceDetails,
-                DateTime.now())) {
+                    controller.attendanceForTheMonth.value!.attendanceDetails,
+                    day) ==
+                "Present") {
               return Container(
                 margin: const EdgeInsets.all(6.0),
                 decoration: const BoxDecoration(
                   color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "${day.day}",
+                  style: const TextStyle(color: Colors.white),
+                ),
+              );
+            } else if (controller.hasAttendance(
+                    controller.attendanceForTheMonth.value!.attendanceDetails,
+                    day) ==
+                "Absent") {
+              return Container(
+                margin: const EdgeInsets.all(6.0),
+                decoration: const BoxDecoration(
+                  color: Colors.red,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,

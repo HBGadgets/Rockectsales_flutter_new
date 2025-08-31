@@ -28,7 +28,7 @@ class NewAttendanceController extends GetxController {
   RxDouble latitude = 0.0.obs;
   RxDouble longitude = 0.0.obs;
   var attendanceForTheMonth = Rxn<Attendance>();
-  RxnBool isPresentToday = RxnBool();
+  RxnBool isAttendanceMarkedToday = RxnBool();
 
   var focusedDay = Rxn<DateTime>();
 
@@ -40,8 +40,22 @@ class NewAttendanceController extends GetxController {
     super.onInit();
     getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
         .then((_) {
-      isPresentToday.value = hasAttendance(
-          attendanceForTheMonth.value!.attendanceDetails, DateTime.now());
+      final attendance = attendanceForTheMonth.value;
+
+      if (attendance == null) {
+        isAttendanceMarkedToday.value = false;
+      } else {
+        if (hasAttendance(attendance.attendanceDetails, DateTime.now()) ==
+            "noData") {
+          isAttendanceMarkedToday.value = false;
+        } else if (hasAttendance(
+                    attendance.attendanceDetails, DateTime.now()) ==
+                "Present" ||
+            hasAttendance(attendance.attendanceDetails, DateTime.now()) ==
+                "Absent") {
+          isAttendanceMarkedToday.value = true;
+        }
+      }
     });
     getAddress();
 
@@ -74,7 +88,7 @@ class NewAttendanceController extends GetxController {
         final jsonData = json.decode(response.body);
         print("json data of attendance ========>>> $jsonData");
         attendanceForTheMonth.value = Attendance.fromJson(jsonData);
-        print("is present today =====>>>> ${isPresentToday.value}");
+        print("is present today =====>>>> ${isAttendanceMarkedToday.value}");
         print(
             "attendance data from model after modeling =======>>>> ${attendanceForTheMonth.value!.presentCount}");
         // final List<dynamic> dataList = jsonData['data'];
@@ -97,14 +111,28 @@ class NewAttendanceController extends GetxController {
     }
   }
 
-  bool hasAttendance(List<AttendanceDetail> attendanceDetails, DateTime day) {
-    return attendanceDetails.any((detail) {
-      if (detail.createdAt == null) return false;
+  String hasAttendance(List<AttendanceDetail> attendanceDetails, DateTime day) {
+    if (attendanceDetails.isEmpty) {
+      return "noData";
+    }
 
-      return detail.createdAt!.year == day.year &&
+    // Look for the first matching record
+    final match = attendanceDetails.firstWhere(
+      (detail) =>
+          detail.createdAt != null &&
+          detail.createdAt!.year == day.year &&
           detail.createdAt!.month == day.month &&
-          detail.createdAt!.day == day.day;
-    });
+          detail.createdAt!.day == day.day,
+      orElse: () => AttendanceDetail(
+        status: "noData",
+        createdAt: null,
+        startLat: 0,
+        startLong: 0,
+        salesmanName: "",
+      ),
+    );
+
+    return match.status;
   }
 
   void getAddress() async {
@@ -131,7 +159,16 @@ class NewAttendanceController extends GetxController {
 
   Future<void> startAttendanceProcess() async {
     final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+    final pickedImage = await picker.pickImage(
+      source: ImageSource.camera,
+      preferredCameraDevice: CameraDevice.front,
+    );
+
+    if (pickedImage == null) {
+      Get.snackbar('Error', 'Please click a photo before marking attendance.');
+      return;
+    }
+
     sendAttendanceData(pickedImage);
   }
 
@@ -139,7 +176,7 @@ class NewAttendanceController extends GetxController {
     XFile? image,
   ) async {
     try {
-      isPresentToday.value = null;
+      isAttendanceMarkedToday.value = null;
       print("🔹 Processing Attendance Submission...");
 
       // 🔹 Get Token
@@ -149,13 +186,9 @@ class NewAttendanceController extends GetxController {
         Get.snackbar('Error', 'No token found. Please login again.');
         return;
       }
-      // print("✅ Token Retrieved: $token");
 
-      // 🔹 Decode Token
       Map<String, dynamic> tokenData = JwtDecoder.decode(token);
-      // print("✅ Token Data Extracted: $tokenData");
 
-      // 🔹 Extract Token Fields
       String salesmanId = tokenData['id'] ?? '';
       String companyId = tokenData['companyId'] ?? '';
       String branchId = tokenData['branchId'] ?? '';
@@ -165,7 +198,6 @@ class NewAttendanceController extends GetxController {
           companyId.isEmpty ||
           branchId.isEmpty ||
           supervisorId.isEmpty) {
-        // print("Missing required fields in token");
         Get.snackbar(
           'Error',
           'Token is missing required fields. Please login again.',
@@ -173,18 +205,13 @@ class NewAttendanceController extends GetxController {
         return;
       }
 
-      // print("✅ Current Location: Lat: $latitude, Long: $longitude");
-
-      // 🔹 Set Attendance Status
       String attendanceStatus = "Present";
 
-      // 🔹 Prepare Multipart Request
       var request = http.MultipartRequest(
         'POST',
         Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence'),
       );
 
-      // 🔹 Add Headers
       request.headers['Authorization'] = 'Bearer $token';
       request.fields['salesmanId'] = salesmanId;
       request.fields['companyId'] = companyId;
@@ -203,25 +230,34 @@ class NewAttendanceController extends GetxController {
             contentType: MediaType(
               'image',
               'jpeg',
-            ), // or 'png' based on your image type
+            ),
           ),
         );
       }
 
-      // print("📤 Sending Attendance Data: ${request.fields}");
-
-      // 🔹 Send Request
       var response = await request.send();
       var responseData = await response.stream.bytesToString();
 
-      // 🔹 Check Response
       if (response.statusCode == 201) {
-        // setState(() => _isProcessingAttendance = false);
         print("Attendance Submitted Successfully: $responseData");
         getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
             .then((_) {
-          isPresentToday.value = hasAttendance(
-              attendanceForTheMonth.value!.attendanceDetails, DateTime.now());
+          final attendance = attendanceForTheMonth.value;
+
+          if (attendance == null) {
+            isAttendanceMarkedToday.value = false;
+          } else {
+            if (hasAttendance(attendance.attendanceDetails, DateTime.now()) ==
+                "noData") {
+              isAttendanceMarkedToday.value = false;
+            } else if (hasAttendance(
+                        attendance.attendanceDetails, DateTime.now()) ==
+                    "Present" ||
+                hasAttendance(attendance.attendanceDetails, DateTime.now()) ==
+                    "Absent") {
+              isAttendanceMarkedToday.value = true;
+            }
+          }
         });
         getAddress();
 
@@ -233,17 +269,31 @@ class NewAttendanceController extends GetxController {
         // print("Attendance Already Marked: $responseData");
         getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
             .then((_) {
-          isPresentToday.value = hasAttendance(
-              attendanceForTheMonth.value!.attendanceDetails, DateTime.now());
+          final attendance = attendanceForTheMonth.value;
+
+          if (attendance == null) {
+            isAttendanceMarkedToday.value = false;
+          } else {
+            if (hasAttendance(attendance.attendanceDetails, DateTime.now()) ==
+                "noData") {
+              isAttendanceMarkedToday.value = false;
+            } else if (hasAttendance(
+                        attendance.attendanceDetails, DateTime.now()) ==
+                    "Present" ||
+                hasAttendance(attendance.attendanceDetails, DateTime.now()) ==
+                    "Absent") {
+              isAttendanceMarkedToday.value = true;
+            }
+          }
         });
         getAddress();
         Get.snackbar('Today', 'Attendance Already Marked:');
       }
     } catch (e) {
       // setState(() => _isProcessingAttendance = false);
-      print('🔥 Error submitting attendance: $e');
+      print(' Error submitting attendance: $e');
       Get.snackbar(
-        '❌ Error',
+        ' Error',
         'Something went wrong while submitting attendance.',
       );
     }

@@ -65,12 +65,13 @@ class AttendanceDetail {
         parsedDate = null;
       }
     }
+
     return AttendanceDetail(
       status: json['status']?.toString() ?? '',
       createdAt: parsedDate,
-      startLat: json['startLat'] ?? '',
-      startLong: json['startLong'] ?? '',
-      salesmanName: json['salesmanName'] ?? '',
+      startLat: (json['startLat'] as num?)?.toDouble() ?? 0.0,
+      startLong: (json['startLong'] as num?)?.toDouble() ?? 0.0,
+      salesmanName: json['salesmanName']?.toString() ?? '',
     );
   }
 
