@@ -427,100 +427,94 @@ class _TaskcardState extends State<Taskcard> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 15, left: 15),
-                  child: Expanded(
-                    flex: 1,
-                    child: OutlinedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: MyColor.dashbord,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                10), // Adjust radius as needed
-                          ),
+                  child: OutlinedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: MyColor.dashbord,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10), // Adjust radius as needed
                         ),
-                        onPressed: () {
-                          openMap(widget.task.shopGeofence!.latitude,
-                              widget.task.shopGeofence!.longitude);
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.map,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 2),
-                            Text(
-                              "Set destination",
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        )),
-                  ),
+                      ),
+                      onPressed: () {
+                        openMap(widget.task.shopGeofence!.latitude,
+                            widget.task.shopGeofence!.longitude);
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.map,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            "Set destination",
+                            style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )),
                 ),
                 Padding(
                   padding:
                       const EdgeInsets.only(right: 15, left: 15, bottom: 8),
-                  child: Expanded(
-                    flex: 1,
-                    child: OutlinedButton(
-                        style: ElevatedButton.styleFrom(
-                          side: BorderSide(
-                            color: taskStatus == "Completed"
-                                ? Colors.red
-                                : Colors.green,
-                            width: 1.5, // thickness of border
-                          ),
-                          backgroundColor: taskStatus == "Completed"
-                              ? const Color.fromRGBO(247, 210, 210, 1)
-                              : const Color.fromRGBO(224, 247, 210, 1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                10), // Adjust radius as needed
-                          ),
+                  child: OutlinedButton(
+                      style: ElevatedButton.styleFrom(
+                        side: BorderSide(
+                          color: taskStatus == "Completed"
+                              ? Colors.red
+                              : Colors.green,
+                          width: 1.5, // thickness of border
                         ),
-                        onPressed: () {
-                          changeStatusDialogue(taskStatus == "Completed"
-                              ? "Pending"
-                              : "Completed");
-                        },
-                        child: taskStatus == "Completed"
-                            ? const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.pending_actions,
-                                    color: Colors.red,
-                                  ),
-                                  Text(
-                                    "Mark as Pending",
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              )
-                            : const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.check_circle_outline,
-                                    size: 15,
-                                    color: Color.fromRGBO(37, 87, 9, 1),
-                                  ),
-                                  Text(
-                                    "Mark as complete",
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: Color.fromRGBO(37, 87, 9, 1),
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              )),
-                  ),
+                        backgroundColor: taskStatus == "Completed"
+                            ? const Color.fromRGBO(247, 210, 210, 1)
+                            : const Color.fromRGBO(224, 247, 210, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              10), // Adjust radius as needed
+                        ),
+                      ),
+                      onPressed: () {
+                        changeStatusDialogue(taskStatus == "Completed"
+                            ? "Pending"
+                            : "Completed");
+                      },
+                      child: taskStatus == "Completed"
+                          ? const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.pending_actions,
+                                  color: Colors.red,
+                                ),
+                                Text(
+                                  "Mark as Pending",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )
+                          : const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_outline,
+                                  size: 15,
+                                  color: Color.fromRGBO(37, 87, 9, 1),
+                                ),
+                                Text(
+                                  "Mark as complete",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      color: Color.fromRGBO(37, 87, 9, 1),
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            )),
                 )
               ],
             )
