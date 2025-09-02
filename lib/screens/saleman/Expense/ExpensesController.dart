@@ -1,116 +1,167 @@
-import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-
-// import 'package:get/get_rx/src/rx_workers/rx_workers.dart';
-// import 'package:get/get_rx/src/rx_workers/utils/debouncer.dart';
 import 'package:intl/intl.dart';
-
-import 'package:flutter_debouncer/flutter_debouncer.dart';
-import 'package:rocketsale_rs/resources/my_assets.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRTabs.dart';
+import 'package:rocketsale_rs/screens/saleman/SalesManLocationController.dart';
+import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
 
 import '../../../models/expense/expenseList.dart';
+import '../../../resources/my_colors.dart';
 import '../../../utils/token_manager.dart';
 
 class ExpensesController extends GetxController {
-  var fromDate = Rxn<DateTime>();
+  final RxList<Expense> expenses = <Expense>[].obs;
+  final RxBool isLoading = true.obs;
 
-  var toDate = Rxn<DateTime>();
+  // final RxBool areProductsLoading = false.obs;
+  final RxString error = ''.obs;
+  final dateTimeFilter = ''.obs;
+  final searchString = ''.obs;
+  final RxString selectedTag = "".obs;
+  final RxBool isLoadingInDetails = false.obs;
 
-  var Today = DateTime.now().obs;
-
-  var selectedTime = TimeOfDay.now().obs;
-
-  var twelveAM = const TimeOfDay(hour: 00, minute: 00).obs;
-
-  var dateTimeFilter = ''.obs;
-  var salesmanName = Rxn<String>;
-
-  var searchController = TextEditingController().obs;
-
-  var isLoading = false.obs;
-
-  var expensesList = <Expense>[].obs;
-  var expensesListFromSearch = <Expense>[].obs;
+  RxInt page = 2.obs;
+  RxBool isMoreCardsAvailable = false.obs;
 
   @override
   void onInit() {
-    // TODO: implement onInit
+    getExpenses();
     super.onInit();
-    fetchExpenses(dateTimeFilter.value);
   }
 
-  void refreshExpenses() {
-    fetchExpenses(dateTimeFilter.value);
+  void showInvoiceDialog(BuildContext context) {
+    final TextEditingController sgstController = TextEditingController();
+    final TextEditingController cgstController = TextEditingController();
+    final TextEditingController discountController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text(
+            "Enter Details",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: sgstController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "SGST",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: cgstController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "CGST",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: discountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "Discount",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(color: MyColor.dashbord),
+              ),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                  backgroundColor: MyColor.dashbord,
+                  foregroundColor: Colors.white),
+              onPressed: () {
+                String sgst = sgstController.text;
+                String cgst = cgstController.text;
+                String discount = discountController.text;
+
+                // 👉 Do something with values
+                print("SGST: $sgst, CGST: $cgst, Discount: $discount");
+
+                Navigator.pop(context);
+              },
+              child: const Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  String formatTimeOfDayFull(TimeOfDay time) {
-    final hour = time.hour.toString().padLeft(2, '0');
-    final minute = time.minute.toString().padLeft(2, '0');
-    return "$hour:$minute:00.000";
+  void showLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: MyColor.dashbord),
+                SizedBox(width: 20),
+                Text("Loading..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
-  String formatTimeOfDay(BuildContext context, TimeOfDay time) {
-    return time.format(context); // returns something like "1:45 PM"
+  String formattedDate(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+    return DateFormat('dd/MM/yy').format(dateTime);
   }
 
-  String formatDate(DateTime date) {
-    return DateFormat('yyyy-MM-dd').format(date);
+  String formattedTime(String? dateTimeStr) {
+    DateTime dateTime = DateTime.parse(dateTimeStr!);
+
+    // Format to hh:mm a (12-hour format with AM/PM)
+    return DateFormat('hh:mm a').format(dateTime);
   }
 
-  // Future<void> _pickTime(String fromDateString, BuildContext context) async {
-  //   final TimeOfDay? picked = await showTimePicker(
-  //     context: context,
-  //     initialTime: TimeOfDay.now(),
-  //   );
-  //
-  //   if (picked != null) {
-  //     selectedTime.value = picked;
-  //     String date = formatDate(fromDate.value!);
-  //
-  //     String fromTimeString = formatTimeOfDayFull(twelveAM.value);
-  //
-  //     String endTimeString = formatTimeOfDayFull(selectedTime.value);
-  //
-  //     dateTimeFilter.value = "startDate=$date" +
-  //         "T" +
-  //         fromTimeString +
-  //         "Z&endDate=$date" +
-  //         "T" +
-  //         endTimeString +
-  //         "Z";
-  //   }
-  // }
-
-  void applyFilter(BuildContext context) {
-    fetchExpenses(dateTimeFilter.value);
-  }
-
-  // Future<void> _selectFromDate(BuildContext context) async {
-  //   final picked = await showDatePicker(
-  //     context: context,
-  //     // initialDate: fromDate ?? DateTime.now(),
-  //     initialDate: fromDate.value ?? DateTime.now(),
-  //     firstDate: DateTime(2000),
-  //     lastDate: DateTime.now(),
-  //   );
-  //   if (picked != null) {
-  //     fromDate.value = picked;
-  //     String date = formatDate(fromDate.value!);
-  //
-  //     _pickTime(date, context);
-  //   }
-  // }
-
-  Future<void> fetchExpenses(String filter) async {
+  void getExpenses() async {
     isLoading.value = true;
+    isMoreCardsAvailable.value = false;
+    page.value = 2;
     try {
       final token = await TokenManager.getToken();
 
@@ -119,8 +170,52 @@ class ExpensesController extends GetxController {
         return;
       }
 
-      final url =
-          Uri.parse('${dotenv.env['BASE_URL']}/api/api/expence?$filter');
+      final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/get/expence?&limit=10$dateTimeFilter&search=$searchString');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print(url);
+
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        print(jsonData);
+        final List<dynamic> dataList = jsonData['data'];
+        print("expenseList ========>>>>>> $dataList");
+        final expenseList =
+            dataList.map((item) => Expense.fromJson(item)).toList();
+        expenses.assignAll(expenseList);
+      } else {
+        expenses.clear();
+        Get.snackbar("Error connect",
+            "Failed to Connect to DB (Code: ${response.statusCode})");
+      }
+    } catch (e) {
+      expenses.clear();
+      // Get.snackbar("Exception", e.toString());
+      Get.snackbar("Exception", "Couldn't get Expenses");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void getMoreExpensesCards() async {
+    print('fetching more');
+    try {
+      final token = await TokenManager.getToken();
+
+      if (token == null || token.isEmpty) {
+        Get.snackbar("Auth Error", "Token not found");
+        return;
+      }
+
+      final url = Uri.parse(
+          '${dotenv.env['BASE_URL']}/api/api/get/expence?page=$page&limit=10$dateTimeFilter&search=$searchString');
       final response = await http.get(
         url,
         headers: {
@@ -131,24 +226,28 @@ class ExpensesController extends GetxController {
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        final List<dynamic> data = jsonData['data'];
-        final List<Expense> expenseData =
-            data.map((e) => Expense.fromJson(e)).toList();
-        // final expenseData = Expense.fromJson(jsonData);
-        expensesList.assignAll(expenseData);
-        expensesListFromSearch.assignAll(expenseData);
+        // print(jsonData);
+        final List<dynamic> dataList = jsonData['data'];
+        // final List<dynamic> dataList = jsonData;
+        final expenseList =
+            dataList.map((item) => Expense.fromJson(item)).toList();
+        // page.value++;
+        if (expenseList.length < 1) {
+          isMoreCardsAvailable.value = false;
+          // page.value = 1;
+        } else {
+          page.value++;
+        }
+        expenses.addAll(expenseList);
       } else {
-        expensesList.clear();
-        expensesListFromSearch.clear();
-        Get.snackbar(
-            "Error", "Failed to load data (Code: ${response.statusCode})");
+        expenses.clear();
+        Get.snackbar("Error connect",
+            "Failed to Connect to DB (Code: ${response.statusCode})");
       }
     } catch (e) {
-      expensesList.clear();
-      expensesListFromSearch.clear();
-      Get.snackbar("Exception", e.toString());
-    } finally {
-      isLoading.value = false;
+      expenses.clear();
+      // Get.snackbar("Exception", e.toString());
+      Get.snackbar("Exception", "Couldn't get Expenses");
     }
   }
 }

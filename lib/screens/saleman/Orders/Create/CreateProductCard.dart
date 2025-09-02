@@ -157,6 +157,7 @@ class _CreateProductCardState extends State<CreateProductCard> {
       TextInputType inputType = TextInputType.text,
       bool isDisabled = false}) {
     return TextFormField(
+      keyboardType: inputType,
       onSaved: (String? string) {
         controller.productCardList[widget.index] = Product(
           productName: dropdownValue.productName,

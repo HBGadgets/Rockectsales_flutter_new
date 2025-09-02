@@ -97,9 +97,10 @@ class AttendanceCard extends StatelessWidget {
               // Button
               Obx(() {
                 if (controller.isAttendanceMarkedToday.value == null) {
-                  return const Text(
-                    "Loading...",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: MyColor.dashbord,
+                    ),
                   );
                 } else {
                   return Center(

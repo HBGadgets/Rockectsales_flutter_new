@@ -5,7 +5,8 @@ import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-
+import 'package:rocketsale_rs/screens/saleman/Attendance/New%20Attendance/SelfiePreviewScreen.dart';
+import 'package:image/image.dart' as img;
 import '../../../../resources/my_colors.dart';
 import 'NewAttendanceController.dart';
 
@@ -20,27 +21,37 @@ class SelfietakingscreenAttendance extends StatefulWidget {
 class _SelfietakingscreenAttendanceState
     extends State<SelfietakingscreenAttendance> {
   late FaceCameraController selfieController;
-  final NewAttendanceController controller =
-      Get.find<NewAttendanceController>();
+
+  Future<File> flipImage(File file) async {
+    final bytes = await file.readAsBytes();
+    final image = img.decodeImage(bytes)!;
+    final flipped = img.flipHorizontal(image);
+    final newFile = await file.writeAsBytes(img.encodeJpg(flipped));
+    return newFile;
+  }
 
   @override
   void initState() {
     selfieController = FaceCameraController(
-      imageResolution: ImageResolution.low,
+      imageResolution: ImageResolution.high,
       autoCapture: false,
       defaultCameraLens: CameraLens.front,
       onCapture: (File? image) async {
         if (image != null) {
-          controller.salesManSelfie.value = image;
-          controller.sendAttendanceData(XFile(image.path));
+          final flippedImage = await flipImage(image);
+          Get.to(SelfiePreviewScreen(
+            imageFile: flippedImage,
+          ));
+          // controller.salesManSelfie.value = image;
+          // controller.sendAttendanceData(XFile(image.path));
         }
 
         // Stop camera safely before leaving
-        await selfieController.dispose();
+        // await selfieController.dispose();
 
-        if (mounted) {
-          Navigator.pop(context);
-        }
+        // if (mounted) {
+        //   Navigator.pop(context);
+        // }
       },
     );
     super.initState();

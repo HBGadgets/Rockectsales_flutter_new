@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
@@ -12,9 +13,12 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:rocketsale_rs/screens/saleman/Attendance/New%20Attendance/AttendanceScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http_parser/http_parser.dart';
 
+import '../../../../NativeKTMethodChannel.dart';
+import '../../../../resources/my_colors.dart';
 import '../../../../utils/token_manager.dart';
 import '../../SalesManLocationController.dart';
 import 'AttendanceModel.dart';
@@ -173,27 +177,64 @@ class NewAttendanceController extends GetxController {
   //   sendAttendanceData(pickedImage);
   // }
 
-  Future<void> sendAttendanceData(
-    XFile? image,
-  ) async {
+  Future<void> startTracking() async {
+    String? token = await TokenManager.getToken();
+    Map<String, dynamic> tokenData = JwtDecoder.decode(token!);
+
+    String salesmanId = tokenData['id'] ?? '';
+    String salesmanName = tokenData['username'] ?? '';
+
+    await NativeChannel.startService(salesmanName, salesmanId);
+  }
+
+  void showLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: MyColor.dashbord),
+                SizedBox(width: 20),
+                Text("Uploading..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> sendAttendanceData(XFile? image, BuildContext context) async {
+    showLoading(context);
+    String? token = await TokenManager.getToken();
+    if (token == null || token.isEmpty) {
+      print('🚨 No token found!');
+      Get.snackbar('Error', 'No token found. Please login again.');
+      return;
+    }
+
     try {
-      isAttendanceMarkedToday.value = null;
-      print("🔹 Processing Attendance Submission...");
-
-      // 🔹 Get Token
-      String? token = await TokenManager.getToken();
-      if (token == null || token.isEmpty) {
-        print('🚨 No token found!');
-        Get.snackbar('Error', 'No token found. Please login again.');
-        return;
-      }
-
       Map<String, dynamic> tokenData = JwtDecoder.decode(token);
 
       String salesmanId = tokenData['id'] ?? '';
       String companyId = tokenData['companyId'] ?? '';
       String branchId = tokenData['branchId'] ?? '';
       String supervisorId = tokenData['supervisorId'] ?? '';
+      String salesmanName = tokenData['username'] ?? '';
+      isAttendanceMarkedToday.value = null;
+      print("🔹 Processing Attendance Submission...");
+
+      // 🔹 Get Token
 
       if (salesmanId.isEmpty ||
           companyId.isEmpty ||
@@ -263,6 +304,17 @@ class NewAttendanceController extends GetxController {
         getAddress();
 
         focusedDay.value = DateTime.now();
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.pop(context);
+        // Navigator.pushAndRemoveUntil<dynamic>(
+        //   context,
+        //   MaterialPageRoute<dynamic>(
+        //     builder: (BuildContext context) =>
+        //         AttendanceScreen(name: salesmanName),
+        //   ),
+        //   (route) => false, //if you want to disable back feature set to false
+        // );
         Get.snackbar('Success', 'Attendance submitted successfully.');
       } else {
         // setState(() => _isProcessingAttendance = false);
