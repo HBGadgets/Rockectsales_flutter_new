@@ -275,7 +275,7 @@ class _FiltrationsystemExpensesState extends State<FiltrationsystemExpenses> {
                         controller.selectedTag.value = "Completed";
                       });
 
-                      controller.expenses();
+                      controller.getExpenses();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -306,7 +306,7 @@ class _FiltrationsystemExpensesState extends State<FiltrationsystemExpenses> {
                         controller.selectedTag.value = "Pending";
                       });
 
-                      controller.expenses();
+                      controller.getExpenses();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
@@ -340,7 +340,7 @@ class _FiltrationsystemExpensesState extends State<FiltrationsystemExpenses> {
                         controller.selectedTag.value = "Cancelled";
                       });
 
-                      controller.expenses();
+                      controller.getExpenses();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),

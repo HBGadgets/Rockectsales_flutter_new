@@ -51,7 +51,7 @@ class _ExpensesHistoryScreenState extends State<ExpensesHistoryScreen> {
         },
         icon: const Icon(Icons.add),
         // Optional icon
-        label: const Text('Create Order'),
+        label: const Text('Create Expense'),
         // The text label
         backgroundColor: MyColor.dashbord,
         // Optional background color

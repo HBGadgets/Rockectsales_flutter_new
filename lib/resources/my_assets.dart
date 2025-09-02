@@ -19,6 +19,7 @@ var clock = const AssetImage('assets/images/clock.png');
 var location = const AssetImage('assets/images/location.png');
 var salesman = const AssetImage('assets/images/Salesman.png');
 var qrscan = const AssetImage('assets/images/qrscan.jpg');
+var dashBoardImage = const AssetImage('assets/images/DashboardImage.jpeg');
 
 //
 // //dialog
