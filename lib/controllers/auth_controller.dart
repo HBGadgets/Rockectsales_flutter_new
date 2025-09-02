@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/admin/dashboard_admin.dart';
@@ -14,6 +15,7 @@ class AuthController extends GetxController {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   RxString username = ''.obs;
+  RxString salesmanId = ''.obs;
 
   @override
   void onInit() {
@@ -23,6 +25,10 @@ class AuthController extends GetxController {
 
   Future<void> loadUsername() async {
     String? name = await TokenManager.getUsername();
+    String? token = await TokenManager.getToken();
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+    final sId = decodedToken['id'];
+    salesmanId.value = sId;
     if (name != null) {
       username.value = name;
     }

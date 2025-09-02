@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rocketsale_rs/NativeKTMethodChannel.dart';
 import 'package:rocketsale_rs/screens/saleman/Analytics/AnalyticsScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/Attendance/AttendanceSalesmanScreen.dart';
 import 'package:rocketsale_rs/screens/saleman/LeaveApplication/LeaveApplication.dart';
@@ -162,7 +163,11 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            NativeChannel.startService(
+                                authController.username.value,
+                                authController.salesmanId.value);
+                          },
                           child: const Text("Check in"),
                         ),
                       ),

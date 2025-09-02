@@ -114,15 +114,16 @@ class LocationService : Service(), LocationListener {
         val data = JSONObject()
         data.put("_id", userId)
         data.put("username", username)
-        data.put("latitude", location.latitude)
-        data.put("longitude", location.longitude)
-        data.put("batteryLevel", battery)
-        data.put("speed", location.speed)
-        data.put("timestamp", System.currentTimeMillis())
+        data.put("latitude", location.latitude)   // double ✅ OK
+        data.put("longitude", location.longitude) // double ✅ OK
+        data.put("batteryLevel", battery)         // int ✅ OK
+        data.put("speed", location.speed.toDouble()) // 🔥 convert float → double
+        data.put("timestamp", System.currentTimeMillis()) // long ✅ OK
 
         socket?.emit("sendLocation", data)
         Log.d("LocationService", "Location sent: $data")
     }
+
 
     override fun onBind(intent: Intent?): IBinder? = null
 
