@@ -110,9 +110,9 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                     children: [
                       const CircleAvatar(
                         radius: 30,
-                        backgroundImage: NetworkImage(
-                          "https://via.placeholder.com/150", // replace with real image
-                        ),
+                        // backgroundImage: NetworkImage(
+                        //   "https://via.placeholder.com/150", // replace with real image
+                        // ),
                       ),
                       const SizedBox(width: 12),
                       Column(
@@ -136,11 +136,6 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                         ],
                       ),
                       const Spacer(),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.notifications_none,
-                            color: Colors.white, size: 30),
-                      )
                     ],
                   ),
                 ),

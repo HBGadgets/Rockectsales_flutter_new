@@ -212,7 +212,16 @@ class OrderDetailScreen extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              controller.showInvoiceDialog(context);
+                              if (order.status == "Pending") {
+                                controller.showInvoiceDialog(
+                                    context, order, grandTotal.toString());
+                              } else {
+                                controller
+                                    .generateInvoicePdfCompleted(order, context)
+                                    .then((_) => controller
+                                        .getOrders()
+                                        .then((_) => Navigator.pop(context)));
+                              }
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(

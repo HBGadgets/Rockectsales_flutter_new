@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:rocketsale_rs/screens/saleman/Expense/CreateExpenseScreen.dart';
+import 'package:rocketsale_rs/screens/saleman/Expense/CreateAndEditExpense/CreateAndEditExpenseScreen.dart';
+import 'package:rocketsale_rs/screens/saleman/Expense/ExpensesCard.dart';
 import 'package:rocketsale_rs/screens/saleman/Expense/FilterExpensesBar.dart';
 
 import '../../../resources/my_colors.dart';
@@ -45,7 +46,7 @@ class _ExpensesHistoryScreenState extends State<ExpensesHistoryScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Get.to(CreateExpensesScreen(), arguments: {
+          Get.to(CreateAndEditExpenseScreen(), arguments: {
             "screenType": "edit",
           });
         },
@@ -75,54 +76,54 @@ class _ExpensesHistoryScreenState extends State<ExpensesHistoryScreen> {
               padding: EdgeInsets.only(top: 8, left: 8, right: 8),
               child: FiltrationsystemExpenses(),
             ),
-            // Expanded(
-            //   child: Obx(() {
-            //     if (controller.isLoading.value) {
-            //       return const Center(
-            //           child: CircularProgressIndicator(
-            //         color: MyColor.dashbord,
-            //       ));
-            //     } else if (controller.expenses.isEmpty) {
-            //       return const Center(child: Text("No Orders found."));
-            //     } else {
-            //       return RefreshIndicator(
-            //         backgroundColor: Colors.white,
-            //         color: MyColor.dashbord,
-            //         onRefresh: () async {
-            //           controller.getExpenses();
-            //         },
-            //         child: ListView.builder(
-            //           controller: scrollController,
-            //           itemCount: controller.expenses.length + 1,
-            //           itemBuilder: (context, index) {
-            //             if (index < controller.expenses.length) {
-            //               final item = controller.expenses[index];
-            //               return Expen(
-            //                 order: item,
-            //               );
-            //             } else {
-            //               if (controller.isMoreCardsAvailable.value) {
-            //                 return const Padding(
-            //                   padding: EdgeInsets.symmetric(vertical: 32),
-            //                   child: Center(
-            //                     child: CircularProgressIndicator(
-            //                       color: MyColor.dashbord,
-            //                     ),
-            //                   ),
-            //                 );
-            //               } else {
-            //                 return const Padding(
-            //                   padding: EdgeInsets.symmetric(vertical: 5),
-            //                   child: Center(child: Text('')),
-            //                 );
-            //               }
-            //             }
-            //           },
-            //         ),
-            //       );
-            //     }
-            //   }),
-            // ),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(
+                      child: CircularProgressIndicator(
+                    color: MyColor.dashbord,
+                  ));
+                } else if (controller.expenses.isEmpty) {
+                  return const Center(child: Text("No Expenses found."));
+                } else {
+                  return RefreshIndicator(
+                    backgroundColor: Colors.white,
+                    color: MyColor.dashbord,
+                    onRefresh: () async {
+                      controller.getExpenses();
+                    },
+                    child: ListView.builder(
+                      controller: scrollController,
+                      itemCount: controller.expenses.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index < controller.expenses.length) {
+                          final item = controller.expenses[index];
+                          return ExpenseCard(
+                            expense: item,
+                          );
+                        } else {
+                          if (controller.isMoreCardsAvailable.value) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 32),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: MyColor.dashbord,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Center(child: Text('')),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  );
+                }
+              }),
+            ),
           ],
         ),
       ),

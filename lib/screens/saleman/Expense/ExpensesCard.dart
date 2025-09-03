@@ -65,13 +65,13 @@ class ExpenseCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 4),
-                    // Text(
-                    //   formatDate(expense.date),
-                    //   style: TextStyle(
-                    //     fontSize: 16,
-                    //     fontWeight: FontWeight.w600,
-                    //   ),
-                    // ),
+                    Text(
+                      formatDate(expense.date),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
               ],

@@ -39,7 +39,8 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
         leading: const BackButton(
           color: Colors.white, // Change your color here
         ),
-        title: const Text('Expense Management', style: TextStyle(color: Colors.white)),
+        title: const Text('Expense Management',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: MyColor.dashbord,
       ),
       backgroundColor: Colors.grey.shade100,
@@ -275,9 +276,9 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(expense.date ?? '',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                                    // Text(expense.date ?? '',
+                                    //     style: const TextStyle(
+                                    //         fontWeight: FontWeight.bold)),
                                     Text(expense.expenceType ?? '',
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold)),

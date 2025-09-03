@@ -143,11 +143,9 @@ class AuthController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        showSnackbar("✅ FCM token updated successfully");
         print("FCM token sent successfully");
       } else {
         print("Failed to update FCM token: ${response.statusCode}");
-        showSnackbar("❌ Failed to update FCM token");
       }
     } catch (e) {
       print("Error updating FCM token: $e");
@@ -183,16 +181,13 @@ class AuthController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        showSnackbar("✅ FCM token deleted successfully");
         print("FCM token deleted successfully");
       } else {
         print(
             "❌ Failed to delete FCM token: ${response.statusCode} - ${response.body}");
-        showSnackbar("❌ Failed to delete FCM token");
       }
     } catch (e) {
       print("🔥 Error deleting FCM token: $e");
-      showSnackbar("Error deleting FCM token");
     }
   }
 }

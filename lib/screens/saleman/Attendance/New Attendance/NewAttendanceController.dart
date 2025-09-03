@@ -177,16 +177,6 @@ class NewAttendanceController extends GetxController {
   //   sendAttendanceData(pickedImage);
   // }
 
-  Future<void> startTracking() async {
-    String? token = await TokenManager.getToken();
-    Map<String, dynamic> tokenData = JwtDecoder.decode(token!);
-
-    String salesmanId = tokenData['id'] ?? '';
-    String salesmanName = tokenData['username'] ?? '';
-
-    await NativeChannel.startService(salesmanName, salesmanId);
-  }
-
   void showLoading(BuildContext context) {
     showDialog(
       context: context,

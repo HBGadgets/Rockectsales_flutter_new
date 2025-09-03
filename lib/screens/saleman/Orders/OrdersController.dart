@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 import '../../../resources/my_colors.dart';
 import '../../../utils/token_manager.dart';
@@ -30,10 +34,10 @@ class OrdersController extends GetxController {
     super.onInit();
   }
 
-  void showInvoiceDialog(BuildContext context) {
-    final TextEditingController sgstController = TextEditingController();
-    final TextEditingController cgstController = TextEditingController();
+  void showInvoiceDialog(BuildContext context, Order order, String total) {
+    final TextEditingController gstController = TextEditingController();
     final TextEditingController discountController = TextEditingController();
+    final TextEditingController GSTNumber = TextEditingController();
 
     showDialog(
       context: context,
@@ -52,19 +56,10 @@ class OrdersController extends GetxController {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  controller: sgstController,
+                  controller: gstController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: "SGST",
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: cgstController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: "CGST",
+                    labelText: "GST (₹)",
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -73,7 +68,15 @@ class OrdersController extends GetxController {
                   controller: discountController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    labelText: "Discount",
+                    labelText: "Discount (₹)",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                TextField(
+                  controller: GSTNumber,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "GST Number",
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -93,20 +96,172 @@ class OrdersController extends GetxController {
                   backgroundColor: MyColor.dashbord,
                   foregroundColor: Colors.white),
               onPressed: () {
-                String sgst = sgstController.text;
-                String cgst = cgstController.text;
+                String gst = gstController.text;
                 String discount = discountController.text;
+                String gstNumber = GSTNumber.text;
+                int grandTotal = (int.tryParse(total) ?? 0) +
+                    (order.gst ?? 0) -
+                    (order.discount ?? 0);
 
-                // 👉 Do something with values
-                print("SGST: $sgst, CGST: $cgst, Discount: $discount");
+                completeOrder(order.id, context, int.parse(gst),
+                        int.parse(discount), gstNumber, grandTotal)
+                    .then((_) => generateInvoicePdfPending(
+                        order,
+                        total,
+                        context,
+                        int.parse(gst),
+                        int.parse(discount),
+                        gstNumber,
+                        grandTotal));
 
-                Navigator.pop(context);
+                // if (order.status == "Completed") {
+                //   generateInvoicePdf(order, total)
+                //       .then((_) => Navigator.pop(context));
+                // } else {
+                //   completeOrder(order.id, context).then((_) =>
+                //       generateInvoicePdf(order, total).then((_) =>
+                //           getOrders().then((_) => Navigator.pop(context))));
+                // }
               },
               child: const Text("Submit"),
             ),
           ],
         );
       },
+    );
+  }
+
+  Future<void> generateInvoicePdfPending(
+      Order order,
+      String total,
+      BuildContext context,
+      int gst,
+      int discount,
+      String gstNumber,
+      int grandTotal) async {
+    showLoading(context);
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.MultiPage(
+        build: (context) => [
+          pw.Header(
+            level: 0,
+            child: pw.Text(
+              'Invoice #${order.id}',
+              style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+          pw.Text('Shop: ${order.shopName}'),
+          pw.Text('Owner: ${order.shopOwnerName}'),
+          pw.Text('Phone: ${order.phoneNo}'),
+          pw.Text('Address: ${order.shopAddress}'),
+          pw.Text('Order Date: ${order.createdAt.toLocal()}'),
+          pw.Text('GST: ₹${gst}'),
+          pw.Text('Discount: ₹${discount}'),
+          pw.Text('GST Number: ${gstNumber}'),
+          if (order.deliveryDate != null)
+            pw.Text('Delivery Date: ${order.deliveryDate!.toLocal()}'),
+          pw.SizedBox(height: 20),
+          pw.Table.fromTextArray(
+            headers: ['#', 'Product', 'Qty', 'Price', 'Total'],
+            data: List.generate(order.product.length, (index) {
+              final p = order.product[index];
+              return [
+                (index + 1).toString(),
+                p.productName,
+                p.quantity,
+                '₹${p.price}',
+                '₹${int.parse(p.quantity) * int.parse(p.price)}',
+              ];
+            }),
+          ),
+          pw.SizedBox(height: 20),
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text(
+              'Grand Total: ₹$grandTotal',
+              style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // Save file locally
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File("${dir.path}/invoice_${order.id}.pdf");
+    await file
+        .writeAsBytes(await pdf.save())
+        .then((_) => Navigator.pop(context));
+
+    // Trigger download/preview (on mobile/desktop)
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: "invoice_${order.id}.pdf",
+    ).then((_) => Navigator.pop(context));
+  }
+
+  Future<void> generateInvoicePdfCompleted(
+      Order order, BuildContext context) async {
+    showLoading(context);
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.MultiPage(
+        build: (context) => [
+          pw.Header(
+            level: 0,
+            child: pw.Text(
+              'Invoice #${order.id}',
+              style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+          pw.Text('Shop: ${order.shopName}'),
+          pw.Text('Owner: ${order.shopOwnerName}'),
+          pw.Text('Phone: ${order.phoneNo}'),
+          pw.Text('Address: ${order.shopAddress}'),
+          pw.Text('Order Date: ${order.createdAt.toLocal()}'),
+          pw.Text('GST: ₹${order.gst}'),
+          pw.Text('Discount: ₹${order.discount}'),
+          pw.Text('GST Number: ${order.gstNumber}'),
+          if (order.deliveryDate != null)
+            pw.Text('Delivery Date: ${order.deliveryDate!.toLocal()}'),
+          pw.SizedBox(height: 20),
+          pw.Table.fromTextArray(
+            headers: ['#', 'Product', 'Qty', 'Price', 'Total'],
+            data: List.generate(order.product.length, (index) {
+              final p = order.product[index];
+              return [
+                (index + 1).toString(),
+                p.productName,
+                p.quantity,
+                '₹${int.tryParse(p.price) ?? 0}'
+                    '₹${int.parse(p.quantity) * int.parse(p.price)}',
+              ];
+            }),
+          ),
+          pw.SizedBox(height: 20),
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text(
+              'Grand Total: ₹${order.grandTotal}',
+              style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // Save file locally
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File("${dir.path}/invoice_${order.id}.pdf");
+    await file.writeAsBytes(await pdf.save());
+
+    // Trigger download/preview (on mobile/desktop)
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: "invoice_${order.id}.pdf",
     );
   }
 
@@ -172,9 +327,10 @@ class OrdersController extends GetxController {
       print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        getOrders();
-        Navigator.of(buildContext).pop();
-        Navigator.of(buildContext).pop();
+        getOrders().then((_) {
+          Navigator.of(buildContext).pop();
+          Navigator.of(buildContext).pop();
+        });
       } else {
         Navigator.of(buildContext).pop();
         Get.snackbar(
@@ -186,7 +342,8 @@ class OrdersController extends GetxController {
     }
   }
 
-  Future<void> completeOrder(String orderId, BuildContext buildContext) async {
+  Future<void> completeOrder(String orderId, BuildContext buildContext, int gst,
+      int discount, String gstNumber, int grandTotal) async {
     isLoadingInDetails.value = true;
     showLoading(buildContext);
     final url = '${dotenv.env['BASE_URL']}/api/api/order/status/$orderId';
@@ -209,6 +366,10 @@ class OrdersController extends GetxController {
         {
           'status': "Completed",
           '_id': id,
+          'gst': gst,
+          'discount': discount,
+          'gstNumber': gstNumber,
+          'grandTotal': grandTotal,
         },
         headers: {
           'Authorization': 'Bearer $token',
@@ -247,7 +408,7 @@ class OrdersController extends GetxController {
     return DateFormat('hh:mm a').format(dateTime);
   }
 
-  void getOrders() async {
+  Future<void> getOrders() async {
     isLoading.value = true;
     isMoreCardsAvailable.value = false;
     page.value = 2;

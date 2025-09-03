@@ -8,6 +8,10 @@ class Order {
   final String status;
   final String phoneNo;
   final List<Product> product;
+  final int? grandTotal;
+  final int? gst;
+  final int? discount;
+  final String? gstNumber;
 
   Order({
     required this.id,
@@ -19,6 +23,10 @@ class Order {
     required this.status,
     required this.phoneNo,
     required this.product,
+    this.grandTotal,
+    this.gst,
+    this.discount,
+    this.gstNumber,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -37,6 +45,10 @@ class Order {
               ?.map((item) => Product.fromJson(item as Map<String, dynamic>))
               .toList() ??
           [],
+      grandTotal: json['grandTotal'] ?? 0,
+      gst: json['gst'] ?? 0,
+      discount: json['discount'] ?? 0,
+      gstNumber: json['gstNumber'] ?? '',
     );
   }
 }
