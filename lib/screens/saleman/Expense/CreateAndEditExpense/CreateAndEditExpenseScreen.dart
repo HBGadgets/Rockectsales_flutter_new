@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../../../../models/expense/expenseList.dart';
+import '../../../../resources/my_colors.dart';
 import '../ExpensesController.dart';
 
 class CreateAndEditExpenseScreen extends StatelessWidget {
@@ -17,7 +18,16 @@ class CreateAndEditExpenseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text(
+          "Expense",
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: const BackButton(
+          color: Colors.white,
+        ),
+        backgroundColor: MyColor.dashbord,
+      ),
       body: Form(
           key: ExpenseInfoFormKey,
           child: Column(
@@ -28,8 +38,26 @@ class CreateAndEditExpenseScreen extends StatelessWidget {
                 "Order Info:",
                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownMenu<Expense>(
+                  initialSelection: dropdownValue,
+                  onSelected: (Product? value) {
+                    // This is called when the user selects an item.
+                    setState(() {
+                      dropdownValue = value!;
+                    });
+                  },
+                  dropdownMenuEntries: controller.productsList
+                      .map((product) => DropdownMenuEntry<Product>(
+                            value: product,
+                            label: product.productName,
+                          ))
+                      .toList(),
+                ),
+              ),
               buildLabel("Shop Name:"),
-              buildTextEditField(controller.shopName),
+              buildTextEditField(controller),
               buildLabel("Shop Owner Name:"),
               buildTextEditField(controller.shopOwnerName),
               buildLabel("Delivery by:"),

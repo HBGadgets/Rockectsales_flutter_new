@@ -1,3 +1,5 @@
+import 'package:rocketsale_rs/models/admin_attendance_model.dart';
+
 class Expense {
   final String id;
   final String expenceType;
@@ -29,5 +31,37 @@ class Expense {
       amount: json['amount'] ?? '0',
       status: json['status'] ?? '',
     );
+  }
+}
+
+class ExpenseType {
+  final String expenceType;
+  final CompanyId? companyId;
+  final BranchId? branchId;
+  final String? id;
+
+  ExpenseType({
+    required this.expenceType,
+    this.companyId,
+    this.branchId,
+    this.id,
+  });
+
+  factory ExpenseType.fromJson(Map<String, dynamic> json) {
+    return ExpenseType(
+      expenceType: json['expenceType']?.toString() ?? '',
+      branchId: json['branchId'],
+      id: json['_id'] ?? '',
+      companyId: json['companyId'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "expenceType": expenceType,
+      "branchId": branchId,
+      "companyId": companyId,
+      if (id != null) "_id": id,
+    };
   }
 }
