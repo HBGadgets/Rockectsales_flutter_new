@@ -24,6 +24,18 @@ class LocationService : Service(), LocationListener {
     private lateinit var locationManager: LocationManager
     private var username: String = ""
     private var userId: String = ""
+    private var lastLocation: Location? = null
+    private val handler = android.os.Handler()
+    private val sendInterval = 10000L // 10 seconds
+
+    private val sendRunnable = object : Runnable {
+        override fun run() {
+            lastLocation?.let { location ->
+                sendLocationToServer(location)
+            }
+            handler.postDelayed(this, sendInterval)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -37,13 +49,15 @@ class LocationService : Service(), LocationListener {
         initSocket()
         startLocationUpdates()
 
+        // Start repeating sender
+        handler.postDelayed(sendRunnable, sendInterval)
+
         return START_STICKY
     }
 
     private fun startForegroundNotification() {
         val channelId = "location_channel"
 
-        // Create Notification Channel for Android O+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
@@ -54,7 +68,6 @@ class LocationService : Service(), LocationListener {
             manager.createNotificationChannel(channel)
         }
 
-        // Intent to launch MainActivity when user taps notification
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this,
@@ -67,7 +80,7 @@ class LocationService : Service(), LocationListener {
             .setContentTitle("RocketSale Tracking")
             .setContentText("Live location is being shared")
             .setSmallIcon(id.flutter.flutter_background_service.R.drawable.ic_bg_service_small)
-            .setContentIntent(pendingIntent) // ✅ pass pendingIntent here
+            .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setOngoing(true)
             .build()
@@ -75,18 +88,16 @@ class LocationService : Service(), LocationListener {
         startForeground(1, notification)
     }
 
-
     private fun initSocket() {
         try {
-            socket =
-                IO.socket("https://salestrack.rocketsalestracker.com") // ⚡ change to your server
+            socket = IO.socket("https://salestrack.rocketsalestracker.com")
             socket?.connect()
 
             socket?.on(Socket.EVENT_CONNECT) {
-                Log.d("LocationService", "Socket connected")
                 val data = JSONObject()
                 data.put("username", username)
                 socket?.emit("registerUser", data)
+                Log.d("LocationService", "Socket connected")
             }
         } catch (e: Exception) {
             Log.e("LocationService", "Socket init error: ${e.message}")
@@ -98,8 +109,8 @@ class LocationService : Service(), LocationListener {
         try {
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                10000L, // every 10 sec
-                10f,    // every 10 meters
+                5000L, // request updates every 5 sec
+                0f,    // distance = 0 → report all changes
                 this
             )
         } catch (ex: SecurityException) {
@@ -108,22 +119,25 @@ class LocationService : Service(), LocationListener {
     }
 
     override fun onLocationChanged(location: Location) {
+        lastLocation = location // store latest fix
+    }
+
+    private fun sendLocationToServer(location: Location) {
         val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
         val battery = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
 
         val data = JSONObject()
         data.put("_id", userId)
         data.put("username", username)
-        data.put("latitude", location.latitude)   // double ✅ OK
-        data.put("longitude", location.longitude) // double ✅ OK
-        data.put("batteryLevel", battery)         // int ✅ OK
-        data.put("speed", location.speed.toDouble()) // 🔥 convert float → double
-        data.put("timestamp", System.currentTimeMillis()) // long ✅ OK
+        data.put("latitude", location.latitude)
+        data.put("longitude", location.longitude)
+        data.put("batteryLevel", battery)
+        data.put("speed", location.speed.toDouble())
+        data.put("timestamp", System.currentTimeMillis())
 
         socket?.emit("sendLocation", data)
         Log.d("LocationService", "Location sent: $data")
     }
-
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -131,6 +145,8 @@ class LocationService : Service(), LocationListener {
         super.onDestroy()
         socket?.disconnect()
         locationManager.removeUpdates(this)
+        handler.removeCallbacks(sendRunnable) // stop scheduled sending
+        Log.d("LocationService", "Location service disconnected")
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}

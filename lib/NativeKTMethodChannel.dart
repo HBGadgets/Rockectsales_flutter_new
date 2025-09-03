@@ -13,4 +13,12 @@ class NativeChannel {
       print("⚠️ Failed to start service: ${e.message}");
     }
   }
+
+  static Future<void> stopService() async {
+    try {
+      await platform.invokeMethod("stopService");
+    } on PlatformException catch (e) {
+      print("⚠️ Failed to stop service: ${e.message}");
+    }
+  }
 }

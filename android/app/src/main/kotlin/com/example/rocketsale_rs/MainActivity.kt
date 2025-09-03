@@ -31,6 +31,10 @@ class MainActivity : FlutterActivity() {
                     }
 
                     result.success(null)
+                } else if (call.method == "stopService") {
+                    val serviceIntent = Intent(this, LocationService::class.java)
+                    stopService(serviceIntent)
+                    result.success(null)
                 } else {
                     result.notImplemented()
                 }

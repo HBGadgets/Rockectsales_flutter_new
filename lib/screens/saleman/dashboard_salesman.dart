@@ -86,8 +86,8 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromRGBO(10, 42, 139, 1),
-                  // MyColor.dashbord,
+                  // Color.fromRGBO(10, 42, 139, 1),
+                  MyColor.dashbord,
                   Color.fromRGBO(0, 0, 0, 0.27)
                 ],
                 begin: Alignment.topCenter,
@@ -181,7 +181,9 @@ class _DashboardSalesmanState extends State<DashboardSalesman> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            NativeChannel.stopService();
+                          },
                           child: const Text("Check Out"),
                         ),
                       ),
