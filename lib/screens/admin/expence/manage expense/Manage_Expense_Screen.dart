@@ -288,35 +288,35 @@ class _ManageExpenseScreenState extends State<ManageExpenseScreen> {
                                 const Text("Amount",
                                     style: TextStyle(color: Colors.grey)),
                                 const SizedBox(height: 4),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("₹ ${expense.amount}",
-                                        style: const TextStyle(fontSize: 16)),
-                                    if (expense.billDoc != null &&
-                                        expense.billDoc!.isNotEmpty)
-                                      OutlinedButton.icon(
-                                        onPressed: () {
-                                          // TODO: implement View Receipt
-                                        },
-                                        icon: const Icon(Icons.image, size: 16),
-                                        label: const Text("View Receipt"),
-                                        style: OutlinedButton.styleFrom(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          side: BorderSide(
-                                              color: Colors.grey.shade300),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 8),
-                                          textStyle:
-                                              const TextStyle(fontSize: 13),
-                                        ),
-                                      ),
-                                  ],
-                                ),
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     Text("₹ ${expense.amount}",
+                                //         style: const TextStyle(fontSize: 16)),
+                                //     if (expense.billDoc != null &&
+                                //         expense.billDoc!.isNotEmpty)
+                                //       OutlinedButton.icon(
+                                //         onPressed: () {
+                                //           // TODO: implement View Receipt
+                                //         },
+                                //         icon: const Icon(Icons.image, size: 16),
+                                //         label: const Text("View Receipt"),
+                                //         style: OutlinedButton.styleFrom(
+                                //           shape: RoundedRectangleBorder(
+                                //             borderRadius:
+                                //                 BorderRadius.circular(8),
+                                //           ),
+                                //           side: BorderSide(
+                                //               color: Colors.grey.shade300),
+                                //           padding: const EdgeInsets.symmetric(
+                                //               horizontal: 12, vertical: 8),
+                                //           textStyle:
+                                //               const TextStyle(fontSize: 13),
+                                //         ),
+                                //       ),
+                                //   ],
+                                // ),
                                 Divider(
                                   height: 30,
                                   thickness: 1,

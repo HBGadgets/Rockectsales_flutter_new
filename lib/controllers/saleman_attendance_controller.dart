@@ -55,7 +55,8 @@ class AttendanceController extends GetxController {
   late LiveContoller controller;
   final Battery _battery = Battery();
   int? _batteryPercentage;
-  final alertController = Get.find<AlertController>();
+
+  // final alertController = Get.find<AlertController>();
   final AlertController controllerGCW = Get.put(AlertController());
   int speed = 0;
   late Color checkInColor = Colors.transparent; // Default color
@@ -717,9 +718,9 @@ class AttendanceController extends GetxController {
     _timer = null;
     updateCheckoutTime();
     stopListeningLocation();
-    Get.find<AlertController>().stopAlertManually();
-    Get.find<AlertController>().stopBeepSound();
-    alertController.stopBeepSound();
+    // Get.find<AlertController>().stopAlertManually();
+    // Get.find<AlertController>().stopBeepSound();
+    // alertController.stopBeepSound();
     subscription?.cancel();
     subscription = null;
     Get.snackbar("", "checkOut Successfully.");

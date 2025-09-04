@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:rocketsale_rs/models/admin_attendance_model.dart';
 
 class Expense {
@@ -5,7 +7,6 @@ class Expense {
   final String expenceType;
   final String expenceDescription;
   final DateTime? date;
-  final String? billDoc;
   final String amount;
   final String status;
 
@@ -14,7 +15,6 @@ class Expense {
     required this.expenceType,
     required this.expenceDescription,
     required this.date,
-    required this.billDoc,
     required this.amount,
     required this.status,
   });
@@ -27,7 +27,6 @@ class Expense {
       date: json['date'] != null && json['date'] != ''
           ? DateTime.tryParse(json['date'])
           : null,
-      billDoc: json['billDoc'],
       amount: json['amount'] ?? '0',
       status: json['status'] ?? '',
     );

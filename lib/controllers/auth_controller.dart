@@ -8,7 +8,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/admin/dashboard_admin.dart';
-import '../screens/saleman/dashboard_salesman.dart';
+import '../screens/saleman/SalesmanDashboard/dashboard_salesman.dart';
 import '../utils/token_manager.dart';
 
 class AuthController extends GetxController {

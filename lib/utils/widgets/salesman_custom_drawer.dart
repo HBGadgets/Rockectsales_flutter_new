@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rocketsale_rs/screens/saleman/SalesmanDashboard/salesmanDashboardController.dart';
 import '../../controllers/alertController.dart';
 import '../../controllers/saleman_attendance_controller.dart';
 import '../../controllers/dashboard_salesman_controller.dart';
@@ -10,14 +11,14 @@ import '../../screens/admin/drawer admin/feedback/Feedback_Screen.dart';
 import '../../screens/admin/drawer admin/help support/Help_Support_Screen.dart';
 import '../../screens/admin/drawer admin/privacy policy/Privacy_Policy.dart';
 import '../../screens/admin/drawer admin/rate/rate_screen.dart';
-import '../../screens/saleman/dashboard_salesman.dart';
+import '../../screens/saleman/SalesmanDashboard/dashboard_salesman.dart';
 import '../../screens/saleman/drawer sales man/invite friend/Invite_Friend_Screen.dart';
 import '../../screens/saleman/drawer sales man/update password/Update_Password_Screen.dart';
 
 class SalesmanCustomDrawer extends StatelessWidget {
   SalesmanCustomDrawer({super.key});
 
-  final DashboardSalesmanController dashboardController = Get.find();
+  final salesmanDashboardController dashboardController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -149,9 +150,9 @@ class SalesmanCustomDrawer extends StatelessWidget {
                               .stopListeningLocation();
                           Get.find<AlertController>().stopAlertManually();
                           Get.find<AlertController>().stopBeepSound();
-                          Get.find<AttendanceController>()
-                              .alertController
-                              .stopBeepSound();
+                          // Get.find<AttendanceController>()
+                          //     .alertController
+                          //     .stopBeepSound();
                           Get.find<AttendanceController>()
                               .subscription
                               ?.cancel();

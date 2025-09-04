@@ -20,6 +20,11 @@ import io.socket.client.Socket
 import org.json.JSONObject
 
 class LocationService : Service(), LocationListener {
+
+    companion object {
+        var isSocketConnected: Boolean = false
+    }
+
     private var socket: Socket? = null
     private lateinit var locationManager: LocationManager
     private var username: String = ""
@@ -98,6 +103,11 @@ class LocationService : Service(), LocationListener {
                 data.put("username", username)
                 socket?.emit("registerUser", data)
                 Log.d("LocationService", "Socket connected")
+                isSocketConnected = true
+            }
+            socket?.on(Socket.EVENT_DISCONNECT) {
+                isSocketConnected = false
+                Log.d("LocationService", "Socket disconnected")
             }
         } catch (e: Exception) {
             Log.e("LocationService", "Socket init error: ${e.message}")
@@ -149,7 +159,10 @@ class LocationService : Service(), LocationListener {
         Log.d("LocationService", "Location service disconnected")
     }
 
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+    @Deprecated("Deprecated in Java")
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+    }
+
     override fun onProviderEnabled(provider: String) {}
     override fun onProviderDisabled(provider: String) {}
 }

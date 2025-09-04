@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRTabs.dart';
 import 'package:rocketsale_rs/screens/saleman/SalesManLocationController.dart';
-import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
+import 'package:rocketsale_rs/screens/saleman/SalesmanDashboard/dashboard_salesman.dart';
 
 import '../../../utils/token_manager.dart';
 import 'QRInformationScreen.dart';

@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRTabs.dart';
 import 'package:rocketsale_rs/screens/saleman/SalesManLocationController.dart';
-import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
+import 'package:rocketsale_rs/screens/saleman/SalesmanDashboard/dashboard_salesman.dart';
 
 import '../../../models/expense/expenseList.dart';
 import '../../../resources/my_colors.dart';

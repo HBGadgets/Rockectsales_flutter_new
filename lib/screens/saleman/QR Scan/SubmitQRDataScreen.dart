@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/QRCard.dart';
 import 'package:rocketsale_rs/screens/saleman/QR%20Scan/SelfieTakingScreen.dart';
-import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
+import 'package:rocketsale_rs/screens/saleman/SalesmanDashboard/dashboard_salesman.dart';
 
 import 'QRController.dart';
 

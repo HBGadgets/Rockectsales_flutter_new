@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -14,13 +15,9 @@ import '../../../../models/expense/expenseList.dart';
 import '../../../../resources/my_colors.dart';
 import '../../../../utils/token_manager.dart';
 
-class CreateOrderController extends GetxController {
+class CreateEditExpenseController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxList<ExpenseType> expenseTypeList = <ExpenseType>[].obs;
-  final
-
-  // Detail Form
-  final TextEditingController shopName = TextEditingController();
 
   final TextEditingController amount = TextEditingController();
 
@@ -29,6 +26,10 @@ class CreateOrderController extends GetxController {
   final TextEditingController location = TextEditingController();
 
   var tillDate = Rxn<DateTime>();
+
+  var file = Rxn<File?>();
+
+  var dropdownValue = Rxn<ExpenseType>();
 
   final ExpensesController controller = Get.find<ExpensesController>();
 
@@ -41,7 +42,7 @@ class CreateOrderController extends GetxController {
     // TODO: implement onInit
     super.onInit();
 
-    getExpensesForDropDown();
+    getExpenseTypeForDropDown();
   }
 
   void showLoading(BuildContext context) {
@@ -96,10 +97,8 @@ class CreateOrderController extends GetxController {
           'companyId': companyId,
           'branchId': branchId,
           'supervisorId': supervisorId,
-          'status': expenseToEdit.value!.status,
           'deliveryDate': tillDate.value?.toIso8601String(),
           'amount': amount.text,
-          'billDoc': products,
           'date': tillDate,
           'expenceDescription': description.text,
         }),
@@ -151,7 +150,7 @@ class CreateOrderController extends GetxController {
           'status': expenseToEdit.value!.status,
           'deliveryDate': tillDate.value?.toIso8601String(),
           'amount': amount.text,
-          'billDoc': products,
+          'billDoc': file.value,
           'date': tillDate,
           'expenceDescription': description.text,
         }),
@@ -175,7 +174,7 @@ class CreateOrderController extends GetxController {
     }
   }
 
-  void getExpensesForDropDown() async {
+  void getExpenseTypeForDropDown() async {
     isLoading.value = true;
     try {
       final token = await TokenManager.getToken();
@@ -199,18 +198,22 @@ class CreateOrderController extends GetxController {
         print(jsonData);
         final List<dynamic> dataList = jsonData['data'];
         print("expensetypeList ========>>>>>> $dataList");
-        final downloadedProducts =
+        final downloadedExpenseTypes =
             dataList.map((item) => ExpenseType.fromJson(item)).toList();
-        expenseTypeList.assignAll(downloadedProducts);
+        expenseTypeList.assignAll(downloadedExpenseTypes);
+        dropdownValue.value = expenseTypeList[0];
+        isLoading.value = false;
       } else {
         expenseTypeList.clear();
         Get.snackbar("Error connect",
             "Failed to Connect to DB (Code: ${response.statusCode})");
+
+        isLoading.value = false;
       }
     } catch (e) {
       expenseTypeList.clear();
       // Get.snackbar("Exception", e.toString());
-      Get.snackbar("Exception", "Couldn't get Products");
+      Get.snackbar("Exception", "Couldn't get expense types");
     } finally {
       isLoading.value = false;
     }

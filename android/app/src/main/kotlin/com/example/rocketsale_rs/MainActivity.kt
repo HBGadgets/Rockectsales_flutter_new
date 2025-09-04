@@ -35,6 +35,8 @@ class MainActivity : FlutterActivity() {
                     val serviceIntent = Intent(this, LocationService::class.java)
                     stopService(serviceIntent)
                     result.success(null)
+                } else if (call.method == "isSocketConnected") {
+                    result.success(LocationService.isSocketConnected)
                 } else {
                     result.notImplemented()
                 }

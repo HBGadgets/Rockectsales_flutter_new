@@ -11,17 +11,20 @@ import 'package:rocketsale_rs/resources/my_colors.dart';
 import 'package:rocketsale_rs/screens/auth/login_page.dart';
 import 'package:rocketsale_rs/screens/admin/dashboard_admin.dart';
 import 'package:rocketsale_rs/screens/auth/splash_screen.dart';
-import 'package:rocketsale_rs/screens/saleman/dashboard_salesman.dart';
+import 'package:rocketsale_rs/screens/saleman/SalesmanDashboard/dashboard_salesman.dart';
+import 'package:rocketsale_rs/screens/saleman/SalesmanDashboard/salesmanDashboardController.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'controllers/LiveController.dart';
 import 'controllers/alertController.dart';
 import 'controllers/attendance_tab_controller.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/dashboard_salesman_controller.dart';
-import 'controllers/notification_controller.dart';
+
+// import 'controllers/notification_controller.dart';
 import 'controllers/permission.dart';
-import 'controllers/saleman_attendance_controller.dart';
-import 'controllers/user_list_controller.dart';
+
+// import 'controllers/saleman_attendance_controller.dart';
+// import 'controllers/user_list_controller.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -34,30 +37,30 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   });
 }*/
 
-void playAlertSound() async {
-  final player = AudioPlayer();
-  await player.play(AssetSource('overSpeed.mp3'));
-}
+// void playAlertSound() async {
+//   final player = AudioPlayer();
+//   await player.play(AssetSource('overSpeed.mp3'));
+// }
 
-Future<void> showLockScreenNotification() async {
-  const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-    'alert_channel', 'Overspeed Alerts',
-    importance: Importance.max,
-    priority: Priority.high,
-    fullScreenIntent: true, // Ensures it wakes up the screen
-    ongoing: true,
-  );
-
-  const NotificationDetails details =
-      NotificationDetails(android: androidDetails);
-
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    '⚠ Over Speed Alert!',
-    'You are overspeeding! Reduce your speed immediately!',
-    details,
-  );
-}
+// Future<void> showLockScreenNotification() async {
+//   const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+//     'alert_channel', 'Overspeed Alerts',
+//     importance: Importance.max,
+//     priority: Priority.high,
+//     fullScreenIntent: true, // Ensures it wakes up the screen
+//     ongoing: true,
+//   );
+//
+//   const NotificationDetails details =
+//       NotificationDetails(android: androidDetails);
+//
+//   await flutterLocalNotificationsPlugin.show(
+//     0,
+//     '⚠ Over Speed Alert!',
+//     'You are overspeeding! Reduce your speed immediately!',
+//     details,
+//   );
+// }
 
 void main() async {
   await dotenv.load(fileName: '.env');
@@ -74,16 +77,17 @@ void main() async {
   // Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
 
   Get.put(AuthController());
-  Get.put(DashboardSalesmanController());
-  Get.put(LiveController());
-  Get.put(AlertController());
-  Get.put(UserListController());
-  Get.put(AttendanceTabController());
+  // Get.put(DashboardSalesmanController());
+  // Get.put(LiveController());
+  // Get.put(AlertController());
+  // Get.put(UserListController());
+  // Get.put(AttendanceTabController());
+  Get.put(salesmanDashboardController());
   await Firebase.initializeApp();
   await GetStorage.init();
-  Get.put(AttendanceController());
+  // Get.put(AttendanceController());
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  Get.put(NotificationController(), permanent: true);
+  // Get.put(NotificationController(), permanent: true);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await requestAllPermissions();
   String? token = prefs.getString('token');
