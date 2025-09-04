@@ -155,11 +155,18 @@ class DashboardSalesman extends StatelessWidget {
                               onPressed: controller.isConnected.value
                                   ? null // Disable if already connected
                                   : () {
-                                      NativeChannel.startService(
-                                              authController.username.value,
-                                              authController.salesmanId.value)
-                                          .then((_) {
-                                        controller.checkSocketConnection();
+                                      controller
+                                          .checkLocationPermission()
+                                          .then((permission) {
+                                        if (permission) {
+                                          NativeChannel.startService(
+                                                  authController.username.value,
+                                                  authController
+                                                      .salesmanId.value)
+                                              .then((_) {
+                                            controller.checkSocketConnection();
+                                          });
+                                        }
                                       });
                                     },
                               child: const Text("Check in"),
@@ -176,10 +183,29 @@ class DashboardSalesman extends StatelessWidget {
                                 ),
                               ),
                               onPressed: controller.isConnected.value
-                                  ? () {
-                                      NativeChannel.stopService().then((_) {
-                                        controller.checkSocketConnection();
-                                      });
+                                  ? () async {
+                                      final permission = await controller
+                                          .checkLocationPermission();
+                                      if (permission) {
+                                        final location = await controller
+                                            .getCurrentLocation();
+                                        if (location != null &&
+                                            location.latitude != null &&
+                                            location.longitude != null) {
+                                          await controller.updateCheckoutTime(
+                                            location.latitude!,
+                                            location.longitude!,
+                                          );
+                                          await NativeChannel.stopService();
+                                          await controller
+                                              .checkSocketConnection();
+                                          controller.isConnected.value = false;
+                                        } else {
+                                          print("⚠️ Location data is null!");
+                                        }
+                                      } else {
+                                        print("⚠️ Location permission denied!");
+                                      }
                                     }
                                   : null,
                               child: const Text("Check Out"),
@@ -216,24 +242,29 @@ class DashboardSalesman extends StatelessWidget {
                                 "Live Tracking",
                                 LiveTrackingscreen(
                                     salesmanName:
-                                        authController.username.value)),
+                                        authController.username.value),
+                                context),
                             _buildMenuCard(
                                 Icons.calendar_today,
                                 "Attendance",
                                 AttendanceScreen(
-                                    name: authController.username.value)),
+                                    name: authController.username.value),
+                                context),
                             _buildMenuCard(Icons.shopping_cart_outlined,
-                                "Order", OrdersHistoryScreen()),
+                                "Order", OrdersHistoryScreen(), context),
                             _buildMenuCard(Icons.chat_bubble_outline,
-                                "Chat Support", ChatScreen()),
+                                "Chat Support", ChatScreen(), context),
                             _buildMenuCard(Icons.checklist, "Task",
-                                TaskManagementSalesMan()),
+                                TaskManagementSalesMan(), context),
                             _buildMenuCard(Icons.currency_rupee, "Expenses",
-                                ExpensesHistoryScreen()),
-                            _buildMenuCard(Icons.exit_to_app,
-                                "Leave Application", LeaveApplicationHistory()),
+                                ExpensesHistoryScreen(), context),
+                            _buildMenuCard(
+                                Icons.exit_to_app,
+                                "Leave Application",
+                                LeaveApplicationHistory(),
+                                context),
                             _buildMenuCard(Icons.analytics_outlined,
-                                "Analytics", AnalyticsScreen()),
+                                "Analytics", AnalyticsScreen(), context),
                           ],
                         ),
                       ),
@@ -255,54 +286,17 @@ class DashboardSalesman extends StatelessWidget {
         }));
   }
 
-  Widget _buildMenuItem(
-    Widget leadingWidget,
-    String title, {
-    VoidCallback? onTap,
-    bool isSelected = false,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-          border: Border.all(
-            color: Colors.black12, // border color
-            width: 2, // border thickness
-          ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              leadingWidget,
-              SizedBox(height: 8),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: isSelected
-                      ? Colors.white
-                      : Colors.black, // Change text color
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuCard(IconData icon, String title, Widget path) {
+  Widget _buildMenuCard(
+      IconData icon, String title, Widget path, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          Get.to(path);
+          if (controller.isConnected.value) {
+            Get.to(path);
+          } else {
+            showDialogBox(context);
+          }
         },
         child: Container(
           decoration: BoxDecoration(
@@ -341,6 +335,45 @@ class DashboardSalesman extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void showDialogBox(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "You have to check in first!",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Okay"),
+                    style: FilledButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: MyColor.dashbord),
+                  )
+                ],
+              )),
+        );
+      },
     );
   }
 }
