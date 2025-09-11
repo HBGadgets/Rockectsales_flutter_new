@@ -1,6 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:rocketsales/Screens/SalesmanDashboard/ImagePreviewScreen.dart';
+import 'package:rocketsales/TokenManager.dart';
 import '../../../resources/my_assets.dart';
 import '../../../resources/my_colors.dart';
 import '../../NativeChannel.dart';
@@ -20,6 +29,15 @@ import 'package:permission_handler/permission_handler.dart';
 
 class DashboardSalesman extends StatelessWidget {
   DashboardSalesman({super.key});
+
+
+  final AuthController authController = Get.put(AuthController());
+  final salesmanDashboardController controller =
+  Get.put(salesmanDashboardController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  late Size size;
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +79,7 @@ class DashboardSalesman extends StatelessWidget {
         ),
         drawer: SalesmanCustomDrawer(),
         body: Obx(() {
+          Uint8List? profileImage = controller.bytes.value;
           return Stack(
             children: [
               /// Top Gradient Header
@@ -82,24 +101,45 @@ class DashboardSalesman extends StatelessWidget {
                 ),
               ),
 
-              /// Main Content
               SingleChildScrollView(
                 child: Column(
                   children: [
                     const SizedBox(height: 16),
 
-                    /// Profile + Welcome
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const CircleAvatar(
-                            radius: 30,
-                            // backgroundImage: NetworkImage(
-                            //   "https://via.placeholder.com/150", // replace with real image
-                            // ),
-                          ),
+                          Obx(() {
+                            if (controller.loadingProfile.value) {
+                              return const CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                radius: 30,
+                                child: CircularProgressIndicator(color: MyColor.dashbord),
+                              );
+                            } else if (profileImage == null || controller.bytes.value == null) {
+                              return GestureDetector(
+                                onTap: controller.postImage,
+                                child: const CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 30,
+                                  child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+                                ),
+                              );
+                            } else {
+                              return GestureDetector(
+                                onTap: () {
+                                  Get.to(ImagePreviewScreen(imageFile: profileImage));
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  radius: 30,
+                                  backgroundImage: MemoryImage(profileImage),
+                                ),
+                              );
+                            }
+                          }),
                           const SizedBox(width: 12),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,6 +165,7 @@ class DashboardSalesman extends StatelessWidget {
                         ],
                       ),
                     ),
+
 
                     const SizedBox(height: 16),
 
@@ -370,10 +411,3 @@ class DashboardSalesman extends StatelessWidget {
     );
   }
 }
-
-final AuthController authController = Get.put(AuthController());
-final salesmanDashboardController controller =
-Get.put(salesmanDashboardController());
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-late Size size;

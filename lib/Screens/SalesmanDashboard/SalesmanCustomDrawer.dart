@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../NativeChannel.dart';
 import '../../resources/my_colors.dart';
 import '../../resources/my_assets.dart';
+import '../Login/AuthController.dart';
 import '../drawer sales man/invite friend/Invite_Friend_Screen.dart';
 import '../drawer sales man/update password/Update_Password_Screen.dart';
 import 'DrawerContents/about us/About_Us_Page.dart';
@@ -16,7 +17,8 @@ import 'SalesmanDashboardScreen.dart';
 class SalesmanCustomDrawer extends StatelessWidget {
   SalesmanCustomDrawer({super.key});
 
-  final salesmanDashboardController dashboardController = Get.find();
+  final salesmanDashboardController controller = Get.find();
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +159,7 @@ class SalesmanCustomDrawer extends StatelessWidget {
                                     location.longitude!,
                                   );
                                   await NativeChannel.stopService();
-                                  await dashboardController.logout();
+                                  await controller.logout();
                                   controller.isConnected.value = false;
                                   controller.isLoading.value = false;
                                 } else {

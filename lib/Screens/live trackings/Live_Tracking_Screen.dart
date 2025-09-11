@@ -107,13 +107,15 @@ class _LiveTrackingscreenState extends State<LiveTrackingscreen> {
           CameraUpdate.newLatLng(newPosition),
         );
 
-        if (_lastPosition == null) {
-          // First time: just place marker
-          _updateUserMarker(newPosition);
-        } else {
-          // Animate smoothly
-          _animateMarker(const MarkerId("user"), _lastPosition!, newPosition, const Duration(milliseconds: 1000));
-        }
+        // if (_lastPosition == null) {
+        //   // First time: just place marker
+        //   _updateUserMarker(newPosition);
+        // } else {
+        //   // Animate smoothly
+        //   _animateMarker(const MarkerId("user"), _lastPosition!, newPosition, const Duration(milliseconds: 1000));
+        // }
+
+        _updateUserMarker(newPosition);
 
         _lastPosition = newPosition;
       }
@@ -193,38 +195,38 @@ class _LiveTrackingscreenState extends State<LiveTrackingscreen> {
     }
   }
 
-  Future<void> _animateMarker(
-      MarkerId markerId,
-      LatLng from,
-      LatLng to,
-      Duration duration,
-      ) async {
-    final GoogleMapController mapController = await _controller.future;
-    final int frames = 60; // smoother = more frames
-    final double latStep = (to.latitude - from.latitude) / frames;
-    final double lngStep = (to.longitude - from.longitude) / frames;
-
-    for (int i = 1; i <= frames; i++) {
-      await Future.delayed(duration ~/ frames, () {
-        final LatLng newPos = LatLng(
-          from.latitude + latStep * i,
-          from.longitude + lngStep * i,
-        );
-
-        setState(() {
-          _markers.removeWhere((m) => m.markerId == markerId);
-          _markers.add(
-            Marker(
-              markerId: markerId,
-              position: newPos,
-              icon: userAvatar ?? BitmapDescriptor.defaultMarker,
-              anchor: const Offset(0.5, 0.5),
-            ),
-          );
-        });
-      });
-    }
-  }
+  // Future<void> _animateMarker(
+  //     MarkerId markerId,
+  //     LatLng from,
+  //     LatLng to,
+  //     Duration duration,
+  //     ) async {
+  //   final GoogleMapController mapController = await _controller.future;
+  //   final int frames = 60; // smoother = more frames
+  //   final double latStep = (to.latitude - from.latitude) / frames;
+  //   final double lngStep = (to.longitude - from.longitude) / frames;
+  //
+  //   for (int i = 1; i <= frames; i++) {
+  //     await Future.delayed(duration ~/ frames, () {
+  //       final LatLng newPos = LatLng(
+  //         from.latitude + latStep * i,
+  //         from.longitude + lngStep * i,
+  //       );
+  //
+  //       setState(() {
+  //         _markers.removeWhere((m) => m.markerId == markerId);
+  //         _markers.add(
+  //           Marker(
+  //             markerId: markerId,
+  //             position: newPos,
+  //             icon: userAvatar ?? BitmapDescriptor.defaultMarker,
+  //             anchor: const Offset(0.5, 0.5),
+  //           ),
+  //         );
+  //       });
+  //     });
+  //   }
+  // }
 
 
   @override
