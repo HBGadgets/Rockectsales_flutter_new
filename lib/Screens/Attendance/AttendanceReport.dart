@@ -22,7 +22,7 @@ class AttendanceReport extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Attendance Report",
+                "Monthly Report",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

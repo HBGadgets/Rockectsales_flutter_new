@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:rocketsales/Screens/Attendance/AttendanceReport.dart';
 import 'package:rocketsales/Screens/LeaveApplication/ApplyLeaveScreen.dart';
+import 'package:rocketsales/Screens/LeaveApplication/LeaveHistoryScreen.dart';
 
 import '../../resources/my_colors.dart';
 import '../SalesmanDashboard/SalesmanDashboardController.dart';
@@ -115,7 +116,9 @@ class LeaveApplicationScreen extends StatelessWidget {
                     side: const BorderSide(color: MyColor.dashbord),
                     foregroundColor: MyColor.dashbord
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(LeaveHistoryScreen());
+                  },
                   child: const Text("Leave History"),
                 ),
               ],

@@ -13,6 +13,7 @@ import 'DrawerContents/privacy policy/Privacy_Policy.dart';
 import 'DrawerContents/rate/rate_screen.dart';
 import 'SalesmanDashboardController.dart';
 import 'SalesmanDashboardScreen.dart';
+import 'dart:typed_data';
 
 class SalesmanCustomDrawer extends StatelessWidget {
   SalesmanCustomDrawer({super.key});
@@ -22,6 +23,7 @@ class SalesmanCustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Uint8List? profileImage = controller.bytes.value;
     return Drawer(
       backgroundColor: Colors.white,
       child: Obx(() => Stack(
@@ -33,9 +35,24 @@ class SalesmanCustomDrawer extends StatelessWidget {
                   style: const TextStyle(color: Colors.black),
                 )),
                 accountEmail: null,
-                currentAccountPicture: CircleAvatar(
-                  backgroundImage: profile,
-                ),
+                currentAccountPicture: Obx(() {
+                  if (controller.loadingProfile.value) {
+                    return const CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      child: CircularProgressIndicator(color: MyColor.dashbord),
+                    );
+                  } else if (profileImage == null || controller.bytes.value == null) {
+                    return const CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+                    );
+                  } else {
+                    return CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      backgroundImage: MemoryImage(profileImage),
+                    );
+                  }
+                }),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
