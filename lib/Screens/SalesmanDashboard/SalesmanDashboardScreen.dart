@@ -121,10 +121,27 @@ class DashboardSalesman extends StatelessWidget {
                             } else if (profileImage == null || controller.bytes.value == null) {
                               return GestureDetector(
                                 onTap: controller.postImage,
-                                child: const CircleAvatar(
-                                  backgroundColor: Colors.grey,
-                                  radius: 40,
-                                  child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+                                child: Stack(
+                                  children: [const CircleAvatar(
+                                    backgroundColor: Colors.grey,
+                                    radius: 40,
+                                    child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+                                  ),Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue, // background for the plus icon
+                                        shape: BoxShape.circle,
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      child: const Icon(
+                                        Icons.add,
+                                        size: 15,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),]
                                 ),
                               );
                             } else {
@@ -132,10 +149,29 @@ class DashboardSalesman extends StatelessWidget {
                                 onTap: () {
                                   Get.to(ImagePreviewScreen(imageFile: profileImage));
                                 },
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.grey,
-                                  radius: 40,
-                                  backgroundImage: MemoryImage(profileImage),
+                                child: Stack(
+                                  children: [CircleAvatar(
+                                    backgroundColor: Colors.grey,
+                                    radius: 40,
+                                    backgroundImage: MemoryImage(profileImage),
+                                  ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue, // background for the plus icon
+                                          shape: BoxShape.circle,
+                                        ),
+                                        padding: const EdgeInsets.all(4),
+                                        child: const Icon(
+                                          Icons.add,
+                                          size: 15,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ]
                                 ),
                               );
                             }
