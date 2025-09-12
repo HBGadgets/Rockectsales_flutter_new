@@ -24,7 +24,7 @@ class salesmanDashboardController extends GetxController {
   loc.Location location = loc.Location();
   var profileImage = Rxn<File?>();
   var salesmanProfileInfo = SalesmanProfileInfo(
-      name: '', userId: '', profileImage: '',
+      name: '', userId: '', profileImage: '', objectId: '',
   )
       .obs;
   RxBool loadingProfile = false.obs;
@@ -56,7 +56,7 @@ class salesmanDashboardController extends GetxController {
               children: [
                 CircularProgressIndicator(color: MyColor.dashbord),
                 SizedBox(width: 20),
-                Text("Uploading..."),
+                Text("Loading..."),
               ],
             ),
           ),
@@ -117,17 +117,16 @@ class salesmanDashboardController extends GetxController {
         return;
       }
 
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-      final salesmanId = decodedToken['id'];
+      final objectId = salesmanProfileInfo.value.objectId;
       final response = await http.delete(
-        Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile/$salesmanId'),
+        Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile/$objectId'),
         headers: {
           "Content-Type": "application/json",
           // Add auth headers here if needed, e.g. "Authorization": "Bearer TOKEN"
         },
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         isLoading.value = false;
         print("✅ Delete successful: ${response.body}");
         getProfileImage();
@@ -174,7 +173,7 @@ class salesmanDashboardController extends GetxController {
           }),
         );
 
-        if (response.statusCode == 200) {
+        if (response.statusCode == 201) {
           isLoading.value = false;
           print("✅ Upload successful: ${response.body}");
           getProfileImage();
@@ -191,7 +190,7 @@ class salesmanDashboardController extends GetxController {
     }
   }
 
-  Future<void> updateImage() async {
+  Future<void> updateImage(BuildContext context) async {
     isLoading.value = true;
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -199,21 +198,19 @@ class salesmanDashboardController extends GetxController {
     );
 
     if (result != null && result.files.single.path != null) {
+      showLoading(context);
       File file = File(result.files.single.path!);
 
       // ✅ Convert to Base64
       List<int> fileBytes = await file.readAsBytes();
       String base64File = base64Encode(fileBytes);
 
-      final token = await TokenManager.getToken();
-
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
-      final salesmanId = decodedToken['id'];
+      final objectId = salesmanProfileInfo.value.objectId;
       final salesmanName = await TokenManager.getUsername();
 
       try {
         final response = await http.put(
-          Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile/$salesmanId'),
+          Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile/$objectId'),
           headers: {
             "Content-Type": "application/json",
             // Add auth headers here if needed, e.g. "Authorization": "Bearer TOKEN"
@@ -221,7 +218,6 @@ class salesmanDashboardController extends GetxController {
           body: jsonEncode({
             "profileImage": base64File, // 👈 your API should accept this
             "name":salesmanName,
-            "userId": salesmanId
           }),
         );
 
@@ -376,16 +372,19 @@ class salesmanDashboardController extends GetxController {
 }
 
 class SalesmanProfileInfo {
+  String? objectId;
   String? name;
   String? userId;
   String? profileImage;
 
   SalesmanProfileInfo(
-      {required this.name,
+      { required this.objectId,
+        required this.name,
         required this.userId,
         required this.profileImage});
 
   SalesmanProfileInfo.fromJson(Map<String, dynamic> json) {
+    objectId = json['_id'];
     name = json['name'];
     userId = json['userId'];
     profileImage = json['profileImage'];

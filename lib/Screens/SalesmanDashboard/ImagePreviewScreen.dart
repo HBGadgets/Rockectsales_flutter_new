@@ -8,6 +8,8 @@ import '../../resources/my_colors.dart';
 import 'SalesmanDashboardController.dart';
 import 'dart:typed_data';
 
+import 'SalesmanDashboardScreen.dart';
+
 class ImagePreviewScreen extends StatelessWidget {
   final Uint8List imageFile;
 
@@ -56,7 +58,17 @@ class ImagePreviewScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         onPressed: () {
-                          controller.updateImage();
+                          controller.updateImage(context).then((_) {
+                            Navigator.pushAndRemoveUntil<dynamic>(
+                              context,
+                              MaterialPageRoute<dynamic>(
+                                builder: (BuildContext context) =>
+                                DashboardSalesman(),
+                              ),
+                              (route) => false, //if you want to disable back feature set to false
+                            );
+                            controller.getProfileImage();
+                          });
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -79,8 +91,14 @@ class ImagePreviewScreen extends StatelessWidget {
                         ),
                         onPressed: () {
                           controller.deleteImage(context).then((_) {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
+                            Navigator.pushAndRemoveUntil<dynamic>(
+                              context,
+                              MaterialPageRoute<dynamic>(
+                                builder: (BuildContext context) =>
+                                    DashboardSalesman(),
+                              ),
+                                  (route) => false, //if you want to disable back feature set to false
+                            );
                             controller.getProfileImage();
                           });
                         },

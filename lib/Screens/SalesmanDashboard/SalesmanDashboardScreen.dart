@@ -115,7 +115,7 @@ class DashboardSalesman extends StatelessWidget {
                             if (controller.loadingProfile.value) {
                               return const CircleAvatar(
                                 backgroundColor: Colors.grey,
-                                radius: 30,
+                                radius: 40,
                                 child: CircularProgressIndicator(color: MyColor.dashbord),
                               );
                             } else if (profileImage == null || controller.bytes.value == null) {
@@ -123,7 +123,7 @@ class DashboardSalesman extends StatelessWidget {
                                 onTap: controller.postImage,
                                 child: const CircleAvatar(
                                   backgroundColor: Colors.grey,
-                                  radius: 30,
+                                  radius: 40,
                                   child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
                                 ),
                               );
@@ -134,7 +134,7 @@ class DashboardSalesman extends StatelessWidget {
                                 },
                                 child: CircleAvatar(
                                   backgroundColor: Colors.grey,
-                                  radius: 30,
+                                  radius: 40,
                                   backgroundImage: MemoryImage(profileImage),
                                 ),
                               );
