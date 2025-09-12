@@ -36,7 +36,7 @@ class _SelfietakingscreenAttendanceState
 
     _cameraController = CameraController(
       frontCamera,
-      ResolutionPreset.high,
+      ResolutionPreset.low,
       enableAudio: false,
     );
 

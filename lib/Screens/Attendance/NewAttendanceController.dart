@@ -221,6 +221,9 @@ class NewAttendanceController extends GetxController {
       isAttendanceMarkedToday.value = null;
       print("Processing Attendance Submission...");
 
+      final bytes = await image!.readAsBytes();
+      final base64Image = base64Encode(bytes);
+
 
       if (salesmanId.isEmpty ||
           companyId.isEmpty ||
@@ -235,38 +238,60 @@ class NewAttendanceController extends GetxController {
 
       String attendanceStatus = "Present";
 
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence'),
+      // var request = http.MultipartRequest(
+      //   'POST',
+      //   Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence'),
+      // );
+      //
+      // request.headers['Authorization'] = 'Bearer $token';
+      // request.fields['salesmanId'] = salesmanId;
+      // request.fields['companyId'] = companyId;
+      // request.fields['branchId'] = branchId;
+      // request.fields['supervisorId'] = supervisorId;
+      // request.fields['attendenceStatus'] = attendanceStatus;
+      // request.fields['startLat'] = latitude.value.toString();
+      // request.fields['startLong'] = longitude.value.toString();
+      // request.fields['profileImgUrl'] = base64Image;
+
+      // if (image != null) {
+      //   request.files.add(
+      //     await http.MultipartFile.fromPath(
+      //       'profileImgUrl',
+      //       image.path,
+      //       contentType: MediaType(
+      //         'image',
+      //         'jpeg',
+      //       ),
+      //     ),
+      //   );
+      // }
+
+      final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence');
+
+      final response = await http.post(
+        uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode(<String, dynamic>{
+          'salesmanId': salesmanId,
+          'companyId': companyId,
+          'branchId': branchId,
+          'supervisorId': supervisorId,
+          'attendenceStatus': attendanceStatus,
+          'startLat': longitude.value.toString(),
+          'startLong': longitude.value.toString(),
+          'profileImgUrl': base64Image,
+        }),
       );
 
-      request.headers['Authorization'] = 'Bearer $token';
-      request.fields['salesmanId'] = salesmanId;
-      request.fields['companyId'] = companyId;
-      request.fields['branchId'] = branchId;
-      request.fields['supervisorId'] = supervisorId;
-      request.fields['attendenceStatus'] = attendanceStatus;
-      request.fields['startLat'] = latitude.value.toString();
-      request.fields['startLong'] = longitude.value.toString();
 
-      if (image != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'profileImgUrl',
-            image.path,
-            contentType: MediaType(
-              'image',
-              'jpeg',
-            ),
-          ),
-        );
-      }
-
-      var response = await request.send();
-      var responseData = await response.stream.bytesToString();
+      // var response = await request.send();
+      // var responseData = await response.stream.bytesToString();
 
       if (response.statusCode == 201) {
-        print("Attendance Submitted Successfully: $responseData");
+        print("Attendance Submitted Successfully: ${response.body}");
         getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
             .then((_) {
           final attendance = attendanceForTheMonth.value;
@@ -303,7 +328,7 @@ class NewAttendanceController extends GetxController {
         Get.snackbar('Success', 'Attendance submitted successfully.');
       } else {
         // setState(() => _isProcessingAttendance = false);
-        print("Attendance Already Marked:");
+        print("Attendance Already Marked: ${response.body}");
         // print("Attendance Already Marked: $responseData");
         getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
             .then((_) {
