@@ -266,7 +266,7 @@ class _FiltrationsystemleaveState extends State<Filtrationsystemleave> {
                     onTap: () {
                       setState(() {
                         print("completed clicked");
-                        controller.selectedTag.value = "Accepted";
+                        controller.selectedTag.value = "Approved";
                       });
 
                       controller.getLeaves();
@@ -275,7 +275,7 @@ class _FiltrationsystemleaveState extends State<Filtrationsystemleave> {
                       padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
                       child: Container(
                           decoration: BoxDecoration(
-                            color: controller.selectedTag.value == "Accepted"
+                            color: controller.selectedTag.value == "Approved"
                                 ? MyColor.dashbord
                                 : Colors.green,
                             borderRadius: BorderRadius.circular(
@@ -285,7 +285,7 @@ class _FiltrationsystemleaveState extends State<Filtrationsystemleave> {
                             padding: const EdgeInsets.only(
                                 top: 10, bottom: 10, left: 20, right: 20),
                             child: Text(
-                              "Accepted.",
+                              "Approved.",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),

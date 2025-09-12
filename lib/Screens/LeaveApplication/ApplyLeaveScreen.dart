@@ -258,10 +258,10 @@ class _ApplyLeaveScreenState extends State<ApplyLeaveScreen> {
     final branchId = decodedToken['branchId'];
     final companyId = decodedToken['companyId'];
     String formattedFromDate = DateFormat(
-      'dd-MM-YYYY',
+      'dd-MM-yyyy',
     ).format(fromDate!);
     String formattedToDate = DateFormat(
-      'dd-MM-YYYY',
+      'dd-MM-yyyy',
     ).format(toDate!);
 
     try {

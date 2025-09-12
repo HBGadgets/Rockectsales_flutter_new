@@ -85,7 +85,7 @@ class LeavesController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/getleaves?&limit=10$dateTimeFilter&search=$searchString&status=$selectedTag');
+          '${dotenv.env['BASE_URL']}/api/api/leaverequest?limit=10$dateTimeFilter&search=$searchString&status=$selectedTag');
       final response = await http.get(
         url,
         headers: {
@@ -128,7 +128,7 @@ class LeavesController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/getleaves?page=$page&limit=10$dateTimeFilter&search=$searchString');
+          '${dotenv.env['BASE_URL']}/api/api/leaverequest?page=$page&limit=10$dateTimeFilter&search=$searchString');
       final response = await http.get(
         url,
         headers: {
