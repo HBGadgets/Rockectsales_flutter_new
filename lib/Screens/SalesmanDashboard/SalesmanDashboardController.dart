@@ -22,7 +22,6 @@ class salesmanDashboardController extends GetxController {
   RxBool isConnected = false.obs;
   RxBool isLoading = false.obs;
   loc.Location location = loc.Location();
-  var profileImage = Rxn<File?>();
   var salesmanProfileInfo = SalesmanProfileInfo(
       name: '', userId: '', profileImage: '', objectId: '',
   )

@@ -33,7 +33,7 @@ class DashboardSalesman extends StatelessWidget {
 
   final AuthController authController = Get.put(AuthController());
   final salesmanDashboardController controller =
-  Get.put(salesmanDashboardController());
+  Get.find<salesmanDashboardController>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late Size size;
@@ -331,7 +331,7 @@ class DashboardSalesman extends StatelessWidget {
                             _buildMenuCard(
                                 Icons.exit_to_app,
                                 "Leave Application",
-                                LeaveApplicationHistory(),
+                                LeaveApplicationScreen(),
                                 context),
                             _buildMenuCard(Icons.analytics_outlined,
                                 "Analytics", AnalyticsScreen(), context),
