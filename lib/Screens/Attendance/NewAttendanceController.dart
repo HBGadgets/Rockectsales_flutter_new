@@ -328,7 +328,7 @@ class NewAttendanceController extends GetxController {
         Get.snackbar('Success', 'Attendance submitted successfully.');
       } else {
         // setState(() => _isProcessingAttendance = false);
-        print("Attendance Already Marked: ${response.body}");
+        print("Error: ${response.body}");
         // print("Attendance Already Marked: $responseData");
         getAttendanceOfMonth(DateFormat("yyyy-MM").format(DateTime.now()))
             .then((_) {
@@ -350,7 +350,7 @@ class NewAttendanceController extends GetxController {
           }
         });
         getAddress();
-        Get.snackbar('Today', 'Attendance Already Marked:');
+        Get.snackbar('Error', '${response.body}');
       }
     } catch (e) {
       // setState(() => _isProcessingAttendance = false);

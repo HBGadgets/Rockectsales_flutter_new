@@ -79,7 +79,6 @@ class DashboardSalesman extends StatelessWidget {
         ),
         drawer: SalesmanCustomDrawer(),
         body: Obx(() {
-          Uint8List? profileImage = controller.bytes.value;
           return Stack(
             children: [
               /// Top Gradient Header
@@ -112,6 +111,7 @@ class DashboardSalesman extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Obx(() {
+                            Uint8List? profileImage = controller.bytes.value;
                             if (controller.loadingProfile.value) {
                               return const CircleAvatar(
                                 backgroundColor: Colors.grey,

@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../resources/my_colors.dart';
+import '../SalesmanDashboard/SalesmanDashboardController.dart';
 import 'NewAttendanceController.dart';
 import 'SelfieTakingScreenAttendance.dart';
+import 'dart:typed_data';
 
 class AttendanceCard extends StatelessWidget {
   final String name;
@@ -20,6 +22,9 @@ class AttendanceCard extends StatelessWidget {
 
   final NewAttendanceController controller =
       Get.find<NewAttendanceController>();
+
+  final salesmanDashboardController controllerDashboard =
+  Get.find<salesmanDashboardController>();
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +44,28 @@ class AttendanceCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: Colors.grey.shade300,
-                    child: const Icon(Icons.person, color: Colors.grey),
-                  ),
+                  Obx(() {
+                    Uint8List? profileImage = controllerDashboard.bytes.value;
+                    if (controllerDashboard.loadingProfile.value) {
+                      return const CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        radius: 30,
+                        child: CircularProgressIndicator(color: MyColor.dashbord),
+                      );
+                    } else if (profileImage == null || controllerDashboard.bytes.value == null) {
+                      return const CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        radius: 30,
+                        child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+                      );
+                    } else {
+                      return CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        radius: 30,
+                        backgroundImage: MemoryImage(profileImage),
+                      );
+                    }
+                  }),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(

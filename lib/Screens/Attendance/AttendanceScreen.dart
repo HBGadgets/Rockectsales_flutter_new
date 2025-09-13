@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import '../../../../resources/my_colors.dart';
+import '../SalesmanDashboard/SalesmanDashboardController.dart';
 import 'AttendanceCard.dart';
 import 'AttendanceReport.dart';
 import 'NewAttendanceController.dart';

@@ -23,7 +23,6 @@ class SalesmanCustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Uint8List? profileImage = controller.bytes.value;
     return Drawer(
       backgroundColor: Colors.white,
       child: Obx(() => Stack(
@@ -36,6 +35,7 @@ class SalesmanCustomDrawer extends StatelessWidget {
                 )),
                 accountEmail: null,
                 currentAccountPicture: Obx(() {
+                  Uint8List? profileImage = controller.bytes.value;
                   if (controller.loadingProfile.value) {
                     return const CircleAvatar(
                       backgroundColor: Colors.grey,
@@ -219,15 +219,6 @@ class SalesmanCustomDrawer extends StatelessWidget {
               ),
             ],
           ),
-            if (controller.isLoading.value)
-              Positioned.fill(
-                child: Container(
-                  color: Color.fromRGBO(0, 0, 0, 0.35),
-                  child: const Center(
-                    child: CircularProgressIndicator(color: MyColor.dashbord),
-                  ),
-                ),
-              ),
           ]
       ),)
 

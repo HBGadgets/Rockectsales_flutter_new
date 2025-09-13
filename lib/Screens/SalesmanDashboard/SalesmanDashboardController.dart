@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -64,7 +65,7 @@ class salesmanDashboardController extends GetxController {
     );
   }
 
-  Future <void> getProfileImage() async {
+  Future<void> getProfileImage() async {
     loadingProfile.value = true;
     try {
       final token = await TokenManager.getToken();
@@ -76,34 +77,31 @@ class salesmanDashboardController extends GetxController {
 
       Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
       final salesmanId = decodedToken['id'];
-      final salesmanName = await TokenManager.getUsername();
 
-      final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/profile/$salesmanId');
-      print(url);
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final url = Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile/$salesmanId');
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      });
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        print('profile card Info==========>>>>>>>>>> $jsonData');
         salesmanProfileInfo.value = SalesmanProfileInfo.fromJson(jsonData);
-        bytes.value = base64Decode(
-            salesmanProfileInfo.value.profileImage ?? "");
-        loadingProfile.value = false;
+        if (salesmanProfileInfo.value.profileImage?.isNotEmpty ?? false) {
+          bytes.value = base64Decode(salesmanProfileInfo.value.profileImage!);
+        } else {
+          bytes.value = null;
+        }
       } else {
         bytes.value = null;
-        loadingProfile.value = false;
       }
     } catch (e) {
-      Get.snackbar("Exception", "Couldn't get QR Info");
+      Get.snackbar("Exception", "Couldn't get Profile");
+    } finally {
+      loadingProfile.value = false; // ✅ always reset
     }
   }
+
 
   Future<void> deleteImage(BuildContext context) async {
     showLoading(context);
@@ -149,12 +147,24 @@ class salesmanDashboardController extends GetxController {
     if (result != null && result.files.single.path != null) {
       File file = File(result.files.single.path!);
 
-      // ✅ Convert to Base64
-      List<int> fileBytes = await file.readAsBytes();
-      String base64File = base64Encode(fileBytes);
+      String base64File;
+
+      // ✅ Compress the image before encoding
+      final compressedBytes = await FlutterImageCompress.compressWithFile(
+        file.absolute.path,
+        quality: 20, // adjust quality as needed
+        format: CompressFormat.jpeg,
+      );
+
+      if (compressedBytes == null) {
+        print("⚠️ Compression failed, using original image");
+        final fileBytes = await file.readAsBytes();
+        base64File = base64Encode(fileBytes);
+      } else {
+        base64File = base64Encode(compressedBytes);
+      }
 
       final token = await TokenManager.getToken();
-
       Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
       final salesmanId = decodedToken['id'];
       final salesmanName = await TokenManager.getUsername();
@@ -162,13 +172,11 @@ class salesmanDashboardController extends GetxController {
       try {
         final response = await http.post(
           Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile'),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: {"Content-Type": "application/json"},
           body: jsonEncode({
             "profileImage": base64File,
-            "name":salesmanName,
-            "userId": salesmanId
+            "name": salesmanName,
+            "userId": salesmanId,
           }),
         );
 
@@ -200,29 +208,40 @@ class salesmanDashboardController extends GetxController {
       showLoading(context);
       File file = File(result.files.single.path!);
 
-      // ✅ Convert to Base64
-      List<int> fileBytes = await file.readAsBytes();
-      String base64File = base64Encode(fileBytes);
-
-      final objectId = salesmanProfileInfo.value.objectId;
-      final salesmanName = await TokenManager.getUsername();
-
       try {
+        // ✅ Compress before upload
+        final compressedBytes = await FlutterImageCompress.compressWithFile(
+          file.absolute.path,
+          minWidth: 800,   // adjust to your needs
+          minHeight: 800,
+          quality: 20,     // 0–100 (lower = smaller size)
+        );
+
+        if (compressedBytes == null) {
+          throw Exception("Image compression failed");
+        }
+
+        // ✅ Convert compressed image to Base64
+        String base64File = base64Encode(compressedBytes);
+
+        final objectId = salesmanProfileInfo.value.objectId;
+        final salesmanName = await TokenManager.getUsername();
+
         final response = await http.put(
           Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile/$objectId'),
           headers: {
             "Content-Type": "application/json",
-            // Add auth headers here if needed, e.g. "Authorization": "Bearer TOKEN"
           },
           body: jsonEncode({
-            "profileImage": base64File, // 👈 your API should accept this
-            "name":salesmanName,
+            "profileImage": base64File,
+            "name": salesmanName,
           }),
         );
 
         if (response.statusCode == 200) {
           isLoading.value = false;
           print("✅ Upload successful: ${response.body}");
+          getProfileImage(); // refresh profile after update
         } else {
           isLoading.value = false;
           print("❌ Upload failed: ${response.body}");
@@ -235,6 +254,7 @@ class salesmanDashboardController extends GetxController {
       isLoading.value = false;
     }
   }
+
 
 
 
@@ -366,7 +386,9 @@ class salesmanDashboardController extends GetxController {
   }
 
   Future<void> logout() async {
+    isLoading.value = true;
     Get.find<AuthController>().logout();
+    isLoading.value = false;
   }
 }
 
