@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:rocketsales/Screens/Analytics/AnalyticsController.dart';
+
+import '../../resources/my_colors.dart';
 
 class AnalyticsScreen extends StatelessWidget {
-  const AnalyticsScreen({super.key});
+  AnalyticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(AnalyticsController(), permanent: false);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -12,7 +19,7 @@ class AnalyticsScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF1E4DB7), // blue header
         foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
+      body: Obx(() => controller.isLoading.value ? const Center(child: CircularProgressIndicator(color: MyColor.dashbord,),) : SingleChildScrollView(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
@@ -143,7 +150,8 @@ class AnalyticsScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ))
+
     );
   }
 
