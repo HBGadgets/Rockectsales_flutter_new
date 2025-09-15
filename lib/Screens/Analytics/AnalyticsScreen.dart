@@ -1,12 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
 import 'package:rocketsales/Screens/Analytics/AnalyticsController.dart';
+import 'package:rocketsales/Screens/Attendance/NewAttendanceController.dart';
 
 import '../../resources/my_colors.dart';
+import 'dart:typed_data';
 
 class AnalyticsScreen extends StatelessWidget {
   AnalyticsScreen({super.key});
+
+  final NewAttendanceController attendanceController =
+  Get.find<NewAttendanceController>();
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +27,13 @@ class AnalyticsScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF1E4DB7), // blue header
         foregroundColor: Colors.white,
       ),
-      body: Obx(() => controller.isLoading.value ? const Center(child: CircularProgressIndicator(color: MyColor.dashbord,),) : SingleChildScrollView(
+      body: Obx(() => controller.isLoading.value || attendanceController.isLoading.value ? const Center(child: CircularProgressIndicator(color: MyColor.dashbord,),) : SingleChildScrollView(
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
             // 🔹 Salesman of the Month Card
             Container(
-              margin: const EdgeInsets.only(right: 10, left: 10),
+              margin: const EdgeInsets.only(right: 5, left: 5),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: const BorderRadius.all(Radius.circular(12)),
@@ -41,23 +49,40 @@ class AnalyticsScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const CircleAvatar(
-                          radius: 24,
-                          backgroundImage: NetworkImage(
-                            "https://randomuser.me/api/portraits/men/1.jpg",
-                          ),
-                        ),
+                        Obx(() {
+
+                          Uint8List profileImage = base64Decode(controller.performers.first.profileImgBase64);
+                          if (controller.isLoading.value) {
+                            return const CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              radius: 30,
+                              child: CircularProgressIndicator(color: MyColor.dashbord),
+                            );
+                          } else if (controller.performers.first.profileImgBase64 == null) {
+                            return const CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              radius: 30,
+                              child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+                            );
+                          } else {
+                            return CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              radius: 30,
+                              backgroundImage: MemoryImage(profileImage),
+                            );
+                          }
+                        }),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text("Salesman of this month",
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500)),
                               SizedBox(height: 4),
-                              Text("Pavan Raghuvanshi",
+                              Text(controller.performers.first.salesmanName,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -74,9 +99,9 @@ class AnalyticsScreen extends StatelessWidget {
                     // Attendance Progress
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         Text("Attendance"),
-                        Text("65%"),
+                        Text(attendanceController.attendanceForTheMonth.value!.presentPercentage),
                       ],
                     ),
                     const SizedBox(height: 6),
@@ -94,9 +119,9 @@ class AnalyticsScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _infoBox("Order", "25"),
-                        _infoBox("Task", "135"),
-                        _infoBox("Sales", "₹45,452"),
+                        _infoBox("Order", controller.performers.first.orderCompleted.toString()),
+                        _infoBox("Task", controller.performers.first.taskCompleted.toString()),
+                        _infoBox("Score", controller.performers.first.score.toString()),
                       ],
                     )
                   ],
@@ -106,18 +131,25 @@ class AnalyticsScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // 🔹 Period Card
+            // 🔹 Task Card
             _sectionCard(
-              title: "Period",
-              subtitle: "This Month",
+              title: "Task Leaderboard",
               children: [
-                _leaderRow(Icons.shopping_cart_outlined, "Top in Orders",
-                    "Priya Sharma", "135"),
-                _leaderRow(Icons.task_alt_outlined, "Top in Task",
-                    "Pavan Raghuvanshi", "45"),
-                _leaderRow(Icons.calendar_today_outlined, "Top in Attendance",
-                    "Piyush", "30"),
-              ],
+                // _leaderRow(Icons.shopping_cart_outlined, "Top in Orders",
+                //     "Priya Sharma", "135"),
+                // _leaderRow(Icons.task_alt_outlined, "Top in Task",
+                //     "Pavan Raghuvanshi", "45"),
+                // _leaderRow(Icons.calendar_today_outlined, "Top in Attendance",
+                //     "Piyush", "30"),
+                _personRow("Pawan Raghuvanshi", crown: true),
+                _personRow("Priya Mehra"),
+                _personRow("Piyush"),
+                TextButton(
+                  onPressed: () {},
+                  child: const Text("See full leaderboard"),
+                  style: TextButton.styleFrom(foregroundColor: MyColor.dashbord),
+                ),
+              ], icon: Icons.task_alt,
             ),
 
             const SizedBox(height: 16),
@@ -125,7 +157,6 @@ class AnalyticsScreen extends StatelessWidget {
             // 🔹 Attendance Leaderboard
             _sectionCard(
               title: "Attendance Leaderboard",
-              subtitle: "This Month",
               children: [
                 _personRow("Pawan Raghuvanshi", crown: true),
                 _personRow("Priya Mehra"),
@@ -133,8 +164,9 @@ class AnalyticsScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () {},
                   child: const Text("See full leaderboard"),
+                  style: TextButton.styleFrom(foregroundColor: MyColor.dashbord),
                 ),
-              ],
+              ], icon: Icons.calendar_month,
             ),
 
             const SizedBox(height: 16),
@@ -142,11 +174,15 @@ class AnalyticsScreen extends StatelessWidget {
             // 🔹 Order Leaderboard
             _sectionCard(
               title: "Order Leaderboard",
-              subtitle: "This Month",
               children: [
                 _personRow("Darlene Robertson", crown: true),
                 _personRow("Priya Sharma"),
-              ],
+                TextButton(
+                  onPressed: () {},
+                  child: const Text("See full leaderboard"),
+                  style: TextButton.styleFrom(foregroundColor: MyColor.dashbord),
+                ),
+              ], icon: Icons.shopping_cart_outlined,
             ),
           ],
         ),
@@ -179,23 +215,28 @@ class AnalyticsScreen extends StatelessWidget {
 
   static Widget _sectionCard({
     required String title,
-    required String subtitle,
     required List<Widget> children,
+    required IconData icon
   }) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
+    return Container(
+      margin: const EdgeInsets.only(right: 5, left: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        border: Border.all(
+          color: Colors.black12, // border color
+          width: 2, // border thickness
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           children: [
             ListTile(
-              leading: const Icon(Icons.emoji_events, color: Color(0xFF1E4DB7)),
+              leading: Icon(icon, color: Color(0xFF1E4DB7)),
               title: Text(title,
                   style: const TextStyle(fontWeight: FontWeight.bold)),
-              trailing: Text(subtitle,
-                  style: const TextStyle(color: Colors.black54)),
+              // trailing: const Icon(Icons.chevron_right),
             ),
             const Divider(),
             ...children,
@@ -241,7 +282,13 @@ class AnalyticsScreen extends StatelessWidget {
             fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
       ),
       trailing: crown
-          ? const Icon(Icons.emoji_events, color: Colors.amber)
+          ? Row(
+        mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.emoji_events, color: Colors.amber),
+              const Icon(Icons.chevron_right)
+            ],
+          )
           : const Icon(Icons.chevron_right),
     );
   }
