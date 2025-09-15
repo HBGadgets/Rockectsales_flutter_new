@@ -9,9 +9,13 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../TokenManager.dart';
+import '../SalesmanDashboard/SalesmanDashboardController.dart';
 import '../SalesmanDashboard/SalesmanDashboardScreen.dart';
 
 class AuthController extends GetxController {
+
+  final salesmanDashboardController controller =
+  Get.find<salesmanDashboardController>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   RxString username = ''.obs;
@@ -35,7 +39,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
     isLoading.value = true;
     try {
       final response = await http.post(
@@ -48,6 +52,7 @@ class AuthController extends GetxController {
       );
 
       var data = jsonDecode(response.body);
+      String responseMessage = data['message'];
 
       if (response.statusCode == 200 &&
           data.containsKey('username') &&
@@ -62,6 +67,7 @@ class AuthController extends GetxController {
         // prefs.setString('adminName', adminName);
 
         print("Mera Token =============>>>>>>> $token");
+        print("response data ==========>>>>>>$data");
 
         await TokenManager.saveToken(token);
         await TokenManager.saveUserInfo(usernameFromAPI, role);
@@ -84,7 +90,9 @@ class AuthController extends GetxController {
       } else {
         isLoading.value = false;
         print('user already');
-        Get.snackbar('Login Failed', data['message'] ?? 'Invalid credentials');
+        print("response data ==========>>>>>>$data");
+        final snackBar = SnackBar(content: Text(responseMessage));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     } catch (e) {
       isLoading.value = false;
@@ -95,6 +103,8 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
+    controller.isLoading.value = true;
+    isLoading.value = true;
     final String apiUrl = '${dotenv.env['BASE_URL']}/api/api/logout';
 
     try {
@@ -106,13 +116,19 @@ class AuthController extends GetxController {
       );
 
       if (response.statusCode == 200) {
+        controller.isLoading.value = false;
+        isLoading.value = false;
         print("Logout successful");
         await TokenManager.clearAll();
         Get.offAllNamed('/login');
       } else {
+        controller.isLoading.value = false;
+        isLoading.value = false;
         Get.snackbar("Error", "Logout failed. Try again.");
       }
     } catch (e) {
+      controller.isLoading.value = false;
+      isLoading.value = false;
       Get.snackbar("Error", "An error occurred: $e");
     }
   }

@@ -17,11 +17,16 @@ class AnalyticsScreen extends StatelessWidget {
         child: Column(
           children: [
             // 🔹 Salesman of the Month Card
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            Container(
+              margin: const EdgeInsets.only(right: 10, left: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                border: Border.all(
+                  color: Colors.black12, // border color
+                  width: 2, // border thickness
+                ),
               ),
-              elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -170,6 +175,7 @@ class AnalyticsScreen extends StatelessWidget {
     required List<Widget> children,
   }) {
     return Card(
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
       child: Padding(

@@ -1,15 +1,7 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:rocketsales/Screens/SalesmanDashboard/ImagePreviewScreen.dart';
-import 'package:rocketsales/TokenManager.dart';
 import '../../../resources/my_assets.dart';
 import '../../../resources/my_colors.dart';
 import '../../NativeChannel.dart';

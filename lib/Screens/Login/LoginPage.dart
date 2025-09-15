@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                         height: size.height * 0.05,
                         child: ElevatedButton(
                           onPressed: () {
-                            authController.login();
+                            authController.login(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey.shade800,

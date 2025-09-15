@@ -25,8 +25,9 @@ class SalesmanCustomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       backgroundColor: Colors.white,
-      child: Obx(() => Stack(
-          children: [Column(
+      child: Stack(
+        children: [
+          Column(
             children: <Widget>[
               UserAccountsDrawerHeader(
                 accountName: Obx(() => Text(
@@ -41,10 +42,10 @@ class SalesmanCustomDrawer extends StatelessWidget {
                       backgroundColor: Colors.grey,
                       child: CircularProgressIndicator(color: MyColor.dashbord),
                     );
-                  } else if (profileImage == null || controller.bytes.value == null) {
+                  } else if (profileImage == null) {
                     return const CircleAvatar(
                       backgroundColor: Colors.grey,
-                      child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+                      child: Icon(Icons.person, size: 30, color: Colors.white),
                     );
                   } else {
                     return CircleAvatar(
@@ -53,9 +54,7 @@ class SalesmanCustomDrawer extends StatelessWidget {
                     );
                   }
                 }),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                ),
+                decoration: const BoxDecoration(color: Colors.white),
               ),
               Expanded(
                 child: Container(
@@ -134,34 +133,40 @@ class SalesmanCustomDrawer extends StatelessWidget {
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
-                          child: ElevatedButton.icon(
+                          child: Obx(() => ElevatedButton.icon(
                             icon: const Icon(
                               Icons.logout,
-                              size: 24.0, // Adjust the icon size as needed
-                              color:
-                              Colors.white, // Adjust the icon color as needed
+                              size: 24.0,
+                              color: Colors.white,
                             ),
-                            label: controller.isLoading.value ? const CircularProgressIndicator() : Text(
+                            label: (controller.isLoading.value ||
+                                authController.isLoading.value)
+                                ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                                : const Text(
                               'Logout',
                               style: TextStyle(
                                 color: Colors.white,
-                                // Adjust the text color as needed
-                                fontSize: 16.0, // Adjust the text size as needed
+                                fontSize: 16.0,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red, // Background color
+                              backgroundColor: Colors.red,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  16.0,
-                                ), // Rounded corners (you can adjust this value to make it more or less rounded)
+                                borderRadius: BorderRadius.circular(16.0),
                               ),
-                              minimumSize: const Size(
-                                100,
-                                40,
-                              ), // Adjust width (100) and height (40) as needed
+                              minimumSize: const Size(100, 40),
                             ),
-                            onPressed: () async {
+                            onPressed: (controller.isLoading.value ||
+                                authController.isLoading.value)
+                                ? null
+                                : () async {
                               controller.isLoading.value = true;
                               final permission = await controller
                                   .checkLocationPermission();
@@ -171,46 +176,24 @@ class SalesmanCustomDrawer extends StatelessWidget {
                                 if (location != null &&
                                     location.latitude != null &&
                                     location.longitude != null) {
-                                  await controller.updateCheckoutTime(
+                                  await controller
+                                      .updateCheckoutTime(
                                     location.latitude!,
                                     location.longitude!,
                                   );
                                   await NativeChannel.stopService();
                                   await controller.logout();
                                   controller.isConnected.value = false;
-                                  controller.isLoading.value = false;
                                 } else {
                                   print("⚠️ Location data is null!");
-                                  controller.isLoading.value = false;
                                 }
                               } else {
-                                print("⚠️ Location permission denied!");
-                                controller.isLoading.value = false;
+                                print(
+                                    "⚠️ Location permission denied!");
                               }
+                              controller.isLoading.value = false;
                             },
-
-                            // onPressed: () async {
-                            //   printFormattedDate();
-                            //   String? decodedUsername = await decodeToken();
-                            //
-                            //   if (decodedUsername != null) {
-                            //     await logoutUser(decodedUsername);
-                            //     Get.offNamed('/login');
-                            //     await tokenController.delete(key: 'token');
-                            //     await roleController.delete(key: 'role');
-                            //     // locationController.stopListeningLocation();
-                            //     // locationSocketController.disposeSocket();
-                            //     // attendanceController.dispose();
-                            //   } else {
-                            //     Get.snackbar(
-                            //       "Error",
-                            //       "Username not found. Cannot logout.",
-                            //     );
-                            //   }
-                            //
-                            //   setState(() {});
-                            // },
-                          ),
+                          )),
                         ),
                       ),
                     ],
@@ -219,17 +202,8 @@ class SalesmanCustomDrawer extends StatelessWidget {
               ),
             ],
           ),
-          ]
-      ),)
-
-    );
-  }
-
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: MyColor.dashbord),
-      title: Text(title, style: const TextStyle(fontSize: 16)),
-      onTap: onTap,
+        ],
+      ),
     );
   }
 }
