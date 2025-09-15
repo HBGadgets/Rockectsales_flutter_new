@@ -141,9 +141,9 @@ class AnalyticsScreen extends StatelessWidget {
                 //     "Pavan Raghuvanshi", "45"),
                 // _leaderRow(Icons.calendar_today_outlined, "Top in Attendance",
                 //     "Piyush", "30"),
-                _personRow("Pawan Raghuvanshi", crown: true),
-                _personRow("Priya Mehra"),
-                _personRow("Piyush"),
+                _personRow(controller.taskPerformers.first.salesmanName.toString(), controller.taskPerformers.first.profileImage.toString(), crown: true),
+                _personRow(controller.taskPerformers[1].salesmanName.toString(), controller.taskPerformers[1].profileImage.toString()),
+                _personRow(controller.taskPerformers[2].salesmanName.toString(), controller.taskPerformers[2].profileImage.toString()),
                 TextButton(
                   onPressed: () {},
                   child: const Text("See full leaderboard"),
@@ -158,9 +158,9 @@ class AnalyticsScreen extends StatelessWidget {
             _sectionCard(
               title: "Attendance Leaderboard",
               children: [
-                _personRow("Pawan Raghuvanshi", crown: true),
-                _personRow("Priya Mehra"),
-                _personRow("Piyush"),
+                _personRow(controller.attendancePerformers.first.salesmanName.toString(), controller.taskPerformers.first.profileImage.toString(), crown: true),
+                _personRow(controller.attendancePerformers[1].salesmanName.toString(), controller.taskPerformers[1].profileImage.toString()),
+                _personRow(controller.attendancePerformers[2].salesmanName.toString(), controller.taskPerformers[2].profileImage.toString()),
                 TextButton(
                   onPressed: () {},
                   child: const Text("See full leaderboard"),
@@ -271,7 +271,7 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  static Widget _personRow(String name, {bool crown = false}) {
+  static Widget _personRow(String name, String base64Image, {bool crown = false}) {
     return ListTile(
       leading: const CircleAvatar(
         backgroundImage: NetworkImage("https://randomuser.me/api/portraits/men/2.jpg"),
