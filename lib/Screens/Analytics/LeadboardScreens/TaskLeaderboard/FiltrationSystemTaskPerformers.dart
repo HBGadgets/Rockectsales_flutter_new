@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 
 import '../../../../resources/my_colors.dart';
@@ -42,10 +43,12 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
 
   void _prevMonth() {
     controller.month.value = controller.month.value - 1;
+    controller.getTaskPerformers();
   }
 
   void _nextMonth() {
     controller.month.value = controller.month.value + 1;
+    controller.getTaskPerformers();
   }
 
   Future<void> _selectMonth(BuildContext context) async {
@@ -53,14 +56,15 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2019),
-      lastDate: DateTime(2025),
+      lastDate: DateTime.now(),
     );
     if (selected != null) {
-      // setState(() {
-      //   fromDate = picked;
-      // });
       controller.month.value = selected.month;
     }
+  }
+
+  String monthName(int monthNumber) {
+    return DateFormat('MMMM').format(DateTime(0, monthNumber));
   }
 
   @override
@@ -70,49 +74,31 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
         child: Column(
           children: [
           Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             IconButton(
               icon: const Icon(Icons.arrow_back_ios_new),
               onPressed: _prevMonth,
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black26),
-                borderRadius: BorderRadius.circular(8),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                side: const BorderSide(color: Colors.black54),
+                foregroundColor: Colors.black87
               ),
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  side: const BorderSide(color: Colors.black54),
-                ),
-                onPressed: () => _selectMonth(context),
-                icon: const Icon(
-                  Icons.date_range,
-                  color: Colors.black,
-                ),
-                label: Text(
-                  controller.month.value.toString().padLeft(2, '0'),
-                  style: const TextStyle(color: Colors.black),
-                  overflow: TextOverflow.ellipsis,
-                ),
+              onPressed: () => _selectMonth(context),
+              icon: const Icon(
+                Icons.date_range,
+                color: Colors.black,
               ),
-              // child: Row(
-              //   children: [
-              //     const Icon(Icons.calendar_month, size: 20, color: Colors.black87),
-              //     const SizedBox(width: 8),
-              //     Text(
-              //       controller.month.value.toString().padLeft(2, '0'),
-              //       style: const TextStyle(
-              //         fontWeight: FontWeight.bold,
-              //         fontSize: 16,
-              //       ),
-              //     ),
-              //   ],
-              // ),
+              label: Obx(() => Text(
+                monthName(controller.month.value),
+                style: const TextStyle(color: Colors.black),
+                overflow: TextOverflow.ellipsis,
+              ))
+              ,
             ),
             IconButton(
               icon: const Icon(Icons.arrow_forward_ios),
@@ -133,7 +119,7 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
                     child: TextField(
                       onChanged: _handleTextFieldChange,
                       decoration: const InputDecoration(
-                        hintText: 'Search Tasks',
+                        hintText: 'Search Task Performers',
                         border: InputBorder.none,
                       ),
                     ),
