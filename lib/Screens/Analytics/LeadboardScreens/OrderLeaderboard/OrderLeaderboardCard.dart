@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:rocketsales/Screens/Analytics/AnalyticsModel.dart';
 import 'dart:typed_data';
 
-class TaskPerformerCard extends StatelessWidget {
-  final TaskPerformer taskPerformer;
+class OrderPerformerCard extends StatelessWidget {
+  final OrderPerformer orderPerformer;
   final bool crown;
 
-  const TaskPerformerCard({
+  const OrderPerformerCard({
     super.key,
-    required this.taskPerformer,
+    required this.orderPerformer,
     this.crown = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    Uint8List profileImage = base64Decode(taskPerformer.profileImage);
+    Uint8List profileImage = base64Decode(orderPerformer.profileImage);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
 
@@ -35,7 +35,7 @@ class TaskPerformerCard extends StatelessWidget {
           // 🔹 Header Row
           Row(
             children: [
-              taskPerformer.profileImage == "" ? CircleAvatar(
+              orderPerformer.profileImage == "" ? CircleAvatar(
                 backgroundColor: Colors.grey,
                 radius: 20,
                 child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
@@ -46,7 +46,7 @@ class TaskPerformerCard extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  taskPerformer.salesmanName,
+                  orderPerformer.salesmanName,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -62,12 +62,11 @@ class TaskPerformerCard extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // 🔹 Task Info Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _infoDot(Colors.blue, "Total Task", taskPerformer.taskTotal),
-              _infoDot(Colors.green, "Completed", taskPerformer.taskCompleted),
+              _infoDot(Colors.blue, "Total Order", orderPerformer.orderTotal),
+              _infoDot(Colors.green, "Completed", orderPerformer.orderCompleted),
             ],
           ),
         ],

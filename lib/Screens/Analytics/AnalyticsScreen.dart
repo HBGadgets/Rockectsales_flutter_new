@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:rocketsales/Screens/Analytics/AnalyticsController.dart';
+import 'package:rocketsales/Screens/Analytics/LeadboardScreens/OrderLeaderboard/OrderLeaderboardController.dart';
 import 'package:rocketsales/Screens/Analytics/LeadboardScreens/TaskLeaderboard/TaskLeaderboardScreen.dart';
 import 'package:rocketsales/Screens/Attendance/NewAttendanceController.dart';
 
@@ -135,12 +136,6 @@ class AnalyticsScreen extends StatelessWidget {
             _sectionCard(
               title: "Task Leaderboard",
               children: [
-                // _leaderRow(Icons.shopping_cart_outlined, "Top in Orders",
-                //     "Priya Sharma", "135"),
-                // _leaderRow(Icons.task_alt_outlined, "Top in Task",
-                //     "Pavan Raghuvanshi", "45"),
-                // _leaderRow(Icons.calendar_today_outlined, "Top in Attendance",
-                //     "Piyush", "30"),
                 _personRow(controller.taskPerformers.first.salesmanName.toString(), controller.taskPerformers.first.profileImage.toString(), crown: true),
                 _personRow(controller.taskPerformers[1].salesmanName.toString(), controller.taskPerformers[1].profileImage.toString()),
                 _personRow(controller.taskPerformers[2].salesmanName.toString(), controller.taskPerformers[2].profileImage.toString()),
@@ -164,7 +159,9 @@ class AnalyticsScreen extends StatelessWidget {
                 _personRow(controller.attendancePerformers[1].salesmanName.toString(), controller.attendancePerformers[1].profileImage.toString()),
                 _personRow(controller.attendancePerformers[2].salesmanName.toString(), controller.attendancePerformers[2].profileImage.toString()),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(OrderLeaderboardController());
+                  },
                   child: const Text("See full leaderboard"),
                   style: TextButton.styleFrom(foregroundColor: MyColor.dashbord),
                 ),

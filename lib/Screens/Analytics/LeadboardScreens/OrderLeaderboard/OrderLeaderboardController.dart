@@ -11,8 +11,8 @@ import 'package:rocketsales/Screens/Analytics/AnalyticsModel.dart';
 
 import '../../../../TokenManager.dart';
 
-class TaskLeaderboardController extends GetxController {
-  final RxList<TaskPerformer> taskPerformers = <TaskPerformer>[].obs;
+class OrderLeaderboardController extends GetxController {
+  final RxList<OrderPerformer> orderPerformers = <OrderPerformer>[].obs;
   final RxBool isLoading = true.obs;
   final RxString error = ''.obs;
   final month = DateTime.now().month.obs;
@@ -24,7 +24,7 @@ class TaskLeaderboardController extends GetxController {
 
   @override
   void onInit() {
-    getTaskPerformers();
+    getOrderPerformers();
     super.onInit();
   }
 
@@ -40,7 +40,7 @@ class TaskLeaderboardController extends GetxController {
     return DateFormat('hh:mm a').format(dateTime);
   }
 
-  void getTaskPerformers() async {
+  void getOrderPerformers() async {
     isLoading.value = true;
     isMoreCardsAvailable.value = false;
     page.value = 2;
@@ -53,7 +53,7 @@ class TaskLeaderboardController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/salesman/task/analytics?&limit=20&month=$month&search=$searchString');
+          '${dotenv.env['BASE_URL']}/api/api/salesman/order/analytics?&limit=20&month=$month&search=$searchString');
       final response = await http.get(
         url,
         headers: {
@@ -67,23 +67,23 @@ class TaskLeaderboardController extends GetxController {
         print(jsonData);
         final List<dynamic> dataList = jsonData['performers'];
         print("dataList ========>>>>>> $dataList");
-        final taskPerformerList = dataList.map((item) => TaskPerformer.fromJson(item)).toList();
-        taskPerformers.assignAll(taskPerformerList);
+        final orderPerformerList = dataList.map((item) => OrderPerformer.fromJson(item)).toList();
+        orderPerformers.assignAll(orderPerformerList);
       } else {
-        taskPerformers.clear();
+        orderPerformers.clear();
         Get.snackbar("Error connect",
             "Failed to Connect to DB (Code: ${response.statusCode})");
       }
     } catch (e) {
-      taskPerformers.clear();
+      orderPerformers.clear();
       // Get.snackbar("Exception", e.toString());
-      Get.snackbar("Exception", "Couldn't get Task performers");
+      Get.snackbar("Exception", "Couldn't get Order performers");
     } finally {
       isLoading.value = false;
     }
   }
 
-  void getMoreTaskPerformerCards() async {
+  void getMoreOrderPerformerCards() async {
     print('fetching more');
     try {
       final token = await TokenManager.getToken();
@@ -94,7 +94,7 @@ class TaskLeaderboardController extends GetxController {
       }
 
       final url = Uri.parse(
-          '${dotenv.env['BASE_URL']}/api/api/salesman/task/analytics?page=$page&limit=10&month=$month&search=$searchString');
+          '${dotenv.env['BASE_URL']}/api/api/salesman/order/analytics?page=$page&limit=10&month=$month&search=$searchString');
       final response = await http.get(
         url,
         headers: {
@@ -108,24 +108,24 @@ class TaskLeaderboardController extends GetxController {
         // print(jsonData);
         final List<dynamic> dataList = jsonData['performers'];
         // final List<dynamic> dataList = jsonData;
-        final taskPerformerList = dataList.map((item) => TaskPerformer.fromJson(item)).toList();
+        final orderPerformerList = dataList.map((item) => OrderPerformer.fromJson(item)).toList();
         // page.value++;
-        if (taskPerformerList.length < 1) {
+        if (orderPerformerList.length < 1) {
           isMoreCardsAvailable.value = false;
           // page.value = 1;
         } else {
           page.value++;
         }
-        taskPerformers.addAll(taskPerformerList);
+        orderPerformers.addAll(orderPerformerList);
       } else {
-        taskPerformers.clear();
+        orderPerformers.clear();
         Get.snackbar("Error connect",
             "Failed to Connect to DB (Code: ${response.statusCode})");
       }
     } catch (e) {
-      taskPerformers.clear();
+      orderPerformers.clear();
       // Get.snackbar("Exception", e.toString());
-      Get.snackbar("Exception", "Couldn't get Task performers");
+      Get.snackbar("Exception", "Couldn't get Order performers");
     }
   }
 }

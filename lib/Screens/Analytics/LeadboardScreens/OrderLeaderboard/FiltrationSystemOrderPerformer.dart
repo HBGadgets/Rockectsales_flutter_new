@@ -6,16 +6,16 @@ import 'package:intl/intl.dart';
 import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
 
 import '../../../../resources/my_colors.dart';
-import 'TaskLeaderboardController.dart';
+import 'OrderLeaderboardController.dart';
 
-class FiltrationSystemtaskPerformers extends StatelessWidget {
-  FiltrationSystemtaskPerformers({super.key});
+class FiltrationSystemOrderPerformers extends StatelessWidget {
+  FiltrationSystemOrderPerformers({super.key});
 
   final Debouncer _debouncer = Debouncer();
 
   final TextEditingController searchController = TextEditingController();
 
-  final TaskLeaderboardController controller = Get.put(TaskLeaderboardController());
+  final OrderLeaderboardController controller = Get.put(OrderLeaderboardController());
 
   void _handleTextFieldChange(String value) {
     const duration = Duration(milliseconds: 500);
@@ -23,7 +23,7 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
       duration: duration,
       onDebounce: () {
         controller.searchString.value = value;
-        controller.getTaskPerformers();
+        controller.getOrderPerformers();
       },
     );
   }
@@ -35,7 +35,7 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
     } else {
       controller.month.value = controller.month.value - 1;
     }
-    controller.getTaskPerformers();
+    controller.getOrderPerformers();
   }
 
   void _nextMonth() {
@@ -45,16 +45,16 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
     } else {
       controller.month.value = controller.month.value + 1;
     }
-    controller.getTaskPerformers();
+    controller.getOrderPerformers();
   }
 
 
   Future<void> _selectMonth(BuildContext context) async {
     final selected = await showMonthPicker(
-        context: context,
-        initialDate: DateTime(controller.year.value, controller.month.value),
-        firstDate: DateTime(2024),
-        lastDate: DateTime.now(),
+      context: context,
+      initialDate: DateTime(controller.year.value, controller.month.value),
+      firstDate: DateTime(2024),
+      lastDate: DateTime.now(),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
@@ -71,7 +71,7 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
     if (selected != null) {
       controller.month.value = selected.month;
       controller.year.value = selected.year;
-      controller.getTaskPerformers();
+      controller.getOrderPerformers();
     }
   }
 
@@ -86,43 +86,43 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
         margin: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
         child: Column(
           children: [
-          Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new),
-              onPressed: _prevMonth,
-            ),
-            OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new),
+                  onPressed: _prevMonth,
                 ),
-                side: const BorderSide(color: Colors.black54),
-                foregroundColor: Colors.black87
-              ),
-              onPressed: () => _selectMonth(context),
-              icon: const Icon(
-                Icons.date_range,
-                color: Colors.black,
-              ),
-              label: Obx(() => Text(
-                monthName(controller.month.value),
-                style: const TextStyle(color: Colors.black),
-                overflow: TextOverflow.ellipsis,
-              ))
-              ,
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      side: const BorderSide(color: Colors.black54),
+                      foregroundColor: Colors.black87
+                  ),
+                  onPressed: () => _selectMonth(context),
+                  icon: const Icon(
+                    Icons.date_range,
+                    color: Colors.black,
+                  ),
+                  label: Obx(() => Text(
+                    monthName(controller.month.value),
+                    style: const TextStyle(color: Colors.black),
+                    overflow: TextOverflow.ellipsis,
+                  ))
+                  ,
+                ),
+                Obx(() => IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios),
+                  onPressed: (controller.month.value == DateTime.now().month &&
+                      controller.year.value == DateTime.now().year)
+                      ? null
+                      : _nextMonth,
+                ))
+                ,
+              ],
             ),
-            Obx(() => IconButton(
-              icon: const Icon(Icons.arrow_forward_ios),
-              onPressed: (controller.month.value == DateTime.now().month &&
-                  controller.year.value == DateTime.now().year)
-                  ? null
-                  : _nextMonth,
-            ))
-            ,
-          ],
-        ),
             Container(
               margin: const EdgeInsets.only(top: 7, bottom: 7),
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -136,7 +136,7 @@ class FiltrationSystemtaskPerformers extends StatelessWidget {
                     child: TextField(
                       onChanged: _handleTextFieldChange,
                       decoration: const InputDecoration(
-                        hintText: 'Search Task Performers',
+                        hintText: 'Search Order Performers',
                         border: InputBorder.none,
                       ),
                     ),
