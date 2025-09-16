@@ -84,6 +84,7 @@ class _TaskLeaderBoardScreenState extends State<TaskLeaderBoardScreen> {
                           final item = controller.taskPerformers[index];
                           return TaskPerformerCard(
                             taskPerformer: item,
+                            crown: index == 0,
                           );
                         } else {
                           if (controller.isMoreCardsAvailable.value) {

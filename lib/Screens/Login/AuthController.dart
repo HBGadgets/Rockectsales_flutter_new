@@ -14,8 +14,8 @@ import '../SalesmanDashboard/SalesmanDashboardScreen.dart';
 
 class AuthController extends GetxController {
 
-  final salesmanDashboardController controller =
-  Get.find<salesmanDashboardController>();
+  // final salesmanDashboardController controller =
+  // Get.find<salesmanDashboardController>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   RxString username = ''.obs;
@@ -103,7 +103,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
-    controller.isLoading.value = true;
+    // controller.isLoading.value = true;
     isLoading.value = true;
     final String apiUrl = '${dotenv.env['BASE_URL']}/api/api/logout';
 
@@ -116,18 +116,18 @@ class AuthController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        controller.isLoading.value = false;
+        // controller.isLoading.value = false;
         isLoading.value = false;
         print("Logout successful");
         await TokenManager.clearAll();
         Get.offAllNamed('/login');
       } else {
-        controller.isLoading.value = false;
+        // controller.isLoading.value = false;
         isLoading.value = false;
         Get.snackbar("Error", "Logout failed. Try again.");
       }
     } catch (e) {
-      controller.isLoading.value = false;
+      // controller.isLoading.value = false;
       isLoading.value = false;
       Get.snackbar("Error", "An error occurred: $e");
     }

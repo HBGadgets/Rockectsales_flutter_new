@@ -85,7 +85,8 @@ class _AttendanceLeaderBoardScreenState extends State<AttendanceLeaderBoardScree
                         if (index < controller.attendancePerformers.length) {
                           final item = controller.attendancePerformers[index];
                           return AttendanceLeaderBoardCard(
-                            attendancePerformer: item
+                            attendancePerformer: item,
+                            isCrown: index == 0,
                           );
                         } else {
                           if (controller.isMoreCardsAvailable.value) {

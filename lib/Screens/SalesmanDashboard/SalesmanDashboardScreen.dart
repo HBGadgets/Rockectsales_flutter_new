@@ -24,8 +24,7 @@ class DashboardSalesman extends StatelessWidget {
 
 
   final AuthController authController = Get.put(AuthController());
-  final salesmanDashboardController controller =
-  Get.find<salesmanDashboardController>();
+  final salesmanDashboardController controller = Get.put(salesmanDashboardController());
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late Size size;

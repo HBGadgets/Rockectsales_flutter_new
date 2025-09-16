@@ -83,6 +83,7 @@ class _OrderLeaderBoardScreenState extends State<OrderLeaderBoardScreen> {
                           final item = controller.orderPerformers[index];
                           return OrderPerformerCard(
                             orderPerformer: item,
+                            crown: index == 0,
                           );
                         } else {
                           if (controller.isMoreCardsAvailable.value) {
