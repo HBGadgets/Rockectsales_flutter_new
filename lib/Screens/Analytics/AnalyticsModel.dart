@@ -10,7 +10,7 @@ class Performer {
   int taskCompleted;
   int orderTotal;
   int orderCompleted;
-  int score;
+  double score;
 
   Performer({
     required this.salesmanId,

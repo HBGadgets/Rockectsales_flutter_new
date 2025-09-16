@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:intl/intl.dart';
 import 'package:rocketsales/Screens/Analytics/AnalyticsController.dart';
 import 'package:rocketsales/Screens/Attendance/NewAttendanceController.dart';
 
@@ -158,9 +157,9 @@ class AnalyticsScreen extends StatelessWidget {
             _sectionCard(
               title: "Attendance Leaderboard",
               children: [
-                _personRow(controller.attendancePerformers.first.salesmanName.toString(), controller.taskPerformers.first.profileImage.toString(), crown: true),
-                _personRow(controller.attendancePerformers[1].salesmanName.toString(), controller.taskPerformers[1].profileImage.toString()),
-                _personRow(controller.attendancePerformers[2].salesmanName.toString(), controller.taskPerformers[2].profileImage.toString()),
+                _personRow(controller.attendancePerformers.first.salesmanName.toString(), controller.attendancePerformers.first.profileImage.toString(), crown: true),
+                _personRow(controller.attendancePerformers[1].salesmanName.toString(), controller.attendancePerformers[1].profileImage.toString()),
+                _personRow(controller.attendancePerformers[2].salesmanName.toString(), controller.attendancePerformers[2].profileImage.toString()),
                 TextButton(
                   onPressed: () {},
                   child: const Text("See full leaderboard"),
@@ -175,8 +174,9 @@ class AnalyticsScreen extends StatelessWidget {
             _sectionCard(
               title: "Order Leaderboard",
               children: [
-                _personRow("Darlene Robertson", crown: true),
-                _personRow("Priya Sharma"),
+                _personRow(controller.orderPerformers.first.salesmanName.toString(), controller.orderPerformers.first.profileImage.toString(), crown: true),
+                _personRow(controller.orderPerformers[1].salesmanName.toString(), controller.orderPerformers[1].profileImage.toString()),
+                _personRow(controller.orderPerformers[2].salesmanName.toString(), controller.orderPerformers[2].profileImage.toString()),
                 TextButton(
                   onPressed: () {},
                   child: const Text("See full leaderboard"),
@@ -272,9 +272,15 @@ class AnalyticsScreen extends StatelessWidget {
   }
 
   static Widget _personRow(String name, String base64Image, {bool crown = false}) {
+    Uint8List profileImage = base64Decode(base64Image);
     return ListTile(
-      leading: const CircleAvatar(
-        backgroundImage: NetworkImage("https://randomuser.me/api/portraits/men/2.jpg"),
+      leading: base64Image == "" ? CircleAvatar(
+        backgroundColor: Colors.grey,
+        radius: 20,
+        child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+      ) : CircleAvatar(
+          radius: 20,
+          backgroundImage: MemoryImage(profileImage)
       ),
       title: Text(
         name,
@@ -284,12 +290,13 @@ class AnalyticsScreen extends StatelessWidget {
       trailing: crown
           ? Row(
         mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.emoji_events, color: Colors.amber),
-              const Icon(Icons.chevron_right)
-            ],
-          )
+        children: [
+          Icon(Icons.emoji_events, color: Colors.amber),
+          const Icon(Icons.chevron_right)
+        ],
+      )
           : const Icon(Icons.chevron_right),
     );
+
   }
 }

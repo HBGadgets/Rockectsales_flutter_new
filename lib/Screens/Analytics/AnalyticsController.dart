@@ -75,6 +75,7 @@ class AnalyticsController extends GetxController {
       }
     } catch (e) {
       performers.clear();
+      print("error ==========================>>>>>>>>>>>>>>> ${e.toString()}");
       Get.snackbar("Exception", "Couldn't get TopPerformer");
     }
   }
