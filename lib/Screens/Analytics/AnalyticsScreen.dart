@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:rocketsales/Screens/Analytics/AnalyticsController.dart';
+import 'package:rocketsales/Screens/Analytics/LeadboardScreens/AttendanceLeaderboard/AttendanceLeaderboardController.dart';
+import 'package:rocketsales/Screens/Analytics/LeadboardScreens/AttendanceLeaderboard/AttendanceLeaderboardScreen.dart';
 import 'package:rocketsales/Screens/Analytics/LeadboardScreens/OrderLeaderboard/OrderLeaderboardController.dart';
+import 'package:rocketsales/Screens/Analytics/LeadboardScreens/OrderLeaderboard/OrderLeaderboardScreen.dart';
 import 'package:rocketsales/Screens/Analytics/LeadboardScreens/TaskLeaderboard/TaskLeaderboardScreen.dart';
 import 'package:rocketsales/Screens/Attendance/NewAttendanceController.dart';
 
@@ -33,102 +36,7 @@ class AnalyticsScreen extends StatelessWidget {
         child: Column(
           children: [
             // 🔹 Salesman of the Month Card
-            Container(
-              margin: const EdgeInsets.only(right: 5, left: 5),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
-                border: Border.all(
-                  color: Colors.black12, // border color
-                  width: 2, // border thickness
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Obx(() {
-
-                          Uint8List profileImage = base64Decode(controller.performers.first.profileImgBase64);
-                          if (controller.isLoading.value) {
-                            return const CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              radius: 30,
-                              child: CircularProgressIndicator(color: MyColor.dashbord),
-                            );
-                          } else if (controller.performers.first.profileImgBase64 == null) {
-                            return const CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              radius: 30,
-                              child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
-                            );
-                          } else {
-                            return CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              radius: 30,
-                              backgroundImage: MemoryImage(profileImage),
-                            );
-                          }
-                        }),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Salesman of this month",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500)),
-                              SizedBox(height: 4),
-                              Text(controller.performers.first.salesmanName,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1E4DB7),
-                                  )),
-                            ],
-                          ),
-                        ),
-                        const Icon(Icons.emoji_events,
-                            color: Colors.amber, size: 28),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    // Attendance Progress
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Attendance"),
-                        Text(attendanceController.attendanceForTheMonth.value!.presentPercentage),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: LinearProgressIndicator(
-                        value: 0.65,
-                        minHeight: 6,
-                        backgroundColor: Colors.grey.shade300,
-                        color: const Color(0xFF1E4DB7),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Order / Task / Sales
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _infoBox("Order", controller.performers.first.orderCompleted.toString()),
-                        _infoBox("Task", controller.performers.first.taskCompleted.toString()),
-                        _infoBox("Score", controller.performers.first.score.toString()),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
+            _salesmanOfTheMonth(controller.attendancePerformers.first.attendancePresent, DateTime.now().day, controller),
 
             const SizedBox(height: 16),
 
@@ -160,7 +68,7 @@ class AnalyticsScreen extends StatelessWidget {
                 _personRow(controller.attendancePerformers[2].salesmanName.toString(), controller.attendancePerformers[2].profileImage.toString()),
                 TextButton(
                   onPressed: () {
-                    Get.to(OrderLeaderboardController());
+                    Get.to(AttendanceLeaderBoardScreen());
                   },
                   child: const Text("See full leaderboard"),
                   style: TextButton.styleFrom(foregroundColor: MyColor.dashbord),
@@ -178,7 +86,9 @@ class AnalyticsScreen extends StatelessWidget {
                 _personRow(controller.orderPerformers[1].salesmanName.toString(), controller.orderPerformers[1].profileImage.toString()),
                 _personRow(controller.orderPerformers[2].salesmanName.toString(), controller.orderPerformers[2].profileImage.toString()),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(OrderLeaderBoardScreen());
+                  },
                   child: const Text("See full leaderboard"),
                   style: TextButton.styleFrom(foregroundColor: MyColor.dashbord),
                 ),
@@ -188,6 +98,108 @@ class AnalyticsScreen extends StatelessWidget {
         ),
       ))
 
+    );
+  }
+  
+  static Widget _salesmanOfTheMonth(int attendancePresent, int totalDays, AnalyticsController controller) {
+
+    double attendancePercentage = (attendancePresent / totalDays) * 100;
+    return Container(
+      margin: const EdgeInsets.only(right: 5, left: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        border: Border.all(
+          color: Colors.black12, // border color
+          width: 2, // border thickness
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Obx(() {
+
+                  Uint8List profileImage = base64Decode(controller.performers.first.profileImgBase64);
+                  if (controller.isLoading.value) {
+                    return const CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      radius: 30,
+                      child: CircularProgressIndicator(color: MyColor.dashbord),
+                    );
+                  } else if (controller.performers.first.profileImgBase64 == null) {
+                    return const CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      radius: 30,
+                      child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
+                    );
+                  } else {
+                    return CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      radius: 30,
+                      backgroundImage: MemoryImage(profileImage),
+                    );
+                  }
+                }),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Salesman of this month",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500)),
+                      SizedBox(height: 4),
+                      Text(controller.performers.first.salesmanName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E4DB7),
+                          )),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.emoji_events,
+                    color: Colors.amber, size: 28),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Attendance Progress
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Attendance"),
+                Text("${attendancePercentage.toStringAsFixed(0)}%")
+                ,
+              ],
+            ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: LinearProgressIndicator(
+                value: attendancePercentage / 100,
+                minHeight: 6,
+                backgroundColor: Colors.grey.shade300,
+                color: const Color(0xFF1E4DB7),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Order / Task / Sales
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _infoBox("Order", controller.performers.first.orderCompleted.toString()),
+                _infoBox("Task", controller.performers.first.taskCompleted.toString()),
+                _infoBox("Score", controller.performers.first.score.toString()),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 
