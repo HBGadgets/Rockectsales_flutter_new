@@ -13,10 +13,10 @@ class AttendanceScreen extends StatelessWidget {
 
   AttendanceScreen({required this.name});
 
-  final controller = Get.put(NewAttendanceController());
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(NewAttendanceController());
     return Scaffold(
       appBar: AppBar(
         title: const Text(

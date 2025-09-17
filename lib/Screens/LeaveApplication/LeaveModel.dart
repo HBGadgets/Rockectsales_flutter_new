@@ -18,7 +18,7 @@ class Leave {
       leaveStartdate: json['leaveStartdate']?.toString() ?? '',
       leaveEnddate: json['leaveEnddate']?.toString() ?? '',
       reason: json['reason'] ?? '',
-      status: json['status'] ?? '',
+      status: json['leaveRequestStatus'] ?? '',
     );
   }
 
@@ -28,7 +28,7 @@ class Leave {
       "leaveStartdate": leaveStartdate,
       "leaveEnddate": leaveEnddate,
       "reason": reason,
-      "status": status,
+      "leaveRequestStatus": status,
     };
   }
 }

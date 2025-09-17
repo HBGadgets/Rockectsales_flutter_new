@@ -15,11 +15,12 @@ import 'dart:typed_data';
 class AnalyticsScreen extends StatelessWidget {
   AnalyticsScreen({super.key});
 
-  final NewAttendanceController attendanceController =
-  Get.find<NewAttendanceController>();
+
 
   @override
   Widget build(BuildContext context) {
+    final NewAttendanceController attendanceController =
+    Get.put(NewAttendanceController());
     final controller = Get.put(AnalyticsController(), permanent: false);
 
     return Scaffold(

@@ -285,7 +285,7 @@ class _FiltrationsystemleaveState extends State<Filtrationsystemleave> {
                             padding: const EdgeInsets.only(
                                 top: 10, bottom: 10, left: 20, right: 20),
                             child: Text(
-                              "Approved.",
+                              "Approved",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),

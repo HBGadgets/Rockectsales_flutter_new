@@ -7,6 +7,7 @@ import '../../../resources/my_colors.dart';
 import '../../NativeChannel.dart';
 import '../Analytics/AnalyticsScreen.dart';
 import '../Attendance/AttendanceScreen.dart';
+import '../Attendance/NewAttendanceController.dart';
 import '../Expense/ExpensesHistoryScreen.dart';
 import '../LeaveApplication/LeaveApplication.dart';
 import '../Login/AuthController.dart';

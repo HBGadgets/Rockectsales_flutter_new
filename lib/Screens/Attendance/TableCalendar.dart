@@ -25,7 +25,7 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
     return Obx(() {
       return TableCalendar(
         firstDay: DateTime.utc(2020, 1, 1),
-        lastDay: DateTime.utc(2070, 12, 31),
+        lastDay: DateTime.now(),
         focusedDay: controller.focusedDay.value ?? DateTime.now(),
         selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
         onDaySelected: (selectedDay, focusedDay) {
