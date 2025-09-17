@@ -308,14 +308,8 @@ class AnalyticsScreen extends StatelessWidget {
             fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
       ),
       trailing: crown
-          ? Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.emoji_events, color: Colors.amber),
-          const Icon(Icons.chevron_right)
-        ],
-      )
-          : const Icon(Icons.chevron_right),
+          ? Icon(Icons.emoji_events, color: Colors.amber)
+          : null,
     );
 
   }
