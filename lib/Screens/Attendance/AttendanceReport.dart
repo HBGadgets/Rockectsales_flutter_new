@@ -8,7 +8,7 @@ class AttendanceReport extends StatelessWidget {
   AttendanceReport({Key? key}) : super(key: key);
 
   final NewAttendanceController controller =
-      Get.find<NewAttendanceController>();
+  Get.put(NewAttendanceController());
 
   @override
   Widget build(BuildContext context) {

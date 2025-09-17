@@ -4,6 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../resources/my_colors.dart';
 import 'AttendanceModel.dart';
 import 'NewAttendanceController.dart';
 
@@ -47,7 +48,7 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
                 return Container(
                   margin: const EdgeInsets.all(6.0),
                   decoration: const BoxDecoration(
-                    color: Colors.red,
+                    color: MyColor.dashbord,
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,

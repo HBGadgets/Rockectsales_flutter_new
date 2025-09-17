@@ -18,13 +18,7 @@ class AboutUsPage extends StatelessWidget {
               floating: true,
               snap: true,
               backgroundColor: Colors.grey.shade50,
-              leading: IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {
-                  // Using GetX for navigation
-                  // Get.back();
-                },
-              ),
+              leading: BackButton(color: Colors.black87, onPressed: () => Navigator.pop(context),)
             ),
           ];
         },

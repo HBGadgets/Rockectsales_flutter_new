@@ -42,12 +42,7 @@ class _UpdatePasswordScreenState extends State<UpdatePasswordScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue.shade100,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop(); // Navigate back to the previous screen
-          },
-        ),
+        leading: BackButton(color: Colors.black87, onPressed: () => Navigator.pop(context),)
       ),
       body: SingleChildScrollView(
         child: Padding(

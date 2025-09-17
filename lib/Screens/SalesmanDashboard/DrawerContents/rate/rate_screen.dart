@@ -10,12 +10,7 @@ class RateScreen extends StatelessWidget {
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade50,
-        leading: IconButton(
-          icon:  const Icon(Icons.menu),
-          onPressed: () {
-            Get.back();
-          },
-        ),
+        leading: BackButton(color: Colors.black87, onPressed: () => Navigator.pop(context),),
         elevation: 0,
       ),
       body: SingleChildScrollView(

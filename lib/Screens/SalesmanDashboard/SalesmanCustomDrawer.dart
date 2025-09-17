@@ -23,6 +23,110 @@ class SalesmanCustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    // return Drawer(
+    //   backgroundColor: Colors.white,
+    //   child: Column(
+    //     children: [
+    //       // 🔹 Top header with wave & user name
+    //       Container(
+    //         width: double.infinity,
+    //         padding: const EdgeInsets.all(20),
+    //         decoration: const BoxDecoration(
+    //           gradient: LinearGradient(
+    //             colors: [MyColor.dashbord, Color.fromRGBO(1, 29, 74, 1)],
+    //             begin: Alignment.topCenter,
+    //             end: Alignment.bottomCenter,
+    //           ),
+    //           borderRadius: BorderRadius.only(
+    //             bottomRight: Radius.circular(40),
+    //           ),
+    //         ),
+    //         child: SafeArea(
+    //           child: Column(
+    //             crossAxisAlignment: CrossAxisAlignment.start,
+    //             children: const [
+    //               SizedBox(height: 20),
+    //               Text(
+    //                 "Hello,",
+    //                 style: TextStyle(
+    //                   fontSize: 22,
+    //                   color: Colors.white,
+    //                   fontWeight: FontWeight.bold,
+    //                 ),
+    //               ),
+    //               SizedBox(height: 5),
+    //               Text(
+    //                 "Murlidhar",
+    //                 style: TextStyle(
+    //                   fontSize: 18,
+    //                   color: Colors.white70,
+    //                 ),
+    //               ),
+    //               SizedBox(height: 20),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //
+    //       // 🔹 Drawer Menu Items
+    //       Expanded(
+    //         child: ListView(
+    //           padding: EdgeInsets.zero,
+    //           children: [
+    //             _buildDrawerItem(Icons.home_outlined, "Home"),
+    //             _buildDrawerItem(Icons.info_outline, "About us"),
+    //             _buildDrawerItem(Icons.lock_outline, "Privacy"),
+    //             _buildDrawerItem(Icons.more_horiz, "Change Password"),
+    //             _buildDrawerItem(Icons.feedback_outlined, "Feedback"),
+    //             _buildDrawerItem(Icons.star_border, "Rate us"),
+    //             _buildDrawerItem(Icons.notifications_none, "Notification"),
+    //             _buildDrawerItem(Icons.help_outline, "Help"),
+    //           ],
+    //         ),
+    //       ),
+    //
+    //       // 🔹 Logout Button
+    //       Padding(
+    //         padding: const EdgeInsets.symmetric(vertical: 12),
+    //         child: ElevatedButton.icon(
+    //           onPressed: () {
+    //             // TODO: Add logout action
+    //           },
+    //           icon: const Icon(Icons.logout, color: Colors.white),
+    //           label: const Text(
+    //             "Logout",
+    //             style: TextStyle(color: Colors.white),
+    //           ),
+    //           style: ElevatedButton.styleFrom(
+    //             backgroundColor: Colors.red,
+    //             shape: RoundedRectangleBorder(
+    //               borderRadius: BorderRadius.circular(30),
+    //             ),
+    //             padding:
+    //             const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+    //           ),
+    //         ),
+    //       ),
+    //
+    //       // 🔹 Version Text
+    //       const Padding(
+    //         padding: EdgeInsets.only(bottom: 12),
+    //         child: Text(
+    //           "Version 2.0.1",
+    //           style: TextStyle(color: Colors.grey, fontSize: 14),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
+
+
+
+
+
+
+
     return Drawer(
       backgroundColor: Colors.white,
       child: Stack(
@@ -30,9 +134,16 @@ class SalesmanCustomDrawer extends StatelessWidget {
           Column(
             children: <Widget>[
               UserAccountsDrawerHeader(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [MyColor.dashbord, Color.fromRGBO(1, 29, 74, 1)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
                 accountName: Obx(() => Text(
                   'Hello, ${authController.username.value}',
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 )),
                 accountEmail: null,
                 currentAccountPicture: Obx(() {
@@ -54,7 +165,6 @@ class SalesmanCustomDrawer extends StatelessWidget {
                     );
                   }
                 }),
-                decoration: const BoxDecoration(color: Colors.white),
               ),
               Expanded(
                 child: Container(
@@ -113,13 +223,6 @@ class SalesmanCustomDrawer extends StatelessWidget {
                         onTap: () {
                           Get.back(); // Equivalent to Navigator.pop(context)
                           Get.to(() => const RateScreen());
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.person_add_outlined),
-                        title: const Text('Add Friends'),
-                        onTap: () {
-                          Get.to(() => const InviteFriendScreen());
                         },
                       ),
                       ListTile(
@@ -205,5 +308,60 @@ class SalesmanCustomDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildDrawerItem(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.black),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16, color: Colors.black),
+      ),
+      onTap: () {
+        // TODO: Add navigation logic
+      },
+    );
+  }
+
+  Widget _buildUserHeader() {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [MyColor.dashbord, Color.fromRGBO(1, 29, 74, 1)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(40),
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  SizedBox(height: 20),
+                  Text(
+                    "Hello,",
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    "Murlidhar",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ],
+              ),
+            ),
+          );
   }
 }

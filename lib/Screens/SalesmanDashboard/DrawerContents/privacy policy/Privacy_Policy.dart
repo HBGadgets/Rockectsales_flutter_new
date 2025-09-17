@@ -18,12 +18,7 @@ class PrivacyPolicy extends StatelessWidget {
                 floating: true,
                 snap: true,
                 backgroundColor: Colors.grey.shade50,
-                leading: IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {
-                    Get.back();
-                  },
-                ),
+                leading: BackButton(color: Colors.black87, onPressed: () => Navigator.pop(context),)
               )
             ];
           },
