@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../NativeChannel.dart';
 import '../../resources/my_colors.dart';
-import '../../resources/my_assets.dart';
 import '../Login/AuthController.dart';
-import '../drawer sales man/invite friend/Invite_Friend_Screen.dart';
 import '../drawer sales man/update password/Update_Password_Screen.dart';
 import 'DrawerContents/about us/About_Us_Page.dart';
 import 'DrawerContents/feedback/Feedback_Screen.dart';
 import 'DrawerContents/help support/Help_Support_Screen.dart';
 import 'DrawerContents/privacy policy/Privacy_Policy.dart';
-import 'DrawerContents/rate/rate_screen.dart';
 import 'SalesmanDashboardController.dart';
-import 'SalesmanDashboardScreen.dart';
 import 'dart:typed_data';
 
 class SalesmanCustomDrawer extends StatelessWidget {
@@ -111,14 +107,6 @@ class SalesmanCustomDrawer extends StatelessWidget {
                         onTap: () {
                           Get.back(); // Equivalent to Navigator.pop(context)
                           Get.to(() => const FeedbackScreen());
-                        },
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.star_border),
-                        title: const Text('Rate us'),
-                        onTap: () {
-                          Get.back(); // Equivalent to Navigator.pop(context)
-                          Get.to(() => const RateScreen());
                         },
                       ),
                       ListTile(
