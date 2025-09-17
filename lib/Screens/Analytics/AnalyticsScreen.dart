@@ -21,7 +21,7 @@ class AnalyticsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final NewAttendanceController attendanceController =
     Get.put(NewAttendanceController());
-    final controller = Get.put(AnalyticsController(), permanent: false);
+    final controller = Get.put(AnalyticsController());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -43,8 +43,11 @@ class AnalyticsScreen extends StatelessWidget {
             _sectionCard(
               title: "Task Leaderboard",
               children: [
+                if (controller.taskPerformers.length > 0)
                 _personRow(controller.taskPerformers.first.salesmanName.toString(), controller.taskPerformers.first.profileImage.toString(), crown: true),
+                if (controller.taskPerformers.length > 1)
                 _personRow(controller.taskPerformers[1].salesmanName.toString(), controller.taskPerformers[1].profileImage.toString()),
+                if (controller.taskPerformers.length > 2)
                 _personRow(controller.taskPerformers[2].salesmanName.toString(), controller.taskPerformers[2].profileImage.toString()),
                 TextButton(
                   onPressed: () {
@@ -62,8 +65,11 @@ class AnalyticsScreen extends StatelessWidget {
             _sectionCard(
               title: "Attendance Leaderboard",
               children: [
+                if (controller.attendancePerformers.length > 0)
                 _personRow(controller.attendancePerformers.first.salesmanName.toString(), controller.attendancePerformers.first.profileImage.toString(), crown: true),
+                if (controller.attendancePerformers.length > 1)
                 _personRow(controller.attendancePerformers[1].salesmanName.toString(), controller.attendancePerformers[1].profileImage.toString()),
+                if (controller.attendancePerformers.length > 2)
                 _personRow(controller.attendancePerformers[2].salesmanName.toString(), controller.attendancePerformers[2].profileImage.toString()),
                 TextButton(
                   onPressed: () {
@@ -81,8 +87,11 @@ class AnalyticsScreen extends StatelessWidget {
             _sectionCard(
               title: "Order Leaderboard",
               children: [
+                if (controller.orderPerformers.length > 0)
                 _personRow(controller.orderPerformers.first.salesmanName.toString(), controller.orderPerformers.first.profileImage.toString(), crown: true),
+                if (controller.orderPerformers.length > 1)
                 _personRow(controller.orderPerformers[1].salesmanName.toString(), controller.orderPerformers[1].profileImage.toString()),
+                if (controller.orderPerformers.length > 2)
                 _personRow(controller.orderPerformers[2].salesmanName.toString(), controller.orderPerformers[2].profileImage.toString()),
                 TextButton(
                   onPressed: () {

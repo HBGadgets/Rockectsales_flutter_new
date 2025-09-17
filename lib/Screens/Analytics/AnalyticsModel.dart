@@ -39,7 +39,7 @@ class Performer {
         taskCompleted = json['taskCompleted'] ?? 30,
         orderTotal = json['orderTotal'] ?? 30,
         orderCompleted = json['orderCompleted'] ?? 30,
-        score = json['score'] ?? 30;
+        score = (json['score'] ?? 0).toDouble();
 }
 
 class AttendancePerformer {
