@@ -157,8 +157,8 @@ class OrdersController extends GetxController {
           pw.Text('Phone: ${order.phoneNo}'),
           pw.Text('Address: ${order.shopAddress}'),
           pw.Text('Order Date: ${order.createdAt.toLocal()}'),
-          pw.Text('GST: ₹${gst}'),
-          pw.Text('Discount: ₹${discount}'),
+          pw.Text('GST: ${gst}'),
+          pw.Text('Discount: ${discount}'),
           pw.Text('GST Number: ${gstNumber}'),
           if (order.deliveryDate != null)
             pw.Text('Delivery Date: ${order.deliveryDate!.toLocal()}'),
@@ -170,20 +170,24 @@ class OrdersController extends GetxController {
               return [
                 (index + 1).toString(),
                 p.productName,
-                p.quantity,
-                '₹${p.price}',
-                '₹${int.parse(p.quantity) * int.parse(p.price)}',
+                p.quantity.toString(),
+                '${p.price}', // price per unit
+                '${int.parse(p.quantity) * int.parse(p.price)}', // total
               ];
             }),
           ),
+
           pw.SizedBox(height: 20),
+
+// ✅ Correct grand total calculation
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
-              'Grand Total: ₹$grandTotal',
+              'Grand Total: ${order.product.fold<int>(0, (sum, p) => sum + (int.parse(p.quantity) * int.parse(p.price)))}',
               style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
             ),
           ),
+
         ],
       ),
     );
@@ -222,8 +226,8 @@ class OrdersController extends GetxController {
           pw.Text('Phone: ${order.phoneNo}'),
           pw.Text('Address: ${order.shopAddress}'),
           pw.Text('Order Date: ${order.createdAt.toLocal()}'),
-          pw.Text('GST: ₹${order.gst}'),
-          pw.Text('Discount: ₹${order.discount}'),
+          pw.Text('GST: ${order.gst}'),
+          pw.Text('Discount: ${order.discount}'),
           pw.Text('GST Number: ${order.gstNumber}'),
           if (order.deliveryDate != null)
             pw.Text('Delivery Date: ${order.deliveryDate!.toLocal()}'),
@@ -235,20 +239,24 @@ class OrdersController extends GetxController {
               return [
                 (index + 1).toString(),
                 p.productName,
-                p.quantity,
-                '₹${int.tryParse(p.price) ?? 0}'
-                    '₹${int.parse(p.quantity) * int.parse(p.price)}',
+                p.quantity.toString(),
+                '${p.price}', // price per unit
+                '${int.parse(p.quantity) * int.parse(p.price)}', // total
               ];
             }),
           ),
+
           pw.SizedBox(height: 20),
+
+// ✅ Correct grand total calculation
           pw.Align(
             alignment: pw.Alignment.centerRight,
             child: pw.Text(
-              'Grand Total: ₹${order.grandTotal}',
+              'Grand Total: ${order.product.fold<int>(0, (sum, p) => sum + (int.parse(p.quantity) * int.parse(p.price)))}',
               style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
             ),
           ),
+
         ],
       ),
     );
