@@ -88,7 +88,7 @@ class OrderDetailScreen extends StatelessWidget {
                   buildLabel("Address:"),
                   buildReadOnlyField(order.shopAddress),
                   buildLabel("Phone No. :"),
-                  buildReadOnlyField("7548754558"),
+                  buildReadOnlyField(order.phoneNo),
                   const SizedBox(height: 8),
                   const Text(
                     "Product Items:",
