@@ -49,7 +49,7 @@
         android:required="false" />
 
     <application
-        android:label="rocketsale_rs"
+        android:label="Rocketsales Salesman"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
