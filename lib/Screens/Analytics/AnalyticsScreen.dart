@@ -108,19 +108,52 @@ class AnalyticsScreen extends StatelessWidget {
 
     );
   }
-  
-  static Widget _salesmanOfTheMonth(int attendancePresent, int totalDays, AnalyticsController controller) {
 
-    double attendancePercentage = (attendancePresent / totalDays) * 100;
+  static Widget _salesmanOfTheMonth(
+      int attendancePresent,
+      int totalDays,
+      AnalyticsController controller,
+      ) {
+    // ✅ If no performers, show a placeholder instead of crashing
+    if (controller.performers.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black12, width: 2),
+        ),
+        child: const Center(
+          child: Text(
+            "No Salesman of the Month data",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+        ),
+      );
+    }
+
+    final performer = controller.performers.first;
+    final double attendancePercentage =
+    totalDays > 0 ? (attendancePresent / totalDays) * 100 : 0;
+
+    // ✅ Handle profileImage safely
+    Uint8List? profileImage;
+    if (performer.profileImgBase64 != null &&
+        performer.profileImgBase64!.isNotEmpty) {
+      try {
+        profileImage = base64Decode(performer.profileImgBase64!);
+      } catch (e) {
+        profileImage = null; // if decode fails
+      }
+    }
+
     return Container(
       margin: const EdgeInsets.only(right: 5, left: 5),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.all(Radius.circular(12)),
-        border: Border.all(
-          color: Colors.black12, // border color
-          width: 2, // border thickness
-        ),
+        border: Border.all(color: Colors.black12, width: 2),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -129,41 +162,34 @@ class AnalyticsScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Obx(() {
-
-                  Uint8List profileImage = base64Decode(controller.performers.first.profileImgBase64);
-                  if (controller.isLoading.value) {
-                    return const CircleAvatar(
-                      backgroundColor: Colors.grey,
-                      radius: 30,
-                      child: CircularProgressIndicator(color: MyColor.dashbord),
-                    );
-                  } else if (controller.performers.first.profileImgBase64 == null) {
-                    return const CircleAvatar(
-                      backgroundColor: Colors.grey,
-                      radius: 30,
-                      child: Icon(Icons.person, size: 30, color: Colors.white), // default avatar
-                    );
-                  } else {
-                    return CircleAvatar(
-                      backgroundColor: Colors.grey,
-                      radius: 30,
-                      backgroundImage: MemoryImage(profileImage),
-                    );
-                  }
-                }),
+                controller.isLoading.value
+                    ? const CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  radius: 30,
+                  child: CircularProgressIndicator(color: MyColor.dashbord),
+                )
+                    : (profileImage == null
+                    ? const CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  radius: 30,
+                  child: Icon(Icons.person,
+                      size: 30, color: Colors.white),
+                )
+                    : CircleAvatar(
+                  radius: 30,
+                  backgroundImage: MemoryImage(profileImage),
+                )),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Salesman of this month",
+                      const Text("Salesman of this month",
                           style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500)),
-                      SizedBox(height: 4),
-                      Text(controller.performers.first.salesmanName,
-                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 4),
+                      Text(performer.salesmanName,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF1E4DB7),
@@ -171,8 +197,7 @@ class AnalyticsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.emoji_events,
-                    color: Colors.amber, size: 28),
+                const Icon(Icons.emoji_events, color: Colors.amber, size: 28),
               ],
             ),
             const SizedBox(height: 12),
@@ -180,9 +205,8 @@ class AnalyticsScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Attendance"),
-                Text("${attendancePercentage.toStringAsFixed(0)}%")
-                ,
+                const Text("Attendance"),
+                Text("${attendancePercentage.toStringAsFixed(0)}%"),
               ],
             ),
             const SizedBox(height: 6),
@@ -196,13 +220,13 @@ class AnalyticsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Order / Task / Sales
+            // Order / Task / Score
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _infoBox("Order", controller.performers.first.orderCompleted.toString()),
-                _infoBox("Task", controller.performers.first.taskCompleted.toString()),
-                _infoBox("Score", controller.performers.first.score.toString()),
+                _infoBox("Order", performer.orderCompleted?.toString() ?? "0"),
+                _infoBox("Task", performer.taskCompleted?.toString() ?? "0"),
+                _infoBox("Score", performer.score?.toString() ?? "0"),
               ],
             )
           ],

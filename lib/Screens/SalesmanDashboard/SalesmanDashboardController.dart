@@ -117,9 +117,9 @@ class salesmanDashboardController extends GetxController {
       final objectId = salesmanProfileInfo.value.objectId;
       final response = await http.delete(
         Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile/$objectId'),
-        headers: {
-          "Content-Type": "application/json",
-          // Add auth headers here if needed, e.g. "Authorization": "Bearer TOKEN"
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $token'
         },
       );
 
@@ -172,7 +172,10 @@ class salesmanDashboardController extends GetxController {
       try {
         final response = await http.post(
           Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile'),
-          headers: {"Content-Type": "application/json"},
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token'
+          },
           body: jsonEncode({
             "profileImage": base64File,
             "name": salesmanName,
@@ -226,11 +229,13 @@ class salesmanDashboardController extends GetxController {
 
         final objectId = salesmanProfileInfo.value.objectId;
         final salesmanName = await TokenManager.getUsername();
+        final token = await TokenManager.getToken();
 
         final response = await http.put(
           Uri.parse('${dotenv.env['BASE_URL']}/api/api/profile/$objectId'),
-          headers: {
-            "Content-Type": "application/json",
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token'
           },
           body: jsonEncode({
             "profileImage": base64File,

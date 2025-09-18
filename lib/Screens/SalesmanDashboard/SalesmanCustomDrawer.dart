@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import '../../NativeChannel.dart';
 import '../../resources/my_colors.dart';
 import '../Login/AuthController.dart';
-import '../drawer sales man/update password/Update_Password_Screen.dart';
 import 'DrawerContents/about us/About_Us_Page.dart';
 import 'DrawerContents/feedback/Feedback_Screen.dart';
 import 'DrawerContents/help support/Help_Support_Screen.dart';
 import 'DrawerContents/privacy policy/Privacy_Policy.dart';
+import 'DrawerContents/update password/Update_Password_Screen.dart';
 import 'SalesmanDashboardController.dart';
 import 'dart:typed_data';
 

@@ -6,10 +6,9 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:rocketsales/resources/my_colors.dart';
-
-import '../../../NativeChannel.dart';
-import '../../../TokenManager.dart';
-import '../../SalesmanDashboard/SalesmanDashboardController.dart';
+import '../../../../NativeChannel.dart';
+import '../../../../TokenManager.dart';
+import '../../SalesmanDashboardController.dart';
 
 class UpdatePasswordScreen extends StatefulWidget {
   const UpdatePasswordScreen({super.key});
