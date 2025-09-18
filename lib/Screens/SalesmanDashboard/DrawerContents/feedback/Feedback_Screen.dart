@@ -1,10 +1,89 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
+
+import '../../../../TokenManager.dart';
 import '../../../../resources/my_assets.dart';
+import '../../../../resources/my_colors.dart';
 
 class FeedbackScreen extends StatelessWidget {
-  const FeedbackScreen({super.key});
+  FeedbackScreen({super.key});
+
+  final TextEditingController feedbackController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  void showLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: MyColor.dashbord),
+                SizedBox(width: 20),
+                Text("Loading..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> submitFeedback(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      showLoading(context);
+      try {
+        final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/api/feedback');
+
+        final token = await TokenManager.getToken();
+
+        final response = await http.post(
+          uri,
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $token'
+          },
+          body: jsonEncode(<String, dynamic>{
+            'feedbackText': feedbackController.text
+          }),
+        );
+
+        if (response.statusCode == 201) {
+          Navigator.of(context).pop();
+          feedbackController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Feedback submitted!'),
+            ),
+          );
+        } else {
+          Navigator.of(context).pop();
+          print("❌ Feedback submission Failed: ${response.body}");
+          Get.snackbar("Error", response.body);
+        }
+      } catch (e) {
+        // isLoading.value = false;
+        Navigator.of(context).pop();
+        print("⚠️ Exception in posting feedback: $e");
+        Get.snackbar("Exception", e.toString());
+      }
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,12 +91,7 @@ class FeedbackScreen extends StatelessWidget {
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade50,
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            Get.back();
-          },
-        ),
+        leading: BackButton( onPressed: () => Navigator.pop(context),),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -61,16 +135,26 @@ class FeedbackScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              hintText: 'Write your feedback here..........',
-                              hintStyle: TextStyle(
-                                color: Colors.black.withOpacity(0.6),
+                          child: Form(
+                            key: _formKey,
+                            child: TextFormField(
+                              controller: feedbackController,
+                              decoration: InputDecoration(
+                                hintText: 'Write your feedback here..........',
+                                hintStyle: TextStyle(
+                                  color: Colors.black.withOpacity(0.6),
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.all(8.0),
                               ),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.all(8.0),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Please enter something";
+                                }
+                                return null;
+                              },
+                              maxLines: null, // Allow multiple lines
                             ),
-                            maxLines: null, // Allow multiple lines
                           ),
                         ),
                       ],
@@ -109,16 +193,13 @@ class FeedbackScreen extends StatelessWidget {
                       ),
                       onPressed: () {
                         // Handle feedback submission
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Feedback submitted!'),
-                          ),
-                        );
+                        submitFeedback(context);
+
                       },
                       child: const Text(
                         'Submit Feedback',
                         style: TextStyle(
-                          color: Colors.greenAccent,
+                          color: MyColor.dashbord,
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),

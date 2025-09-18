@@ -103,35 +103,49 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
-    // controller.isLoading.value = true;
     isLoading.value = true;
-    final String apiUrl = '${dotenv.env['BASE_URL']}/api/api/logout';
-
     try {
       await fcmTockenDelete();
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"username": username.value}),
-      );
-
-      if (response.statusCode == 200) {
-        // controller.isLoading.value = false;
-        isLoading.value = false;
-        print("Logout successful");
-        await TokenManager.clearAll();
-        Get.offAllNamed('/login');
-      } else {
-        // controller.isLoading.value = false;
-        isLoading.value = false;
-        Get.snackbar("Error", "Logout failed. Try again.");
-      }
+      print("Logout successful");
+      await TokenManager.clearAll();
+      Get.offAllNamed('/login');
     } catch (e) {
       // controller.isLoading.value = false;
       isLoading.value = false;
       Get.snackbar("Error", "An error occurred: $e");
     }
   }
+
+  // Future<void> logout() async {
+  //   // controller.isLoading.value = true;
+  //   isLoading.value = true;
+  //   final String apiUrl = '${dotenv.env['BASE_URL']}/api/api/logout';
+  //
+  //   try {
+  //     await fcmTockenDelete();
+  //     final response = await http.post(
+  //       Uri.parse(apiUrl),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: jsonEncode({"username": username.value}),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       // controller.isLoading.value = false;
+  //       isLoading.value = false;
+  //       print("Logout successful");
+  //       await TokenManager.clearAll();
+  //       Get.offAllNamed('/login');
+  //     } else {
+  //       // controller.isLoading.value = false;
+  //       isLoading.value = false;
+  //       Get.snackbar("Error", "Logout failed. Try again.");
+  //     }
+  //   } catch (e) {
+  //     // controller.isLoading.value = false;
+  //     isLoading.value = false;
+  //     Get.snackbar("Error", "An error occurred: $e");
+  //   }
+  // }
 
   void showSnackbar(String message) {
     Get.snackbar('Message', message);
