@@ -108,6 +108,7 @@ class AuthController extends GetxController {
       await fcmTockenDelete();
       print("Logout successful");
       await TokenManager.clearAll();
+      isLoading.value = false;
       Get.offAllNamed('/login');
     } catch (e) {
       // controller.isLoading.value = false;

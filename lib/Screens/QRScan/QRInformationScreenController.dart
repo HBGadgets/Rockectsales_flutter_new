@@ -90,6 +90,7 @@ class Qrinformationscreencontroller extends GetxController {
             "Failed to Connect to DB (Code: ${response.statusCode})");
       }
     } catch (e) {
+      print("⚠️ Exception in getting QR info: $e");
       Get.snackbar("Exception", "Couldn't get QR Info");
     }
   }

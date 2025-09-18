@@ -43,7 +43,7 @@ class HelpSupportScreen extends StatelessWidget {
                       onPressed: () async {
                         final Uri callUri = Uri(
                           scheme: 'tel',
-                          path: dotenv.env['SUPPORT_PHONE'],
+                          path: "${dotenv.env['SUPPORT_PHONE']}",
                         );
 
                         if (await canLaunchUrl(callUri)) {
@@ -63,7 +63,7 @@ class HelpSupportScreen extends StatelessWidget {
                       onPressed: () async {
                         final Uri emailUri = Uri(
                           scheme: 'mailto',
-                          path: dotenv.env['SUPPORT_EMAIL'],
+                          path: "${dotenv.env['SUPPORT_EMAIL']}",
                           query: encodeQueryParameters(<String, String>{
                             'subject': 'Support Needed',
                           }), // encoding is safer
