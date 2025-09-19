@@ -97,7 +97,7 @@ class _CreateAndEditExpenseScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Order Info:",
+                          "Expense Info:",
                           style: TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 20),
                         ),

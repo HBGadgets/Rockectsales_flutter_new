@@ -14,7 +14,7 @@ class Submitqrdatascreencontroller extends GetxController {
   final isLoadingQuestions = false.obs;
   var qrQuestions = <QRQuestions>[].obs;
 
-  final QRCardsController controller = Get.find<QRCardsController>();
+  final QRCardsController controller = Get.put(QRCardsController());
 
   @override
   void onInit() {
