@@ -121,16 +121,19 @@ class NewAttendanceController extends GetxController {
     // Look for the first matching record
     final match = attendanceDetails.firstWhere(
       (detail) =>
-          detail.createdAt != null &&
-          detail.createdAt!.year == day.year &&
-          detail.createdAt!.month == day.month &&
-          detail.createdAt!.day == day.day,
+          detail.checkInTime != null &&
+          detail.checkInTime!.year == day.year &&
+          detail.checkInTime!.month == day.month &&
+          detail.checkInTime!.day == day.day,
       orElse: () => AttendanceDetail(
         status: "noData",
-        createdAt: null,
+        checkInTime: null,
         startLat: 0,
         startLong: 0,
         salesmanName: "",
+        checkOutTime: null,
+        endLat: 0,
+        endLong: 0,
       ),
     );
 

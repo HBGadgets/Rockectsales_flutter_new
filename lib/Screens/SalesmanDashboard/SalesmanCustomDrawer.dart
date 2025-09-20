@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:rocketsales/Screens/SalesmanDashboard/SalesmanDashboardScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../NativeChannel.dart';
 import '../../resources/my_colors.dart';
 import '../Login/AuthController.dart';
@@ -16,6 +19,15 @@ class SalesmanCustomDrawer extends StatelessWidget {
 
   final salesmanDashboardController controller = Get.find();
   final AuthController authController = Get.put(AuthController());
+
+  Future<void> openWebsite(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw Exception("Could not launch $url");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -71,27 +83,36 @@ class SalesmanCustomDrawer extends StatelessWidget {
                   child: ListView(
                     padding: EdgeInsets.zero,
                     children: [
-                      ListTile(
-                        leading: const Icon(Icons.home),
-                        title: const Text('Home'),
-                        onTap: () {
-                          // Navigate to Home screen
-                        },
-                      ),
+                      // ListTile(
+                      //   leading: const Icon(Icons.home),
+                      //   title: const Text('Home'),
+                      //   onTap: () {
+                      //     Navigator.pushReplacement(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => DashboardSalesman()),
+                      //     );
+                      //   },
+                      // ),
                       ListTile(
                         leading: const Icon(Icons.info_outline),
                         title: const Text('About us'),
                         onTap: () {
-                          Get.back(); // Equivalent to Navigator.pop(context)
-                          Get.to(() => AboutUsPage());
+                          openWebsite('${dotenv.env['ABOUT_US']}');
                         },
                       ),
                       ListTile(
                         leading: const Icon(Icons.lock_outline),
                         title: const Text('Privacy'),
                         onTap: () {
-                          Get.back(); // Equivalent to Navigator.pop(context)
-                          Get.to(() => const PrivacyPolicy());
+                          openWebsite('${dotenv.env['PRIVACY_POLICY']}');
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.description_outlined),
+                        title: const Text('Terms & Conditions'),
+                        onTap: () {
+                          openWebsite('${dotenv.env['TERMS_CONDITIONS']}');
                         },
                       ),
                       ListTile(

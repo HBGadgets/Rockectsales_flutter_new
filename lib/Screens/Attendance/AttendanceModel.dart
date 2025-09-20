@@ -44,33 +44,43 @@ class Attendance {
 
 class AttendanceDetail {
   final String status;
-  final DateTime? createdAt;
+  final DateTime? checkInTime;
+  final DateTime? checkOutTime;
   final double startLat;
   final double startLong;
+  final double endLat;
+  final double endLong;
   final String salesmanName;
 
-  AttendanceDetail(
-      {required this.status,
-      required this.createdAt,
-      required this.startLat,
-      required this.startLong,
-      required this.salesmanName});
+  AttendanceDetail({
+    required this.status,
+    required this.checkInTime,
+    required this.checkOutTime,
+    required this.startLat,
+    required this.startLong,
+    required this.endLat,
+    required this.endLong,
+    required this.salesmanName,
+  });
 
   factory AttendanceDetail.fromJson(Map<String, dynamic> json) {
-    DateTime? parsedDate;
-    if (json['createdAt'] != null && json['createdAt'] != '') {
+    DateTime? parseDate(dynamic value) {
+      if (value == null || value.toString().isEmpty) return null;
       try {
-        parsedDate = DateFormat("dd-MM-yyyy").parse(json['createdAt']);
-      } catch (e) {
-        parsedDate = null;
+        return DateTime.parse(value.toString());
+      } catch (_) {
+        return null;
       }
     }
 
     return AttendanceDetail(
       status: json['status']?.toString() ?? '',
-      createdAt: parsedDate,
+      checkInTime: parseDate(json['createdAt']),
+      checkOutTime: parseDate(json['checkOutTime']),
       startLat: (json['startLat'] as num?)?.toDouble() ?? 0.0,
       startLong: (json['startLong'] as num?)?.toDouble() ?? 0.0,
+      endLat: (json['endLat'] as num?)?.toDouble() ?? 0.0,
+      endLong: (json['endLong'] as num?)?.toDouble() ?? 0.0,
       salesmanName: json['salesmanName']?.toString() ?? '',
     );
   }
@@ -78,10 +88,13 @@ class AttendanceDetail {
   Map<String, dynamic> toJson() {
     return {
       "status": status,
-      "createdAt": createdAt,
+      "createdAt": checkInTime?.toIso8601String(),
+      "checkOutTime": checkOutTime?.toIso8601String(),
       "startLat": startLat,
       "startLong": startLong,
-      "salesmanName": salesmanName
+      "endLat": endLat,
+      "endLong": endLong,
+      "salesmanName": salesmanName,
     };
   }
 }

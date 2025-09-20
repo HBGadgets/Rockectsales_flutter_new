@@ -90,7 +90,9 @@ class FeedbackScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: MyColor.dashbord,
+        foregroundColor: Colors.white,
+        title: Text("Feedback"),
         leading: BackButton( onPressed: () => Navigator.pop(context),),
         elevation: 0,
       ),
@@ -99,14 +101,6 @@ class FeedbackScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Feedback',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
             Center(
               child: Column(
                 children: [
@@ -169,43 +163,30 @@ class FeedbackScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 30.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300, width: 1),
-                      // Border color and width
-                      borderRadius: BorderRadius.circular(
-                          20.0), // Border radius to match button's shape
-                    ),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.greenAccent,
-                        backgroundColor: Colors.white,
-                        // Text color
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 25.0, vertical: 12.0),
-                        // Button padding
-                        textStyle: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                        // Text style
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: MyColor.dashbord,
+                      // Text color
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 25.0, vertical: 12.0),
+                      // Button padding
+                      textStyle: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                      // Text style
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
-                      onPressed: () {
-                        // Handle feedback submission
-                        submitFeedback(context);
+                    ),
+                    onPressed: () {
+                      // Handle feedback submission
+                      submitFeedback(context);
 
-                      },
-                      child: const Text(
-                        'Submit Feedback',
-                        style: TextStyle(
-                          color: MyColor.dashbord,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                    },
+                    child: const Text(
+                      'Submit Feedback',
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
