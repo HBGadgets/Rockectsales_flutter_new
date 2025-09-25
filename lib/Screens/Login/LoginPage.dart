@@ -1,5 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../resources/my_assets.dart';
 import '../../resources/my_colors.dart';
 import 'AuthController.dart';
@@ -14,6 +17,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final AuthController authController = Get.put(AuthController());
   bool _obscureText = true;
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +136,45 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       ),
+
+                      SizedBox(height: size.height * 0.02),
+
+                      // Terms & Conditions + Privacy Policy
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.black87),
+                            children: [
+                              const TextSpan(
+                                  text: "By logging in, you agree to our "),
+                              TextSpan(
+                                text: "Terms & Conditions",
+                                style: const TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    _launchURL('${dotenv.env['TERMS_CONDITIONS']}');
+                                  },
+                              ),
+                              const TextSpan(text: " and "),
+                              TextSpan(
+                                text: "Privacy Policy",
+                                style: const TextStyle(
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    _launchURL('${dotenv.env['PRIVACY_POLICY']}');
+                                  },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const Spacer(), // pushes button up if space remains
                     ],
                   ),
@@ -148,4 +197,3 @@ class _LoginPageState extends State<LoginPage> {
 
   }
 }
-
