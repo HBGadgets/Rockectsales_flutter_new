@@ -36,7 +36,7 @@ class _SelfietakingscreenAttendanceState
 
     _cameraController = CameraController(
       frontCamera,
-      ResolutionPreset.low,
+      ResolutionPreset.medium,
       enableAudio: false,
     );
 
@@ -65,9 +65,11 @@ class _SelfietakingscreenAttendanceState
     final rawImage = await _cameraController!.takePicture();
     final flippedImage = await flipImage(File(rawImage.path));
 
+    await _cameraController?.dispose();
+    _cameraController = null;
+    _isInitialized = false;
+
     Get.to(SelfiePreviewScreen(imageFile: flippedImage));
-    // controller.salesManSelfie.value = flippedImage;
-    // controller.sendAttendanceData(XFile(flippedImage.path));
   }
 
   @override

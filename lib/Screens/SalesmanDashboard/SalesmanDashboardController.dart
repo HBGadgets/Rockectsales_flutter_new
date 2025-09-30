@@ -92,7 +92,10 @@ class salesmanDashboardController extends GetxController {
         } else {
           bytes.value = null;
         }
-      } else {
+      } else if (response.statusCode == 401) {
+        print("new log in ====>>> ${response.body}");
+        showLogOutDialog();
+      }else {
         bytes.value = null;
       }
     } catch (e) {
@@ -394,6 +397,24 @@ class salesmanDashboardController extends GetxController {
     isLoading.value = true;
     Get.find<AuthController>().logout();
     isLoading.value = false;
+  }
+
+  void showLogOutDialog() {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: MyColor.dashbord,
+        title: Text("Error"),
+        content: Text("You have been logged out, you need to log in again!"),
+        actions: [
+          TextButton(
+            onPressed: () => logout(),
+            child: Text("OK"),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
   }
 }
 

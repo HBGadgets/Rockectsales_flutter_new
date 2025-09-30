@@ -376,7 +376,7 @@ class _TaskcardState extends State<Taskcard> {
                         ),
                       ),
                       Text(
-                        widget.task.shopGeofence!.shopName,
+                        widget.task.shopGeofence?.shopName ?? "",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],

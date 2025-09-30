@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -162,21 +163,6 @@ class NewAttendanceController extends GetxController {
     }
   }
 
-  // Future<void> startAttendanceProcess() async {
-  //   final picker = ImagePicker();
-  //   final pickedImage = await picker.pickImage(
-  //     source: ImageSource.camera,
-  //     preferredCameraDevice: CameraDevice.front,
-  //   );
-  //
-  //   if (pickedImage == null) {
-  //     Get.snackbar('Error', 'Please click a photo before marking attendance.');
-  //     return;
-  //   }
-  //
-  //   sendAttendanceData(pickedImage);
-  // }
-
   void showLoading(BuildContext context) {
     showDialog(
       context: context,
@@ -224,9 +210,13 @@ class NewAttendanceController extends GetxController {
       isAttendanceMarkedToday.value = null;
       print("Processing Attendance Submission...");
 
-      final bytes = await image!.readAsBytes();
-      final base64Image = base64Encode(bytes);
+      final compressedBytes = await FlutterImageCompress.compressWithFile(
+        image!.path,
+        quality: 20,
+      );
 
+      // final bytes = await image!.readAsBytes();
+      final base64Image = base64Encode(compressedBytes!);
 
       if (salesmanId.isEmpty ||
           companyId.isEmpty ||
@@ -240,34 +230,6 @@ class NewAttendanceController extends GetxController {
       }
 
       String attendanceStatus = "Present";
-
-      // var request = http.MultipartRequest(
-      //   'POST',
-      //   Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence'),
-      // );
-      //
-      // request.headers['Authorization'] = 'Bearer $token';
-      // request.fields['salesmanId'] = salesmanId;
-      // request.fields['companyId'] = companyId;
-      // request.fields['branchId'] = branchId;
-      // request.fields['supervisorId'] = supervisorId;
-      // request.fields['attendenceStatus'] = attendanceStatus;
-      // request.fields['startLat'] = latitude.value.toString();
-      // request.fields['startLong'] = longitude.value.toString();
-      // request.fields['profileImgUrl'] = base64Image;
-
-      // if (image != null) {
-      //   request.files.add(
-      //     await http.MultipartFile.fromPath(
-      //       'profileImgUrl',
-      //       image.path,
-      //       contentType: MediaType(
-      //         'image',
-      //         'jpeg',
-      //       ),
-      //     ),
-      //   );
-      // }
 
       final uri = Uri.parse('${dotenv.env['BASE_URL']}/api/api/attendence');
 
@@ -288,10 +250,6 @@ class NewAttendanceController extends GetxController {
           'profileImgUrl': base64Image,
         }),
       );
-
-
-      // var response = await request.send();
-      // var responseData = await response.stream.bytesToString();
 
       if (response.statusCode == 201) {
         print("Attendance Submitted Successfully: ${response.body}");
@@ -320,14 +278,6 @@ class NewAttendanceController extends GetxController {
         Navigator.pop(context);
         Navigator.pop(context);
         Navigator.pop(context);
-        // Navigator.pushAndRemoveUntil<dynamic>(
-        //   context,
-        //   MaterialPageRoute<dynamic>(
-        //     builder: (BuildContext context) =>
-        //         AttendanceScreen(name: salesmanName),
-        //   ),
-        //   (route) => false, //if you want to disable back feature set to false
-        // );
         Get.snackbar('Success', 'Attendance submitted successfully.');
       } else {
         // setState(() => _isProcessingAttendance = false);
