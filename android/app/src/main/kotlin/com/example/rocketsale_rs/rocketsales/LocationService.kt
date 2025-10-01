@@ -25,6 +25,9 @@ class LocationService : Service(), LocationListener {
     private var userId: String = ""
     private var lastLocation: Location? = null
 
+    private var lastTimestamp: Long = 0L
+    private var totalDistance: Float = 0f  // in meters
+
     // ✅ background handler thread for sending location
     private val handlerThread = HandlerThread("LocationServiceThread").apply { start() }
     private val handler = Handler(handlerThread.looper)
@@ -97,7 +100,7 @@ class LocationService : Service(), LocationListener {
 
             socket?.on(Socket.EVENT_CONNECT) {
                 val data = JSONObject()
-                data.put("username", username)
+                data.put("salesmanId", userId)
                 socket?.emit("registerUser", data)
                 Log.d("LocationService", "Socket connected")
             }
@@ -125,42 +128,37 @@ class LocationService : Service(), LocationListener {
         // ✅ Request updates from both GPS & Network providers
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
-            5000L,  // every 5 sec
+            10000L,  // every 10 sec
             0f,
             this
         )
 
-        locationManager.requestLocationUpdates(
-            LocationManager.NETWORK_PROVIDER,
-            5000L,  // every 5 sec
-            0f,
-            this
-        )
-    }
-
-
-//    private fun startLocationUpdates() {
-//        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//        try {
-//            locationManager.requestLocationUpdates(
-//                LocationManager.GPS_PROVIDER,
-//                5000L, // request updates every 5 sec
-//                0f,    // distance = 0 → report all changes
-//                this
-//            )
-//        } catch (ex: SecurityException) {
-//            Log.e("LocationService", "Permission not granted", ex)
-//        }
-//    }
+        }
 
     override fun onLocationChanged(location: Location) {
+//        sendLocationToServer(location)
+        val now = System.currentTimeMillis()
+
+        lastLocation?.let { prev ->
+            val distance = prev.distanceTo(location) // meters
+            totalDistance += distance
+
+            val timeDeltaSec = (now - lastTimestamp) / 1000f
+            val calculatedSpeedMps = if (timeDeltaSec > 0) distance / timeDeltaSec else 0f
+            val calculatedSpeedKmph = calculatedSpeedMps * 3.6f
+
+            location.extras?.putFloat("calculatedSpeedKmph", calculatedSpeedKmph)
+        }
+
         lastLocation = location
-        sendLocationToServer(location)
+        lastTimestamp = now
     }
 
     private fun sendLocationToServer(location: Location) {
         val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
         val battery = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+
+        val speedKmph = location.extras?.getFloat("calculatedSpeedKmph", 0f) ?: 0f
 
         val data = JSONObject()
         data.put("_id", userId)
@@ -168,7 +166,8 @@ class LocationService : Service(), LocationListener {
         data.put("latitude", location.latitude)
         data.put("longitude", location.longitude)
         data.put("batteryLevel", battery)
-        data.put("speed", location.speed.toDouble())
+        data.put("speed", speedKmph)
+        data.put("distance", totalDistance)
         data.put("timestamp", System.currentTimeMillis())
 
         socket?.emit("sendLocation", data)
