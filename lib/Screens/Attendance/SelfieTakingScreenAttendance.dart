@@ -29,6 +29,7 @@ class _SelfietakingscreenAttendanceState
     _initCamera();
   }
 
+
   Future<void> _initCamera() async {
     _cameras = await availableCameras();
     final frontCamera =
@@ -69,7 +70,11 @@ class _SelfietakingscreenAttendanceState
     _cameraController = null;
     _isInitialized = false;
 
-    Get.to(SelfiePreviewScreen(imageFile: flippedImage));
+    final result = await Get.to(() => SelfiePreviewScreen(imageFile: flippedImage));
+
+    if (result == 'retake') {
+      _initCamera();
+    }
   }
 
   @override
@@ -92,7 +97,7 @@ class _SelfietakingscreenAttendanceState
       body: _isInitialized
           ? Stack(
         children: [
-          SizedBox.expand( // 👈 makes camera cover full screen
+          SizedBox.expand(
             child: FittedBox(
               fit: BoxFit.cover,
               child: SizedBox(

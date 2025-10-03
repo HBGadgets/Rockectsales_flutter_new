@@ -25,6 +25,9 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget> {
   Widget build(BuildContext context) {
     return Obx(() {
       return TableCalendar(
+        headerStyle: HeaderStyle(
+          formatButtonVisible : false,
+        ),
         firstDay: DateTime.utc(2020, 1, 1),
         lastDay: DateTime.now(),
         focusedDay: controller.focusedDay.value ?? DateTime.now(),

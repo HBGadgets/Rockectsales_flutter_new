@@ -56,7 +56,7 @@ class SelfiePreviewScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(context, 'retake');
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,

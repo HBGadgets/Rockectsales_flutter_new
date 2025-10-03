@@ -168,7 +168,6 @@ class LocationService : Service(), LocationListener {
         data.put("batteryLevel", battery)
         data.put("speed", speedKmph)
         data.put("distance", totalDistance)
-        data.put("timestamp", System.currentTimeMillis())
 
         socket?.emit("sendLocation", data)
         Log.d("LocationService", "Location sent: $data")
