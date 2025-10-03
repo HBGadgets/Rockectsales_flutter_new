@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:rocketsales/TokenManager.dart';
 import '../../../../resources/my_colors.dart';
+import '../Login/AuthController.dart';
 import '../SalesmanDashboard/SalesmanDashboardController.dart';
 import 'AttendanceCard.dart';
 import 'AttendanceReport.dart';
@@ -9,10 +11,10 @@ import 'NewAttendanceController.dart';
 import 'TableCalendar.dart';
 
 class AttendanceScreen extends StatelessWidget {
-  final String name;
 
-  AttendanceScreen({required this.name});
+  AttendanceScreen({super.key});
 
+  final AuthController authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class AttendanceScreen extends StatelessWidget {
         child: Column(
           children: [
             AttendanceCard(
-              name: name,
+              name: authController.username.value,
               date: controller.focusedDay.value,
               location: controller.addressString.value,
             ),

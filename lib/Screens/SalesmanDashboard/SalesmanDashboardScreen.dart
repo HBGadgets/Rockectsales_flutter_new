@@ -263,9 +263,11 @@ class DashboardSalesman extends StatelessWidget {
                                     controller.isConnected.value = false;
                                   } else {
                                     print("⚠️ Location data is null!");
+                                    controller.isLoading.value = false;
                                   }
                                 } else {
                                   print("⚠️ Location permission denied!");
+                                  controller.isLoading.value = false;
                                 }
                                 controller.isLoading.value = false;
                               }
@@ -309,8 +311,7 @@ class DashboardSalesman extends StatelessWidget {
                             _buildMenuCard(
                                 Icons.calendar_today,
                                 "Attendance",
-                                AttendanceScreen(
-                                    name: authController.username.value),
+                                AttendanceScreen(),
                                 context),
                             _buildMenuCard(Icons.shopping_cart_outlined,
                                 "Order", OrdersHistoryScreen(), context),

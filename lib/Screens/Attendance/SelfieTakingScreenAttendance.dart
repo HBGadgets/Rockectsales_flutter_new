@@ -6,7 +6,7 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
-import '../../resources/my_colors.dart';
+import '../../../resources/my_colors.dart';
 import 'SelfiePreviewScreen.dart';
 
 class SelfietakingscreenAttendance extends StatefulWidget {
@@ -22,6 +22,7 @@ class _SelfietakingscreenAttendanceState
   CameraController? _cameraController;
   List<CameraDescription>? _cameras;
   bool _isInitialized = false;
+  bool _isFrontCamera = true;
 
   @override
   void initState() {
@@ -29,14 +30,15 @@ class _SelfietakingscreenAttendanceState
     _initCamera();
   }
 
-
-  Future<void> _initCamera() async {
+  Future<void> _initCamera({bool useFrontCamera = true}) async {
     _cameras = await availableCameras();
-    final frontCamera =
-    _cameras!.firstWhere((camera) => camera.lensDirection == CameraLensDirection.front);
+    final selectedCamera = _cameras!.firstWhere(
+          (camera) => camera.lensDirection ==
+          (useFrontCamera ? CameraLensDirection.front : CameraLensDirection.back),
+    );
 
     _cameraController = CameraController(
-      frontCamera,
+      selectedCamera,
       ResolutionPreset.medium,
       enableAudio: false,
     );
@@ -70,16 +72,22 @@ class _SelfietakingscreenAttendanceState
     _cameraController = null;
     _isInitialized = false;
 
+    // Get.to(() => SelfiePreviewScreen(imageFile: flippedImage))!.then((_) {
+    //   // re-init camera when coming back
+    //   _initCamera(useFrontCamera: _isFrontCamera);
+    // });
     final result = await Get.to(() => SelfiePreviewScreen(imageFile: flippedImage));
 
     if (result == 'retake') {
-      _initCamera();
+      _initCamera(); // only reinit if user pressed retake
     }
   }
 
   @override
   void dispose() {
     _cameraController?.dispose();
+    _cameraController = null;
+    _isInitialized = false;
     super.dispose();
   }
 
@@ -97,7 +105,7 @@ class _SelfietakingscreenAttendanceState
       body: _isInitialized
           ? Stack(
         children: [
-          SizedBox.expand(
+          SizedBox.expand( // 👈 makes camera cover full screen
             child: FittedBox(
               fit: BoxFit.cover,
               child: SizedBox(
