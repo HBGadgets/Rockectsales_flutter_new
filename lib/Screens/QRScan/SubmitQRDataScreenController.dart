@@ -16,14 +16,9 @@ class Submitqrdatascreencontroller extends GetxController {
 
   final QRCardsController controller = Get.put(QRCardsController());
 
-  @override
-  void onInit() {
-    // TODO: implement onInit
-    super.onInit();
-    getQRQuestions();
-  }
-
   void getQRQuestions() async {
+    print("questionsetId from getting questions function ========>>>>>> ${controller.questionSetId.value}");
+    qrQuestions.clear();
     isLoadingQuestions.value = true;
     try {
       final token = await TokenManager.getToken();

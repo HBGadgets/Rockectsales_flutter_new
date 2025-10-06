@@ -23,7 +23,7 @@ class QRCardsController extends GetxController {
   final isLoading = false.obs;
   final adminName = ''.obs;
   final addressString = ''.obs;
-  final questionSetId = ''.obs;
+  var questionSetId = Rxn<String?>();
 
   // final salesManId = ''.obs;
   // final companyId = ''.obs;
@@ -34,7 +34,7 @@ class QRCardsController extends GetxController {
   RxBool gettingLocation = false.obs;
   final dateTimeFilter = ''.obs;
   final searchString = ''.obs;
-  final selectedQRid = ''.obs;
+  var selectedQRid = ''.obs;
   var salesManSelfie = Rxn<File?>();
 
   SalesManLocationController controller = SalesManLocationController();

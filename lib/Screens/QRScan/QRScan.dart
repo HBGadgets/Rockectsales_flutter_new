@@ -44,6 +44,7 @@ class _QrscanScreenState extends State<QrscanScreen>
             final cardIdString = jsonData['id'];
             final questionSetId = jsonData['questionSetId'];
             controller.questionSetId.value = questionSetId;
+            print("questionset id from scanner ========>>>>>> ${questionSetId}");
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

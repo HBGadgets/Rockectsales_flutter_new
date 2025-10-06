@@ -31,8 +31,16 @@ class _SubmitqrdatascreenState extends State<Submitqrdatascreen> {
   @override
   void dispose() {
     controller.salesManSelfie.value = null;
-    // TODO: implement dispose
+    controller.questionSetId.value = null;
+    submitController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    submitController.getQRQuestions();
   }
 
   @override
