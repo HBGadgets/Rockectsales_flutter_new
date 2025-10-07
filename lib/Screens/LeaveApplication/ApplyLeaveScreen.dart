@@ -24,10 +24,16 @@ class _ApplyLeaveScreenState extends State<ApplyLeaveScreen> {
   final TextEditingController descriptionController = TextEditingController();
 
   Future<void> _pickDate(BuildContext context, bool isFromDate) async {
+    DateTime now = DateTime.now();
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: isFromDate
+          ? (fromDate ?? now)
+          : (toDate ?? (fromDate ?? now)),
+      firstDate: isFromDate
+          ? now
+          : (fromDate ?? now),
       lastDate: DateTime(2100),
       builder: (BuildContext context, Widget? child) {
         return Theme(
@@ -42,16 +48,22 @@ class _ApplyLeaveScreenState extends State<ApplyLeaveScreen> {
         );
       },
     );
+
     if (picked != null) {
       setState(() {
         if (isFromDate) {
           fromDate = picked;
+          // ✅ reset toDate if it's before new fromDate
+          if (toDate != null && toDate!.isBefore(fromDate!)) {
+            toDate = null;
+          }
         } else {
           toDate = picked;
         }
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -287,6 +299,9 @@ class _ApplyLeaveScreenState extends State<ApplyLeaveScreen> {
           isLoading = false;
         });
         Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text('Leave applied'),
+        ));
         print("✅ Upload successful: ${response.body}");
       } else {
         setState(() {
