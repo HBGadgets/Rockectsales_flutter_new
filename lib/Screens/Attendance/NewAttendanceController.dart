@@ -245,7 +245,7 @@ class NewAttendanceController extends GetxController {
           'branchId': branchId,
           'supervisorId': supervisorId,
           'attendenceStatus': attendanceStatus,
-          'startLat': longitude.value.toString(),
+          'startLat': latitude.value.toString(),
           'startLong': longitude.value.toString(),
           'profileImgUrl': base64Image,
         }),
