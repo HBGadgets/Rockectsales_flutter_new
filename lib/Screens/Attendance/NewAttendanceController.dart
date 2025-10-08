@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -190,6 +191,27 @@ class NewAttendanceController extends GetxController {
     );
   }
 
+  Future<Uint8List?> compressImageToUnder30KB(String filePath) async {
+    int targetSize = 30 * 1024; // 30 KB
+    int quality = 90;
+
+    Uint8List? compressed = await FlutterImageCompress.compressWithFile(
+      filePath,
+      quality: quality,
+    );
+
+    while (compressed != null && compressed.lengthInBytes > targetSize && quality > 10) {
+      quality -= 10;
+      compressed = await FlutterImageCompress.compressWithFile(
+        filePath,
+        quality: quality,
+      );
+    }
+
+    print("✅ Final image size: ${(compressed!.lengthInBytes / 1024).toStringAsFixed(2)} KB");
+    return compressed;
+  }
+
   Future<void> sendAttendanceData(XFile? image, BuildContext context) async {
     showLoading(context);
     String? token = await TokenManager.getToken();
@@ -210,10 +232,12 @@ class NewAttendanceController extends GetxController {
       isAttendanceMarkedToday.value = null;
       print("Processing Attendance Submission...");
 
-      final compressedBytes = await FlutterImageCompress.compressWithFile(
-        image!.path,
-        quality: 20,
-      );
+      // final compressedBytes = await FlutterImageCompress.compressWithFile(
+      //   image!.path,
+      //   quality: 20,
+      // );
+
+      final compressedBytes = await compressImageToUnder30KB(image!.path);
 
       // final bytes = await image!.readAsBytes();
       final base64Image = base64Encode(compressedBytes!);

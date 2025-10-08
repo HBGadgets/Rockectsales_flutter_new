@@ -6,7 +6,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'TokenManager.dart';
 
 class NativeChannel {
-  static const platform = MethodChannel("com.example.rocketsale_rs/native");
+  static const platform = MethodChannel("com.tracker.rocketsale_rs/native");
 
   static Future<void> startService() async {
     String? token = await TokenManager.getToken();

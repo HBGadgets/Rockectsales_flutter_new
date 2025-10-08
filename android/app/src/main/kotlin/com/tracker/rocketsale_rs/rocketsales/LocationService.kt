@@ -1,4 +1,4 @@
-package com.example.rocketsale_rs.rocketsales
+package com.tracker.rocketsale_rs.rocketsales
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel

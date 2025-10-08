@@ -1,4 +1,4 @@
-package com.example.rocketsale_rs.rocketsales
+package com.tracker.rocketsale_rs.rocketsales
 
 import android.Manifest
 import android.content.Intent
@@ -13,7 +13,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.example.rocketsale_rs/native"
+    private val CHANNEL = "com.tracker.rocketsale_rs/native"
     private val LOCATION_PERMISSION_REQUEST = 1001
 
     private var pendingUsername: String? = null
@@ -109,7 +109,7 @@ class MainActivity : FlutterActivity() {
 
 
 //class MainActivity : FlutterActivity() {
-//    private val CHANNEL = "com.example.rocketsale_rs/native"
+//    private val CHANNEL = "com.tracker.rocketsale_rs/native"
 //
 //    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
 //        super.configureFlutterEngine(flutterEngine)

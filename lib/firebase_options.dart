@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: "535225261505",
     projectId: "rocketsalesapp-e5b34",
     storageBucket: "rocketsalesapp-e5b34.firebasestorage.app",
-    iosBundleId: "com.example.rocketsaleRs",
+    iosBundleId: "com.tracker.rocketsaleRs",
   );
 }
