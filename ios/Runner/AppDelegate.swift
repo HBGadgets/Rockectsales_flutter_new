@@ -8,6 +8,7 @@ import UIKit
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+    NativeChannel.register(with: self.registrar(forPlugin: "NativeChannel")!)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

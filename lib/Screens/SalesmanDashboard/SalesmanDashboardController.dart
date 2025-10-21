@@ -140,6 +140,27 @@ class salesmanDashboardController extends GetxController {
     }
   }
 
+  Future<Uint8List?> compressImageToUnder30KB(String filePath) async {
+    int targetSize = 30 * 1024; // 30 KB
+    int quality = 90;
+
+    Uint8List? compressed = await FlutterImageCompress.compressWithFile(
+      filePath,
+      quality: quality,
+    );
+
+    while (compressed != null && compressed.lengthInBytes > targetSize && quality > 10) {
+      quality -= 10;
+      compressed = await FlutterImageCompress.compressWithFile(
+        filePath,
+        quality: quality,
+      );
+    }
+
+    print("✅ Final image size: ${(compressed!.lengthInBytes / 1024).toStringAsFixed(2)} KB");
+    return compressed;
+  }
+
   Future<void> postImage() async {
     isLoading.value = true;
     final result = await FilePicker.platform.pickFiles(
@@ -153,11 +174,13 @@ class salesmanDashboardController extends GetxController {
       String base64File;
 
       // ✅ Compress the image before encoding
-      final compressedBytes = await FlutterImageCompress.compressWithFile(
-        file.absolute.path,
-        quality: 20, // adjust quality as needed
-        format: CompressFormat.jpeg,
-      );
+      // final compressedBytes = await FlutterImageCompress.compressWithFile(
+      //   file.absolute.path,
+      //   quality: 20, // adjust quality as needed
+      //   format: CompressFormat.jpeg,
+      // );
+
+      final compressedBytes = await compressImageToUnder30KB(file.absolute.path);
 
       if (compressedBytes == null) {
         print("⚠️ Compression failed, using original image");
